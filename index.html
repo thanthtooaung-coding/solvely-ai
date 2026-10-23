@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solvely Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&family=Noto+Sans+Myanmar:wght@400;500;600;700&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============ SIDEBAR (shared) ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Sidebar">
+    <div class="sb-head">
+      <a class="brand" href="#/home" aria-label="Solvely.ai home">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 26 26" width="26" height="26">
+            <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a63ff"/><stop offset="1" stop-color="#6b35f2"/></linearGradient></defs>
+            <rect width="26" height="26" rx="7" fill="url(#lg)"/>
+            <path d="M8.2 7.4c1.6 0 2.5 1 3.4 2.6l2.8 5.4c.9 1.7 1.7 2.9 3.4 2.9M17.8 7.6c-2.3.3-3.6 3-4.6 5M12 14.8c-.9 1.9-2.1 3.6-3.9 3.6" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-name">Solvely.ai</span>
+      </a>
+      <button class="icon-btn sb-collapse" id="sbCollapse" aria-label="Collapse sidebar" data-icon="panel" data-size="17"></button>
+    </div>
+
+    <nav class="sb-nav" aria-label="Main navigation">
+      <a href="#/home" class="nav-item" data-route="home"><i data-icon="scan"></i><span data-i18n="nav.home">Home</span></a>
+      <a href="#/study" class="nav-item" data-route="study"><i data-icon="bookplus"></i><span data-i18n="nav.study">AI Study</span></a>
+    </nav>
+
+    <div class="sb-foot">
+      <div class="store-row">
+        <a class="store" href="#" data-toast="App Store link is a placeholder in this mockup">
+          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path fill="#000" d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.3.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4zM13.9 5c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>
+          <span class="store-txt"><small>Download on the</small><b>App Store</b></span>
+        </a>
+        <a class="store" href="#" data-toast="Google Play link is a placeholder in this mockup">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#00d7fe" d="M3.6 2.3 13.3 12l-9.7 9.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1z"/><path fill="#ffce00" d="m16.6 15.3-3.3-3.3 3.3-3.3 3.8 2.2c1 .6 1 1.6 0 2.2z"/><path fill="#ff3a44" d="M16.6 15.3 13.3 12l-9.7 9.7c.4.2.9.2 1.4-.1z"/><path fill="#00f076" d="M16.6 8.7 5 2.4c-.5-.3-1-.3-1.4-.1l9.7 9.7z"/></svg>
+          <span class="store-txt"><small>GET IT ON</small><b>Google Play</b></span>
+        </a>
+      </div>
+      <button class="upgrade" id="upgradeBtn">
+        <span class="burst" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="40" height="40"><polygon fill="#ff4a3d" points="20,1 23.4,6.2 29.5,4.5 30.4,10.6 36.4,12.5 33.9,18.2 38.2,22.8 33,26 34,32.2 27.8,32.4 25.4,38.2 20,35.2 14.6,38.2 12.2,32.4 6,32.2 7,26 1.8,22.8 6.1,18.2 3.6,12.5 9.6,10.6 10.5,4.5 16.6,6.2"/></svg>
+          <span class="burst-txt">57%<br>OFF</span>
+        </span>
+        <span class="up-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="11" fill="#111"/><path d="M12 17V8M8 11.5 12 7.5l4 4" stroke="#ffd34d" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="up-label" data-i18n="upgrade">Upgrade</span>
+      </button>
+    </div>
+
+    <div class="account">
+      <span class="avatar" data-icon="user" data-size="13"></span>
+      <span class="acc-name">thant htoo</span>
+      <button class="lang-btn" id="langBtn" aria-label="Switch language: English / မြန်မာ" title="English / မြန်မာ">EN</button>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode" data-icon="moon" data-size="17"></button>
+    </div>
+  </aside>
+  <div class="sb-overlay" id="sbOverlay"></div>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main" id="main">
+    <button class="icon-btn mob-menu" id="mobMenu" aria-label="Open menu" data-icon="menu" data-size="20"></button>
+
+    <!-- ---------- HOME ---------- -->
+    <section id="view-home" class="view home" hidden>
+      <div class="home-top">
+        <a class="chrome-btn" href="#" data-toast="Chrome Extension link is a placeholder in this mockup">
+          <span class="chrome-ico" aria-hidden="true"></span><span data-i18n="chrome">Get the Chrome Extension</span>
+        </a>
+        <button class="history-link" id="historyBtn"><i data-icon="history" data-size="16"></i><span data-i18n="history">History</span></button>
+      </div>
+
+      <h1 class="home-title" data-i18n="home.title">Solvely: Your AI Study Companion</h1>
+
+      <div class="mode-seg" role="tablist" aria-label="Mode">
+        <button role="tab" class="seg active" data-mode="study" aria-selected="true"><i data-icon="bookplus" data-size="16"></i><span data-i18n="mode.study">Study</span></button>
+        <button role="tab" class="seg" data-mode="exam" aria-selected="false"><i data-icon="examA" data-size="16"></i><span data-i18n="mode.exam">Exam Prep</span></button>
+        <button role="tab" class="seg" data-mode="writing" aria-selected="false"><i data-icon="wand" data-size="16"></i><span data-i18n="mode.writing">Writing</span></button>
+      </div>
+
+      <div class="solver-panel" id="solverPanel">
+        <div class="tool-tabs" role="tablist" aria-label="Tool">
+          <button role="tab" class="ttab active" data-tab="solver" aria-selected="true"><i data-icon="scan" data-size="15"></i><span data-i18n="tab.solver">Solver</span></button>
+          <button role="tab" class="ttab" data-tab="whiteboard" aria-selected="false"><span class="new-badge">NEW</span><i data-icon="board" data-size="15"></i><span data-i18n="tab.whiteboard">Whiteboard Tutor</span></button>
+          <button role="tab" class="ttab" data-tab="flashcards" aria-selected="false"><i data-icon="cards" data-size="15"></i><span data-i18n="tab.flashcards">Flashcards</span></button>
+          <button role="tab" class="ttab" data-tab="quiz" aria-selected="false"><i data-icon="list" data-size="15"></i><span data-i18n="tab.quiz">Quiz</span></button>
+          <button role="tab" class="ttab" data-tab="guide" aria-selected="false"><i data-icon="book" data-size="15"></i><span data-i18n="tab.guide">Study Guide</span></button>
+        </div>
+        <div class="input-zone">
+          <span class="input-pill" id="inputPill">Solver</span>
+          <textarea id="question" aria-label="Enter a problem" rows="3"></textarea>
+          <div class="wb-hint" id="wbHint" hidden>
+            <span data-i18n="wb.try">Try:</span>
+            <button type="button" data-wb="SQL query Big-O complexity analysis">SQL query Big-O complexity</button>
+            <button type="button" data-wb="Solve 2x + 10 = 25">Solve 2x + 10 = 25</button>
+            <button type="button" data-wb="Photosynthesis">Photosynthesis</button>
+          </div>
+          <div class="file-chips" id="fileChips"></div>
+        </div>
+        <div class="panel-bottom">
+          <div class="pb-left">
+            <label class="sq-btn" title="Attach a document">
+              <i data-icon="clip" data-size="17"></i>
+              <input type="file" id="docInput" class="vh" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" multiple aria-label="Attach a document">
+            </label>
+            <label class="sq-btn" title="Upload an image">
+              <i data-icon="imgplus" data-size="17"></i>
+              <input type="file" id="imgInput" class="vh" accept="image/*" multiple aria-label="Upload an image">
+            </label>
+          </div>
+          <div class="pb-right">
+            <div class="model-wrap">
+              <button class="model-btn" id="modelBtn" aria-haspopup="listbox" aria-expanded="false">
+                <span class="mini-logo" aria-hidden="true"></span><span id="modelName">Solvely AI</span><i data-icon="chev" data-size="14"></i>
+              </button>
+              <ul class="model-menu" id="modelMenu" role="listbox" hidden></ul>
+            </div>
+            <button class="solve-btn" id="solveBtn" disabled><span data-i18n="solve">Solve</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="answer" id="answer" hidden></div>
+
+      <section class="examples" aria-labelledby="exTitle">
+        <div class="ex-head">
+          <h2 id="exTitle" data-i18n="ex.title">Solver examples</h2>
+          <span class="xcheck">
+            <span class="xc-icons" aria-hidden="true">
+              <span class="xc a"></span><span class="xc b">G</span><span class="xc c"></span><span class="xc d"></span>
+            </span>
+            <span data-i18n="ex.badge">Cross-check across AI models for highest accuracy</span>
+          </span>
+        </div>
+        <div class="ex-grid">
+          <!-- Card 1 -->
+          <button class="ex-card" data-example="0">
+            <div class="pv pv-steps" aria-hidden="true">
+              <div class="pvs-top"><span class="pvs-final">Final Answer</span><span class="pvs-ans">C. 30</span></div>
+              <div class="pvs-rail"></div>
+              <div class="pvs-step"><span class="pvs-dot on">2</span><div><b>Solving for the variable <i>t</i></b><div class="pvs-math">2t + 10 = 3t − 15<br>25 = t</div></div></div>
+              <div class="pvs-step"><span class="pvs-dot">3</span><div><b>Calculating the measure of angle <i>O</i></b><div class="pvs-math">m∠O = 2(25) + 10<br>= 60°</div></div></div>
+            </div>
+            <span class="ex-title" data-i18n="ex.1">Step-by-step solution</span>
+            <span class="cat cat-geo" data-i18n="cat.geo">geometry</span>
+          </button>
+          <!-- Card 2 -->
+          <button class="ex-card" data-example="1">
+            <div class="pv" aria-hidden="true">
+              <svg viewBox="0 0 206 136" class="pv-svg">
+                <rect x="4" y="5" width="126" height="122" fill="#fff" stroke="#e5e7eb"/>
+                <g stroke="#f0f1f4" stroke-width=".6">
+                  <path d="M14 12v108M30 12v108M46 12v108M62 12v108M78 12v108M94 12v108M110 12v108M126 12v108"/>
+                  <path d="M10 20h118M10 36h118M10 52h118M10 68h118M10 84h118M10 100h118M10 116h118"/>
+                </g>
+                <path d="M10 116h118M62 12v108" stroke="#9ca3af" stroke-width=".7"/>
+                <path d="M58 116c0-60 0-99 0-99" stroke="#34a853" stroke-width=".8" stroke-dasharray="2 2"/>
+                <path d="M16 116C30 60 44 22 59 21S88 60 101 116" fill="none" stroke="#2563eb" stroke-width="1.8"/>
+                <path d="M10 68 104 10" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 2"/>
+                <circle cx="40" cy="45" r="2.2" fill="#ef4444"/><circle cx="66" cy="23" r="2.2" fill="#ef4444"/>
+                <text x="70" y="17" font-size="4.6" fill="#374151">(8,14)</text><text x="25" y="42" font-size="4.6" fill="#374151">(-2,4)</text>
+                <g font-size="4" fill="#6b7280"><text x="7" y="22">8</text><text x="7" y="54">4</text><text x="7" y="86">2</text><text x="12" y="123">-4</text><text x="42" y="123">-2</text><text x="60" y="123">0</text><text x="92" y="123">2</text><text x="122" y="123">4</text></g>
+                <g font-size="3.4" fill="#6b7280"><path d="M8 132h8" stroke="#2563eb"/><text x="18" y="133">y(x)</text><path d="M34 132h8" stroke="#f59e0b"/><text x="44" y="133">intersections</text><path d="M80 132h8" stroke="#34a853"/><text x="90" y="133">Axis of Sym</text></g>
+                <rect x="134" y="5" width="68" height="122" fill="#fafbfc" stroke="#e5e7eb"/>
+                <text x="138" y="14" font-size="4.6" font-weight="700" fill="#374151">PARAMETERS</text>
+                <g font-size="3.8" fill="#4b5563">
+                  <rect x="137" y="18" width="62" height="16" rx="2" fill="#fff" stroke="#eceef1"/>
+                  <text x="140" y="23.5">Parabola Coeff (a)</text><text x="189" y="23.5" fill="#2563eb">-1.0</text>
+                  <path d="M141 29h54" stroke="#cfd8e6" stroke-width="1.6" stroke-linecap="round"/><path d="M141 29h37" stroke="#2563eb" stroke-width="1.6" stroke-linecap="round"/><circle cx="178" cy="29" r="2" fill="#fff" stroke="#2563eb"/>
+                  <rect x="137" y="37" width="62" height="16" rx="2" fill="#fff" stroke="#eceef1"/>
+                  <text x="140" y="42.5">Line Gradient (m)</text><text x="191" y="42.5" fill="#2563eb">1.0</text>
+                  <path d="M141 48h54" stroke="#cfd8e6" stroke-width="1.6" stroke-linecap="round"/><path d="M141 48h32" stroke="#2563eb" stroke-width="1.6" stroke-linecap="round"/><circle cx="173" cy="48" r="2" fill="#fff" stroke="#2563eb"/>
+                  <rect x="137" y="56" width="62" height="16" rx="2" fill="#fff" stroke="#eceef1"/>
+                  <text x="140" y="61.5">Line Y-intercept (c)</text><text x="191" y="61.5" fill="#2563eb">6.0</text>
+                  <path d="M141 67h54" stroke="#cfd8e6" stroke-width="1.6" stroke-linecap="round"/><path d="M141 67h38" stroke="#2563eb" stroke-width="1.6" stroke-linecap="round"/><circle cx="179" cy="67" r="2" fill="#fff" stroke="#2563eb"/>
+                </g>
+                <g font-size="3.2" fill="#9ca3af"><text x="138" y="113">Adjust a to change curvature,</text><text x="138" y="117">m for line slope, and c for the</text><text x="138" y="121">y-intercept.</text></g>
+              </svg>
+            </div>
+            <span class="ex-title" data-i18n="ex.2">Interactive graph</span>
+            <span class="cat cat-alg" data-i18n="cat.alg">algebra</span>
+          </button>
+          <!-- Card 3 -->
+          <button class="ex-card" data-example="2">
+            <div class="pv" aria-hidden="true">
+              <svg viewBox="0 0 206 136" class="pv-svg">
+                <g fill="none" stroke="#1f2937" stroke-width="1.5" stroke-linejoin="round">
+                  <path d="M72 58 90 48l18 10v21L90 89 72 79z"/>
+                  <path d="M77 61.5v14.5M90 84l13-7.5M90 53l13 7.5" stroke-width="1.2"/>
+                  <path d="M108 58l17-10v-12"/><path d="M122.5 48V36M127.5 48V36" stroke-width="1.2"/>
+                  <path d="M125 48l15 8 15-8 14 8"/>
+                  <path d="M108 79l14 9v11M122 88l15-8 13 7"/>
+                </g>
+                <g font-family="Inter,Arial" font-size="10" fill="#1f2937" text-anchor="middle">
+                  <rect x="120" y="25" width="10" height="11" fill="#fff"/><text x="125" y="34">O</text>
+                  <rect x="135" y="51" width="10" height="11" fill="#fff"/><text x="140" y="60">O</text>
+                  <rect x="117" y="82" width="10" height="11" fill="#fff"/><text x="122" y="91">N</text>
+                </g>
+              </svg>
+            </div>
+            <span class="ex-title" data-i18n="ex.3">Structure visualization</span>
+            <span class="cat cat-chem" data-i18n="cat.chem">chemistry</span>
+          </button>
+          <!-- Card 4 -->
+          <button class="ex-card" data-example="3">
+            <div class="pv pv-table" aria-hidden="true">
+              <table>
+                <thead><tr><th>Item</th><th>V $M</th><th>V %</th><th>C $M</th><th>C %</th></tr></thead>
+                <tbody>
+                  <tr><td>Revenue</td><td>500</td><td>100%</td><td>800</td><td>100%</td></tr>
+                  <tr><td>COGS</td><td>350</td><td class="hl-b">70%</td><td>480</td><td class="hl-g">60%</td></tr>
+                  <tr><td>Gross Profit</td><td>150</td><td>30%</td><td>320</td><td>40%</td></tr>
+                  <tr><td>Op. Exp.</td><td>100</td><td>20%</td><td>240</td><td>30%</td></tr>
+                  <tr class="tot"><td>Net Income</td><td>50</td><td>10%</td><td>80</td><td>10%</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <span class="ex-title" data-i18n="ex.4">Financial analysis</span>
+            <span class="cat cat-acc" data-i18n="cat.acc">accounting</span>
+          </button>
+        </div>
+      </section>
+    </section>
+
+    <!-- ---------- AI STUDY ---------- -->
+    <section id="view-study" class="view study" hidden>
+      <div class="study-wrap">
+        <div class="banner">
+          <div class="banner-art" aria-hidden="true">
+            <svg viewBox="0 0 120 100" width="120" height="100">
+              <circle cx="52" cy="50" r="44" fill="none" stroke="#c9dafc" stroke-width="1.2" stroke-dasharray="3 3"/>
+              <circle cx="52" cy="50" r="33" fill="#eef4ff" stroke="#d6e3fd"/>
+              <rect x="34" y="27" width="36" height="44" rx="6" fill="#fff" stroke="#c7d7f7"/>
+              <rect x="40" y="35" width="10" height="5" rx="2" fill="#bcd2fb"/><rect x="53" y="35" width="11" height="5" rx="2" fill="#bcd2fb"/>
+              <rect x="40" y="44" width="24" height="3" rx="1.5" fill="#d6e3fd"/>
+              <path d="M28 50h48" stroke="#2f6df5" stroke-width="2.2" stroke-linecap="round"/>
+              <rect x="40" y="55" width="18" height="3" rx="1.5" fill="#d6e3fd"/><rect x="40" y="61" width="22" height="3" rx="1.5" fill="#d6e3fd"/>
+              <rect x="6" y="13" width="14" height="14" rx="4" fill="#4f8cff"/><rect x="10" y="17" width="6" height="6" rx="1.5" fill="#fff"/>
+              <rect x="74" y="4" width="13" height="13" rx="4" fill="#ffb84d"/><path d="M78 9h5M78 12h4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+              <rect x="90" y="40" width="14" height="14" rx="4" fill="#5aa9ff"/><circle cx="97" cy="47" r="3" fill="none" stroke="#fff" stroke-width="1.4"/>
+              <rect x="5" y="64" width="14" height="14" rx="4" fill="#e66bd6"/><path d="M9 71h6M12 68v6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+              <rect x="66" y="78" width="14" height="14" rx="4" fill="#ff6b6b"/><path d="M70 85l2 2 4-4" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <circle cx="96" cy="70" r="1.6" fill="#2f6df5"/><circle cx="90" cy="20" r="1.4" fill="#2f6df5"/><circle cx="26" cy="86" r="1.4" fill="#ffb84d"/>
+            </svg>
+          </div>
+          <div class="banner-text">
+            <h2 data-i18n="banner.title">Ace your exams in less time</h2>
+            <p data-i18n="banner.sub">Turn your study materials into an exam prep bundle</p>
+          </div>
+          <button class="btn-create" data-action="create-set"><i data-icon="plus" data-size="18"></i><span data-i18n="create">Create new</span></button>
+        </div>
+
+        <h3 class="sec-title" data-i18n="quick">Quick tools</h3>
+        <div class="tools-grid">
+          <a class="tool-card t-flash" href="#/study/tool/flashcard">
+            <div class="tc-text"><b data-i18n="tool.flashcard">Flashcard</b><span data-i18n="tool.flashcard.sub">Flip to memorize</span></div>
+            <span class="tc-ico" aria-hidden="true"><svg viewBox="0 0 56 56" width="52" height="52"><rect x="12" y="8" width="28" height="38" rx="5" transform="rotate(-9 26 27)" fill="#9fc2ff" stroke="#1f4fb8" stroke-width="2.4"/><rect x="16" y="10" width="28" height="38" rx="5" fill="#2e6ae6" stroke="#fff" stroke-width="3"/><path d="m30 21 2 4.4 4.7.6-3.5 3.2.9 4.7-4.1-2.3-4.1 2.3.9-4.7-3.5-3.2 4.7-.6z" fill="#fff"/></svg></span>
+          </a>
+          <a class="tool-card t-quiz" href="#/study/tool/quiz">
+            <div class="tc-text"><b data-i18n="tool.quiz">Quiz</b><span data-i18n="tool.quiz.sub">Practice makes perfect</span></div>
+            <span class="tc-ico" aria-hidden="true"><svg viewBox="0 0 56 56" width="52" height="52"><rect x="11" y="9" width="34" height="42" rx="6" fill="#9a3fdc" stroke="#fff" stroke-width="3"/><rect x="20" y="5" width="16" height="8" rx="3" fill="#ffd36b" stroke="#fff" stroke-width="2"/><rect x="17" y="18" width="22" height="27" rx="3" fill="#f6ecff"/><path d="M21 24h14M21 29h14M21 34h8" stroke="#b07ce6" stroke-width="2.2" stroke-linecap="round"/><path d="m30 39 3 3 6-6" stroke="#2fbf71" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </a>
+          <a class="tool-card t-solver" href="#/study/tool/solver">
+            <div class="tc-text"><b data-i18n="tool.solver">AI Solver</b><span data-i18n="tool.solver.sub">Step-by-step explanation</span></div>
+            <span class="tc-ico" aria-hidden="true"><svg viewBox="0 0 56 56" width="54" height="54"><path d="M8 18v-5a5 5 0 0 1 5-5h5M38 8h5a5 5 0 0 1 5 5v5M48 38v5a5 5 0 0 1-5 5h-5M18 48h-5a5 5 0 0 1-5-5v-5" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M18 17c3.5 0 5.6 2.2 7.6 5.8l5 9.6c1.8 3.5 3.6 6 7.4 6M38.5 17.3c-4.6.6-7.2 5.6-9 9.4M26 32.6c-2 4-4.3 6.6-8 6.6" stroke="#1d6fb8" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M18 17c3.5 0 5.6 2.2 7.6 5.8l5 9.6c1.8 3.5 3.6 6 7.4 6M38.5 17.3c-4.6.6-7.2 5.6-9 9.4M26 32.6c-2 4-4.3 6.6-8 6.6" stroke="#fff" stroke-width="3.6" fill="none" stroke-linecap="round"/></svg></span>
+          </a>
+          <a class="tool-card t-guide" href="#/study/tool/guide">
+            <div class="tc-text"><b data-i18n="tool.guide">Study guide</b><span data-i18n="tool.guide.sub">Summarize with clarity</span></div>
+            <span class="tc-ico" aria-hidden="true"><svg viewBox="0 0 56 56" width="54" height="54"><rect x="9" y="11" width="30" height="36" rx="6" transform="rotate(-12 24 29)" fill="#ff8a1f" stroke="#7a3a00" stroke-width="2.4"/><path d="M12 16h4M11 23h4M11 30h4M12 37h4" stroke="#7a3a00" stroke-width="2.6" stroke-linecap="round"/><circle cx="36" cy="33" r="11" fill="#ffd23f" stroke="#7a3a00" stroke-width="2.4"/><path d="M31.5 37v-8l4.5 5 4.5-5v8" stroke="#ff8a1f" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </a>
+          <a class="tool-card t-pred" href="#/study/tool/predictor">
+            <div class="tc-text"><b data-i18n="tool.predictor">Exam predictor</b><span data-i18n="tool.predictor.sub">Study what matters</span></div>
+            <span class="tc-ico" aria-hidden="true"><svg viewBox="0 0 56 56" width="54" height="54"><rect x="11" y="10" width="30" height="40" rx="6" fill="#ff5a5a" stroke="#fff" stroke-width="3.2"/><rect x="16" y="16" width="20" height="28" rx="3" fill="#fff5f5"/><path d="M19 38l5-6 4 3 6-8" stroke="#ff5a5a" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="35" y="17" font-family="Poppins,Arial" font-weight="800" font-size="15" fill="#fff" stroke="#e23d3d" stroke-width=".8">A</text><path d="M48 6v6M45 9h6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+          </a>
+          <a class="tool-card t-cheat" href="#/study/tool/cheatsheet">
+            <div class="tc-text"><b data-i18n="tool.cheatsheet">Cheat sheet</b><span data-i18n="tool.cheatsheet.sub">Crack the exam</span></div>
+            <span class="tc-ico" aria-hidden="true"><svg viewBox="0 0 56 56" width="54" height="54"><rect x="12" y="10" width="30" height="40" rx="6" fill="#585ef0" stroke="#fff" stroke-width="3.2"/><rect x="17" y="16" width="20" height="28" rx="3" fill="#eef0ff"/><path d="M21 23h12M21 29h12M21 35h8" stroke="#585ef0" stroke-width="2.6" stroke-linecap="round"/><text x="36" y="17" font-family="Poppins,Arial" font-weight="800" font-size="14" fill="#ff8f5a" stroke="#fff" stroke-width=".8">A</text><path d="M49 6v5M46.5 8.5h5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+          </a>
+        </div>
+
+        <div class="sec-row">
+          <h3 class="sec-title" data-i18n="recent">Recent study sets</h3>
+          <a href="#/study/sets" class="view-all" data-i18n="viewall">View all</a>
+        </div>
+        <div class="recent-grid" id="recentGrid"></div>
+      </div>
+    </section>
+
+    <!-- ---------- STUDY SUB-PAGES (tools, sets) ---------- -->
+    <section id="view-sub" class="view study" hidden></section>
+
+    <!-- ---------- WHITEBOARD TUTOR (internal views of Home) ---------- -->
+    <section id="view-prep" class="view prep" hidden></section>
+    <section id="view-tutor" class="view tutor" hidden></section>
+  </main>
+</div>
+
+<button class="chat-fab" aria-label="Open support chat" data-toast="Support chat is a placeholder in this mockup" data-icon="msg" data-size="24"></button>
+
+<!-- History drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside class="drawer" id="historyDrawer" aria-label="History" aria-hidden="true">
+  <div class="drawer-head"><h2 data-i18n="history">History</h2><button class="icon-btn" id="drawerClose" aria-label="Close history" data-icon="x" data-size="18"></button></div>
+  <div class="drawer-body" id="historyList"></div>
+</aside>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" id="modalBox"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
