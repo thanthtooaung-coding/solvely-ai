@@ -5,6 +5,7 @@ import JSZip from 'jszip';
 import { createApp } from '../lib/app.js';
 import { extractPptx } from '../lib/files.js';
 import { lessonUsesBurmese, normalizeLesson, parseModelJson } from '../lib/lesson.js';
+import { alignWordTimings, prepareNarrationText, speakableMath } from '../lib/narration.js';
 import { renderNotesHtml } from '../lib/notes.js';
 import { findBrowser } from '../lib/printpdf.js';
 
@@ -106,6 +107,46 @@ test('pdf route returns a pdf document', { timeout: 40000 }, async () => {
     assert.match(res.headers.get('content-type') || '', /pdf/);
     const buf = Buffer.from(await res.arrayBuffer());
     assert.equal(buf.subarray(0, 5).toString(), '%PDF-');
+  } finally {
+    server.close();
+  }
+});
+
+test('narration text speaks equations naturally', () => {
+  assert.match(speakableMath('2x + 10 = 25', 'en'), /two x plus ten equals twenty-five/i);
+  assert.match(prepareNarrationText('Solve 2x + 10 = 25 carefully.', 'en'), /two x plus ten equals/i);
+  assert.equal(prepareNarrationText('   ', 'en'), '');
+});
+
+test('word timings align through the last word', () => {
+  const words = alignWordTimings('The hypotenuse is opposite', [
+    { word: 'The', startOffset: '0s', endOffset: '0.2s' },
+    { word: 'hypotenuse', startOffset: '0.2s', endOffset: '0.9s' },
+    { word: 'is', startOffset: '0.9s', endOffset: '1.1s' },
+    { word: 'opposite', startOffset: '1.1s', endOffset: '1.8s' }
+  ], 1.8);
+  assert.equal(words.length, 4);
+  assert.equal(words[0].text.toLowerCase(), 'the');
+  assert.equal(words[words.length - 1].text.toLowerCase(), 'opposite');
+  assert.ok(words[words.length - 1].end >= words[words.length - 1].start);
+});
+
+test('narration meta and empty text validation', async () => {
+  const { server, base } = await listen(createApp());
+  try {
+    const meta = await fetch(`${base}/api/whiteboard/narration`);
+    assert.equal(meta.status, 200);
+    const body = await meta.json();
+    assert.equal(body.provider, 'gemini-tts');
+    assert.ok(Array.isArray(body.voices) && body.voices.length >= 2);
+    const empty = await fetch(`${base}/api/whiteboard/narration`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: '  ', language: 'en', voice: 'Kore' })
+    });
+    assert.equal(empty.status, 400);
+    const err = await empty.json();
+    assert.equal(err.code, 'empty');
   } finally {
     server.close();
   }

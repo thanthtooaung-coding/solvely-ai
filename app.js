@@ -44,6 +44,11 @@ const ICONS = {
   play: '<path d="M7.5 4.8v14.4L19 12z" fill="currentColor" stroke="none"/>',
   pause: '<rect x="6.5" y="5" width="3.6" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.9" y="5" width="3.6" height="14" rx="1" fill="currentColor" stroke="none"/>',
   volume: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+  volumeOff: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="m16 9 6 6M22 9l-6 6"/>',
+  stop: '<rect x="6.5" y="6.5" width="11" height="11" rx="1.5" fill="currentColor" stroke="none"/>',
+  skipBack: '<path d="M5 6v12M11 12 19 6v12z" fill="currentColor" stroke="none"/>',
+  skipFwd: '<path d="M19 6v12M13 12 5 6v12z" fill="currentColor" stroke="none"/>',
+  replay: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v4h4"/>',
   micoff: '<path d="M9 9V6a3 3 0 0 1 5.6-1.5M15 11.5v.5a3 3 0 0 1-4.6 2.5"/><path d="M5.5 11a6.5 6.5 0 0 0 10.6 5M18.5 11a6.5 6.5 0 0 1-.5 2.4M12 17.5V21M3 3l18 18"/>',
   download: '<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/>',
   pen: '<path d="M15.5 4.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/><path d="m13.5 6.5 3 3"/>',
@@ -102,7 +107,8 @@ const I18N = {
     createLesson: 'Create lesson', 'wb.try': 'Try:', retry: 'Try again',
     'prep.title': 'Creating your lesson…', 'prep.left': 'About {n} sec left', 'prep.ready': 'Ready — opening your lesson',
     'prep.s1': 'Understanding “{topic}”…', 'prep.s2': 'Planning your lesson flow…', 'prep.s3': 'Sketching visual explanations…',
-    'prep.s4': 'Preparing guided practice…', 'prep.s5': 'Starting your interactive lesson…',
+    'prep.s4': 'Preparing tutor voice audio…', 'prep.s5': 'Starting your interactive lesson…',
+    'prep.voice': 'Loading voice {n} of {total}…',
     'prep.err': 'We couldn’t prepare this lesson',
     'prep.errEmpty': 'Add a topic or upload a PDF, Word, PowerPoint, text, or image file.',
     'prep.note': 'Gemini is writing this lesson. A step is marked done only after it actually finishes. With မြန်မာ selected, the whole lesson stays in Burmese.',
@@ -139,6 +145,13 @@ const I18N = {
     'tw.upload': 'Upload files', 'tw.uploadMore': 'Upload more files',
     'tw.preparing': 'Tutor is preparing the board', 'tw.preparingSub': 'The explanation and visuals will appear here in real time.',
     'tw.speed': 'Speed', 'tw.end': 'End lesson', 'tw.ask': 'Type your question or response', 'tw.follow': 'Follow tutor',
+    'narr.play': 'Play narration', 'narr.pause': 'Pause narration', 'narr.stop': 'Stop narration', 'narr.replay': 'Replay section',
+    'narr.prev': 'Previous section', 'narr.next': 'Next section', 'narr.mute': 'Mute narration', 'narr.unmute': 'Unmute narration',
+    'narr.voice': 'Voice', 'narr.auto': 'Auto-play voice', 'narr.ready': 'Narration ready', 'narr.loading': 'Preparing narration…',
+    'narr.playing': 'Playing narration', 'narr.paused': 'Narration paused', 'narr.done': 'Narration complete', 'narr.failed': 'Narration failed',
+    'narr.section': 'Section {n} of {total}', 'narr.browser': 'Using browser speech for this section.', 'narr.off': 'Turn narration on with Play.',
+    'narr.tap': 'Tap Play once to start the tutor voice (browser audio lock).',
+    'err.audio': 'The narration could not be created. Try again.', 'err.unsupported_voice': 'That voice is not available.',
     'tw.skip': 'Skip', 'tw.continue': 'Continue', 'tw.correct': 'Correct!', 'tw.wrong': 'Not quite.', 'tw.you': 'You', 'tw.tutor': 'Tutor',
     'tw.clearInk': 'Clear ink', 'tw.qcap': 'Quick check — pick an answer, or skip to keep going.', 'tw.qof': 'Question {n} of {total}',
     'tw.thinking': 'Tutor is thinking…', 'tw.reveal': 'Reveal answer', 'tw.submit': 'Submit', 'tw.sa': 'Type your answer',
@@ -186,7 +199,8 @@ const I18N = {
     createLesson: 'သင်ခန်းစာ ဖန်တီးရန်', 'wb.try': 'စမ်းကြည့်ရန်:', retry: 'ထပ်စမ်းရန်',
     'prep.title': 'သင်ခန်းစာ ဖန်တီးနေသည်…', 'prep.left': 'ခန့်မှန်း {n} စက္ကန့် ကျန်', 'prep.ready': 'အဆင်သင့် — သင်ခန်းစာ ဖွင့်နေသည်',
     'prep.s1': '“{topic}” ကို နားလည်အောင် ဖတ်နေသည်…', 'prep.s2': 'သင်ခန်းစာ အစီအစဉ် ရေးဆွဲနေသည်…', 'prep.s3': 'ပုံဖြင့် ရှင်းလင်းချက်များ ဆွဲနေသည်…',
-    'prep.s4': 'လေ့ကျင့်ခန်းများ ပြင်ဆင်နေသည်…', 'prep.s5': 'အပြန်အလှန် သင်ခန်းစာ စတင်နေသည်…',
+    'prep.s4': 'ဆရာ့အသံ ဖိုင်များ ပြင်ဆင်နေသည်…', 'prep.s5': 'အပြန်အလှန် သင်ခန်းစာ စတင်နေသည်…',
+    'prep.voice': 'အသံ {n} / {total} ကို တင်နေသည်…',
     'prep.err': 'ဤသင်ခန်းစာကို ပြင်ဆင်၍ မရပါ',
     'prep.errEmpty': 'ခေါင်းစဉ် ထည့်ပါ၊ သို့မဟုတ် PDF၊ Word၊ PowerPoint၊ စာသား သို့မဟုတ် ပုံ ဖိုင် တင်ပါ။',
     'prep.note': 'Gemini က ဤသင်ခန်းစာကို ရေးနေသည်။ အဆင့်တစ်ခု ပြီးမှသာ ပြီးကြောင်း ပြပါမည်။ မြန်မာ ကို ရွေးထားလျှင် သင်ခန်းစာ တစ်ခုလုံး မြန်မာဘာသာဖြင့် ရေးပါမည်။',
@@ -223,6 +237,13 @@ const I18N = {
     'tw.upload': 'ဖိုင်တင်ရန်', 'tw.uploadMore': 'ဖိုင် ထပ်တင်ရန်',
     'tw.preparing': 'ဆရာက ဘုတ်ပြားကို ပြင်ဆင်နေသည်', 'tw.preparingSub': 'ရှင်းလင်းချက်နှင့် ပုံများ ဤနေရာတွင် ပေါ်လာပါမည်။',
     'tw.speed': 'အမြန်နှုန်း', 'tw.end': 'သင်ခန်းစာ ပြီးဆုံးရန်', 'tw.ask': 'မေးခွန်း သို့မဟုတ် အဖြေ ရိုက်ထည့်ပါ', 'tw.follow': 'ဆရာနှင့်အတူ လိုက်ကြည့်ရန်',
+    'narr.play': 'အသံဖွင့်ရန်', 'narr.pause': 'အသံခဏရပ်ရန်', 'narr.stop': 'အသံရပ်ရန်', 'narr.replay': 'ဤအပိုင်း ပြန်နားရန်',
+    'narr.prev': 'ယခင်အပိုင်း', 'narr.next': 'နောက်အပိုင်း', 'narr.mute': 'အသံပိတ်ရန်', 'narr.unmute': 'အသံဖွင့်ရန်',
+    'narr.voice': 'အသံ', 'narr.auto': 'အသံ အလိုအလျောက် ဖွင့်ရန်', 'narr.ready': 'အသံ ပြင်ဆင်ပြီး', 'narr.loading': 'အသံ ပြင်နေသည်…',
+    'narr.playing': 'အသံ ဖွင့်နေသည်', 'narr.paused': 'အသံ ခဏရပ်ထားသည်', 'narr.done': 'အသံ ပြီးပါပြီ', 'narr.failed': 'အသံ မရနိုင်ပါ',
+    'narr.section': 'အပိုင်း {n} / {total}', 'narr.browser': 'ဤအပိုင်းအတွက် ဘရောက်ဇာ အသံကို သုံးနေသည်။', 'narr.off': 'Play နှိပ်ပြီး အသံဖွင့်ပါ။',
+    'narr.tap': 'ဘရောက်ဇာ အသံပိတ်ထားသည်။ Play ကို တစ်ချက် နှိပ်ပါ။',
+    'err.audio': 'အသံဖန်တီးမရပါ။ ထပ်စမ်းပါ။', 'err.unsupported_voice': 'ဤအသံကို မရနိုင်ပါ။',
     'tw.skip': 'ကျော်ရန်', 'tw.continue': 'ဆက်ရန်', 'tw.correct': 'မှန်ပါသည်!', 'tw.wrong': 'မမှန်သေးပါ။', 'tw.you': 'သင်', 'tw.tutor': 'ဆရာ',
     'tw.clearInk': 'မင်ရေး ဖျက်ရန်', 'tw.qcap': 'အမြန်စစ်ဆေးချက် — အဖြေရွေးပါ သို့မဟုတ် ကျော်ပါ။', 'tw.qof': 'မေးခွန်း {n} / {total}',
     'tw.thinking': 'ဆရာ စဉ်းစားနေသည်…', 'tw.reveal': 'အဖြေ ပြရန်', 'tw.submit': 'တင်သွင်းရန်', 'tw.sa': 'အဖြေ ရိုက်ထည့်ပါ',
@@ -857,8 +878,21 @@ function abortOtherLessons(keepId) {
 const TUTOR_DAILY_LIMIT = null; // e.g. 3 → the plan modal appears after 3 lessons in a session. null = no limit.
 const lessons = {};             // id → lesson (kept only while the page is open)
 let lessonsCreated = 0;
-const SPEEDS = [0.75, 1, 1.25, 1.5];
+const SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2];
 const fmtSpeed = s => (Number.isInteger(s * 10) ? s.toFixed(1) : String(s)) + 'x';
+const NARR_VOICES = [
+  { id: 'Kore', label: 'Kore · firm' },
+  { id: 'Puck', label: 'Puck · upbeat' },
+  { id: 'Charon', label: 'Charon · clear' },
+  { id: 'Aoede', label: 'Aoede · breezy' },
+  { id: 'Sulafat', label: 'Sulafat · warm' },
+  { id: 'Rasalgethi', label: 'Rasalgethi · informative' }
+];
+const Narr = {
+  state: 'ready', sections: [], index: 0, audio: null, url: null, ownsUrl: false, abort: null, token: 0,
+  voice: 'Kore', muted: false, autoStart: true, autoContinue: true, resumeAfterQ: true, driving: false,
+  provider: 'gemini-tts', progress: 0, words: [], wordIndex: -1, typePlan: [], cache: new Map(), metaLoaded: false
+};
 const SRC_ACCEPT = '.pdf,.png,.jpg,.jpeg,.webp,.docx,.pptx,.txt,.md,.csv,.sql,.json';
 const FILE_MAX_BYTES = 8 * 1024 * 1024;
 const T = { id: null, L: null, playing: true, speed: 1, timer: null, startTimer: null, capTimer: null, q: null, follow: true, captions: true, pen: false, strokes: [], ro: null, slideTimer: null, chatAbort: null, chatBusy: false, qBusy: false };
@@ -1118,9 +1152,16 @@ function drawPrep(L) {
     return;
   }
   const n = PREP_STEPS.length, done = L.step, waiting = !!L.waiting;
-  box.innerHTML = `<div class="prep-head"><h2>${esc(t('prep.title'))}</h2><span class="prep-pct">${waiting ? '…' : ''}</span></div>
-    <div class="prep-bar${waiting ? ' indeterminate' : ''}" role="progressbar" aria-label="Lesson preparation" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${done}"><span style="width:${waiting ? '35%' : Math.round(done / n * 100) + '%'}"></span></div>
-    <div class="prep-time">${icon('clock', 16)} ${esc(done >= n ? t('prep.ready') : t('prep.working'))}</div>
+  const voice = L.voiceProgress;
+  const pct = voice && voice.total
+    ? Math.min(99, Math.round(((done - 1) + (voice.n / voice.total)) / n * 100))
+    : (waiting ? 35 : Math.round(done / n * 100));
+  const statusLine = done >= n
+    ? t('prep.ready')
+    : (voice ? t('prep.voice', { n: voice.n, total: voice.total }) : t('prep.working'));
+  box.innerHTML = `<div class="prep-head"><h2>${esc(t('prep.title'))}</h2><span class="prep-pct">${waiting && !voice ? '…' : (voice ? voice.n + '/' + voice.total : '')}</span></div>
+    <div class="prep-bar${waiting && !voice ? ' indeterminate' : ''}" role="progressbar" aria-label="Lesson preparation" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${done}"><span style="width:${pct}%"></span></div>
+    <div class="prep-time">${icon('clock', 16)} ${esc(statusLine)}</div>
     <ol class="prep-steps">${PREP_STEPS.map((k, i) => `<li class="${i < done ? 'done' : i === done ? 'cur' : ''}"><span class="ps-ico">${i < done ? icon('check', 12, 3) : ''}</span><span>${esc(t(k, { topic: prepTopic(L) }))}</span></li>`).join('')}</ol>
     <p class="prep-note">${icon('info', 13)} ${esc(t('prep.note'))}</p>
     <div class="prep-actions"><button class="btn-o" id="prepCancel" type="button">${esc(t('prep.cancel'))}</button></div>`;
@@ -1160,20 +1201,64 @@ async function runPrep(L) {
     if (!L.blocks.length || !L.blocks.some(b => b.t === 'q')) throw Object.assign(new Error(''), { code: 'invalid_response' });
     L.sources.forEach(s => { s.sent = true; });
     L.step = 3; drawPrep(L);
-    L.step = 4; drawPrep(L);
+    L.step = 4; L.waiting = true; drawPrep(L);
+    await prepLoadNarrationPack(L, ac.signal);
+    if (ac.signal.aborted) return;
+    L.waiting = false; L.voiceProgress = null;
     L.step = 5; drawPrep(L);
     L.status = 'ready'; L.running = false; L.abort = null;
     if (location.hash === `#/tutor/${L.id}/prep`) location.replace(`#/tutor/${L.id}/lesson`);
     else toast(t('prep.readyToast', { topic: prepTopic(L) }));
   } catch (err) {
     if (err.name === 'AbortError' || ac.signal.aborted) {
-      L.running = false; L.waiting = false;
+      L.running = false; L.waiting = false; L.voiceProgress = null;
       if (L.abort === ac) L.abort = null;
       return;
     }
-    L.status = 'error'; L.error = friendlyError(err); L.running = false; L.waiting = false; L.abort = null;
+    L.status = 'error'; L.error = friendlyError(err); L.running = false; L.waiting = false; L.voiceProgress = null; L.abort = null;
     drawPrep(L);
   }
+}
+async function prepLoadNarrationPack(L, signal) {
+  const sections = narrSections(L);
+  L.narrSections = sections;
+  if (Array.isArray(L.narrPack)) {
+    L.narrPack.forEach(p => { if (p && p.url) try { URL.revokeObjectURL(p.url); } catch { /* ignore */ } });
+  }
+  L.narrPack = [];
+  if (!sections.length) return;
+  for (let i = 0; i < sections.length; i++) {
+    if (signal.aborted) throw Object.assign(new Error('aborted'), { name: 'AbortError' });
+    L.voiceProgress = { n: i + 1, total: sections.length };
+    drawPrep(L);
+    try {
+      const data = await postJson('/api/whiteboard/narration', {
+        text: sections[i].text,
+        language: lessonLang(L),
+        voice: Narr.voice || 'Kore',
+        sectionId: String(i),
+        lessonId: L.id || ''
+      }, signal);
+      const blob = b64ToBlob(data.audioBase64, data.mimeType || 'audio/wav');
+      const url = URL.createObjectURL(blob);
+      const entry = {
+        preloaded: true,
+        mimeType: data.mimeType || 'audio/wav',
+        url,
+        words: Array.isArray(data.words) ? data.words : [],
+        text: data.text || sections[i].text,
+        duration: data.duration || 0
+      };
+      L.narrPack[i] = entry;
+      const key = narrCacheKey(sections[i].text, lessonLang(L), Narr.voice || 'Kore');
+      Narr.cache.set(key, entry);
+    } catch (err) {
+      if (err.name === 'AbortError') throw err;
+      throw Object.assign(err, { code: err.code || 'audio' });
+    }
+  }
+  L.voiceProgress = { n: sections.length, total: sections.length };
+  drawPrep(L);
 }
 
 /* ---------- lesson workspace ---------- */
@@ -1289,8 +1374,27 @@ function twShellHTML() {
           <span class="tw-avatar" title="Tutor">${AVATAR}</span>
           <button class="tw-round" id="twCapBtn" aria-pressed="true" aria-label="Captions" title="Show or hide captions">${icon('captions', 18)}</button>
           <button class="tw-round" id="twPlay" aria-label="Pause lesson" title="Pause lesson">${icon('pause', 18)}</button>
-          <button class="tw-round is-off" id="twVol" aria-disabled="true" aria-label="Audio narration isn't available in this prototype" title="Audio narration isn't available in this prototype">${icon('volume', 18)}</button>
-          <p class="tw-cap" id="twCap" aria-live="polite"></p>
+          <div class="tw-narr" id="twNarr" data-state="ready">
+            <button class="tw-round" type="button" id="twNarrPrev" aria-label="${esc(t('narr.prev'))}" title="${esc(t('narr.prev'))}">${icon('skipBack', 16)}</button>
+            <button class="tw-round tw-narr-play" type="button" id="twNarrPlay" aria-label="${esc(t('narr.play'))}" title="${esc(t('narr.play'))}">${icon('play', 18)}</button>
+            <button class="tw-round" type="button" id="twNarrStop" aria-label="${esc(t('narr.stop'))}" title="${esc(t('narr.stop'))}" disabled>${icon('stop', 14)}</button>
+            <button class="tw-round" type="button" id="twNarrReplay" aria-label="${esc(t('narr.replay'))}" title="${esc(t('narr.replay'))}">${icon('replay', 16)}</button>
+            <button class="tw-round" type="button" id="twNarrNext" aria-label="${esc(t('narr.next'))}" title="${esc(t('narr.next'))}">${icon('skipFwd', 16)}</button>
+            <button class="tw-round" type="button" id="twVol" aria-pressed="false" aria-label="${esc(t('narr.mute'))}" title="${esc(t('narr.mute'))}">${icon('volume', 18)}</button>
+            <div class="tw-narr-prog" aria-hidden="true"><span id="twNarrBar"></span></div>
+            <div class="tw-narr-meta">
+              <span id="twNarrStatus">${esc(t('narr.ready'))}</span>
+              <span id="twNarrSection"></span>
+            </div>
+            <label class="tw-narr-voice"><span class="vh">${esc(t('narr.voice'))}</span>
+              <select id="twNarrVoice" aria-label="${esc(t('narr.voice'))}">${NARR_VOICES.map(v => `<option value="${esc(v.id)}"${v.id === Narr.voice ? ' selected' : ''}>${esc(v.label)}</option>`).join('')}</select>
+            </label>
+            <label class="tw-narr-auto"><input type="checkbox" id="twNarrAuto" ${Narr.autoStart ? 'checked' : ''}> <span>${esc(t('narr.auto'))}</span></label>
+          </div>
+          <div class="tw-cap-wrap">
+            <p class="tw-cap" id="twCap" aria-live="polite"></p>
+            <p class="tw-narr-words" id="twNarrWords" aria-live="polite" hidden></p>
+          </div>
         </div>
         <div class="tw-bar-r">
           <button class="tw-round" id="twPen" aria-pressed="false" aria-label="Pen: circle something to get it explained" title="Pen: circle something on the board to get it explained">${icon('pen', 18)}</button>
@@ -1341,6 +1445,7 @@ async function twAddFiles(list) {
 
 function tutorTeardown() {
   if (T.chatAbort) { T.chatAbort.abort(); T.chatAbort = null; }
+  narrTeardown();
   clearTimeout(T.timer); clearTimeout(T.startTimer); clearInterval(T.capTimer);
   if (T.ro) T.ro.disconnect();
   Object.assign(T, { id: null, L: null, q: null, ro: null, timer: null, startTimer: null, capTimer: null, pen: false, chatBusy: false, qBusy: false });
@@ -1349,6 +1454,14 @@ function tutorTeardown() {
 function tutorView(id) {
   const v = $('#view-tutor'), L = lessons[id];
   if (!L || L.status !== 'ready') { location.replace(`#/tutor/${id}/prep`); return; }
+  if (L.narrSections && L.narrSections.length) {
+    const packOk = Array.isArray(L.narrPack) && L.narrPack.length === L.narrSections.length && L.narrPack.every(Boolean);
+    if (!packOk) {
+      L.status = 'preparing'; L.running = false;
+      location.replace(`#/tutor/${id}/prep`);
+      return;
+    }
+  }
   v.hidden = false;
   if (T.id === id && $('#tw')) return;               // already mounted (e.g. language switch)
   tutorTeardown();
@@ -1360,8 +1473,17 @@ function tutorView(id) {
   L.blocks.forEach((b, i) => { if (i < L.idx && b.t !== 'q') twRenderBlock(i, false); });
   twRenderQA(); twUpdatePlay(); twInkSize();
   if (L.finished || L.ended) { $('#twLoading').hidden = true; twFinish(true); }
-  else if (L.idx > 0) { $('#twLoading').hidden = true; twCaption('Welcome back — picking up where you left off.'); twSchedule(700); }
-  else T.startTimer = setTimeout(() => { $('#twLoading').hidden = true; twTick(); }, 1100);
+  else if (L.idx > 0) {
+    $('#twLoading').hidden = true;
+    twCaption('Welcome back — picking up where you left off.');
+    T.startTimer = setTimeout(() => { if (Narr.autoStart) narrAutoBegin(); else twSchedule(700); }, 400);
+  } else {
+    T.startTimer = setTimeout(() => {
+      $('#twLoading').hidden = true;
+      if (Narr.autoStart) narrAutoBegin();
+      else twTick();
+    }, 900);
+  }
 }
 function twBind() {
   const tw = $('#tw'), sc = $('#twScroll');
@@ -1384,6 +1506,7 @@ function twBind() {
     T.speed = +b.dataset.speed; $('#twSpeedVal').textContent = fmtSpeed(T.speed);
     $$('[data-speed]', sm).forEach(x => x.setAttribute('aria-selected', String(x === b)));
     sm.hidden = true; sb.setAttribute('aria-expanded', 'false'); sb.focus();
+    if (Narr.audio) Narr.audio.playbackRate = T.speed;
     if (T.playing && !T.q && T.timer) twSchedule(400);
     toast(`Lesson speed set to ${fmtSpeed(T.speed)}`);
   };
@@ -1404,9 +1527,18 @@ function twBind() {
   $('#twPlay').onclick = () => {
     if (T.L.finished || T.L.ended) return;
     T.playing = !T.playing; twUpdatePlay();
-    if (T.playing) { if (!T.q) twSchedule(300); } else clearTimeout(T.timer);
+    if (T.playing) {
+      if (Narr.autoStart && Narr.sections.length) {
+        if (Narr.state === 'paused') narrTogglePlay();
+        else if (Narr.state === 'ready' || Narr.state === 'done' || Narr.state === 'failed') narrAutoBegin();
+        else if (!T.q) twSchedule(300);
+      } else if (!T.q) twSchedule(300);
+    } else {
+      clearTimeout(T.timer);
+      if (Narr.state === 'playing' || Narr.state === 'loading') narrPause();
+    }
   };
-  $('#twVol').onclick = () => toast('Audio narration isn’t connected in this prototype — captions show what the tutor says.');
+  narrBindControls();
   $('#twMic').onclick = () => toast('Voice input isn’t connected in this prototype — type your question instead.');
   // pen / circle-to-explain
   $('#twPen').onclick = () => {
@@ -1459,9 +1591,17 @@ const twDur = b => Math.min(9000, 1300 + (b.say || blockText(b)).length * 32) / 
 function twTick() {
   const L = T.L; T.timer = null;
   if (!L || !T.playing || T.q != null || L.ended || L.finished) return;
+  if (Narr.driving && (Narr.state === 'playing' || Narr.state === 'loading' || Narr.state === 'paused')) return;
   if (L.idx >= L.blocks.length) { twFinish(false); return; }
   const b = L.blocks[L.idx];
   if (b.t === 'q') { twShowQ(L.idx); return; }
+  if (Narr.driving && Narr.autoStart) {
+    // Voice owns teaching blocks; only questions are handled here after narration.
+    while (L.idx < L.blocks.length && L.blocks[L.idx].t !== 'q') L.idx++;
+    if (L.idx >= L.blocks.length) { twFinish(false); return; }
+    twShowQ(L.idx);
+    return;
+  }
   twRenderBlock(L.idx, true); L.idx++;
   twCaption(b.say || blockText(b));
   twSchedule(twDur(b));
@@ -1490,6 +1630,533 @@ function twCaption(text) {
   }, 26 / T.speed);
 }
 
+/* ---------- AI audio narration ---------- */
+function narrSections(L) {
+  if (!L || !L.blocks) return [];
+  const out = [];
+  let cur = null;
+  const push = () => {
+    if (!cur) return;
+    const text = cur.parts.filter(Boolean).join('. ').replace(/\s+/g, ' ').trim();
+    if (text) out.push({ title: cur.title || lessonTitle(L), text: clipText(text, 2200), blocks: cur.blocks.slice() });
+    cur = null;
+  };
+  L.blocks.forEach((b, i) => {
+    if (b.t === 'q') { push(); return; }
+    if (b.t === 'title' || b.t === 'h') {
+      push();
+      cur = { title: plain(b.text || ''), parts: [b.say || blockText(b)], blocks: [i] };
+      return;
+    }
+    if (!cur) cur = { title: lessonTitle(L), parts: [], blocks: [] };
+    cur.parts.push(b.say || blockText(b));
+    cur.blocks.push(i);
+  });
+  push();
+  return out;
+}
+function narrStopAudio() {
+  if (Narr.abort) { Narr.abort.abort(); Narr.abort = null; }
+  if (Narr.audio) {
+    try { Narr.audio.pause(); Narr.audio.removeAttribute('src'); Narr.audio.load(); } catch { /* ignore */ }
+    Narr.audio = null;
+  }
+  if (Narr.url && Narr.ownsUrl) { try { URL.revokeObjectURL(Narr.url); } catch { /* ignore */ } }
+  Narr.url = null;
+  Narr.ownsUrl = false;
+  if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+  Narr.progress = 0;
+  Narr.words = [];
+  Narr.wordIndex = -1;
+  narrClearWords();
+}
+function narrTeardown() {
+  narrStopAudio();
+  Narr.state = 'ready'; Narr.sections = []; Narr.index = 0; Narr.token++; Narr.driving = false; Narr.typePlan = [];
+  $$('.wb-narrating').forEach(el => el.classList.remove('wb-narrating'));
+}
+function narrSectionForBoard() {
+  const L = T.L; if (!L || !Narr.sections.length) return 0;
+  const idx = L.idx || 0;
+  let best = 0;
+  Narr.sections.forEach((s, i) => {
+    if ((s.blocks || []).some(b => b <= idx)) best = i;
+  });
+  return best;
+}
+async function narrAutoBegin() {
+  const L = T.L;
+  if (!L || L.finished || L.ended || T.q != null) return;
+  Narr.sections = (L.narrSections && L.narrSections.length) ? L.narrSections : narrSections(L);
+  narrUpdateUi();
+  if (!Narr.sections.length) { Narr.driving = false; twSchedule(300); return; }
+  Narr.driving = true;
+  Narr.autoContinue = true;
+  T.playing = true; twUpdatePlay();
+  clearTimeout(T.timer);
+  const startAt = narrSectionForBoard();
+  try {
+    await narrPlayIndex(startAt, { force: true });
+  } catch (err) {
+    Narr.driving = false;
+    if (!T.q) twSchedule(400);
+  }
+}
+function narrClearWords() {
+  const box = $('#twNarrWords');
+  if (box) { box.hidden = true; box.innerHTML = ''; }
+}
+function narrRenderWords(words) {
+  const box = $('#twNarrWords'); if (!box) return;
+  Narr.words = Array.isArray(words) ? words : [];
+  Narr.wordIndex = -1;
+  if (!Narr.words.length) { narrClearWords(); return; }
+  box.hidden = false;
+  box.innerHTML = Narr.words.map((w, i) => `<span class="nw" data-i="${i}">${esc(w.text || '')}</span>`).join(' ');
+  const cap = $('#twCap'); if (cap) cap.textContent = '';
+}
+function narrActiveWordIndex(time) {
+  const words = Narr.words || [];
+  if (!words.length) return -1;
+  let active = -1;
+  for (let i = 0; i < words.length; i++) {
+    const start = Number(words[i].start) || 0;
+    const end = Number(words[i].end) || start;
+    if (time + 0.02 >= start) active = i;
+    if (time < end) break;
+  }
+  if (active < 0 && time >= 0) active = 0;
+  if (words.length && time >= (Number(words[words.length - 1].start) || 0)) active = words.length - 1;
+  return active;
+}
+function narrSyncWords(time) {
+  const words = Narr.words || [];
+  if (!words.length) return;
+  const active = narrActiveWordIndex(time);
+  if (active === Narr.wordIndex) {
+    narrApplyBoardTyping(active);
+    return;
+  }
+  Narr.wordIndex = active;
+  narrApplyBoardTyping(active);
+  const box = $('#twNarrWords'); if (!box) return;
+  $$('.nw', box).forEach((el, i) => {
+    el.classList.toggle('on', i === active);
+    el.classList.toggle('done', i < active);
+  });
+  const on = box.querySelector('.nw.on');
+  if (on && typeof on.scrollIntoView === 'function') on.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+}
+function narrHighlight(section) {
+  $$('.wb-narrating').forEach(el => el.classList.remove('wb-narrating'));
+  if (!section) return;
+  (section.blocks || []).forEach(i => {
+    const el = document.querySelector(`.wb-block[data-b="${i}"]`);
+    if (el) el.classList.add('wb-narrating');
+  });
+}
+function narrEnsureBlocks(section) {
+  const L = T.L; if (!L || !section) return;
+  (section.blocks || []).forEach(i => {
+    if (!document.querySelector(`.wb-block[data-b="${i}"]`) && L.blocks[i] && L.blocks[i].t !== 'q') {
+      twRenderBlock(i, false);
+      if (i >= L.idx) L.idx = i + 1;
+    }
+  });
+}
+function blockPlainForType(b) {
+  if (!b) return '';
+  if (b.t === 'ul') return (b.items || []).join('\n');
+  if (b.t === 'table') return (b.headers || []).join(' ');
+  return plain(b.text || b.caption || b.say || '');
+}
+function tokenizeClient(text) {
+  return String(text || '').match(/[\u1000-\u109F\uAA60-\uAA7F\uA9E0-\uA9FF]+|[A-Za-z0-9]+(?:'[A-Za-z]+)?|[^\s]/g) || [];
+}
+function blockTypeShell(b) {
+  switch (b.t) {
+    case 'title': return `<h1 class="wb-title"><span class="wb-type"></span><span class="wb-caret">|</span></h1>`;
+    case 'h': return `<h2 class="wb-h"><span class="wb-type"></span><span class="wb-caret">|</span></h2>`;
+    case 'p': return `<p class="wb-p"><span class="wb-type"></span><span class="wb-caret">|</span></p>`;
+    case 'callout': return `<div class="wb-callout"><span class="wb-type"></span><span class="wb-caret">|</span></div>`;
+    case 'ul': return `<div class="wb-ul-type"><span class="wb-type"></span><span class="wb-caret">|</span></div>`;
+    case 'math': return `<div class="wb-math wb-type-math" data-math="${esc(b.text || '')}"><span class="wb-type"></span><span class="wb-caret">|</span></div>`;
+    case 'code': return `<pre class="wb-code"><code class="wb-type"></code><span class="wb-caret">|</span></pre>`;
+    default: return `<div><span class="wb-type"></span><span class="wb-caret">|</span></div>`;
+  }
+}
+function narrOpenTypingSection(section) {
+  const L = T.L; if (!L || !section) return;
+  $$('.wb-narrating').forEach(el => el.classList.remove('wb-narrating'));
+  Narr.typePlan = [];
+  (section.blocks || []).forEach(bi => {
+    const b = L.blocks[bi];
+    if (!b || b.t === 'q') return;
+    let el = document.querySelector(`.wb-block[data-b="${bi}"]`);
+    if (!el) {
+      const col = b.side === 'R' ? $('#twColR') : $('#twColL');
+      el = document.createElement('div');
+      el.className = 'wb-block wb-typing wb-in';
+      el.dataset.b = bi;
+      el.innerHTML = blockTypeShell(b);
+      col.appendChild(el);
+      if (T.follow) twScrollTo(el);
+    } else {
+      el.classList.add('wb-typing');
+      el.innerHTML = blockTypeShell(b);
+    }
+    el.classList.add('wb-narrating');
+    if (bi >= L.idx) L.idx = bi + 1;
+    const host = el.querySelector('.wb-type') || el;
+    Narr.typePlan.push({ bi, el, host, tokens: tokenizeClient(blockPlainForType(b)), wordStart: 0, wordEnd: -1 });
+  });
+}
+function narrAssignWordRanges(words) {
+  const plan = Narr.typePlan || [];
+  if (!plan.length) return;
+  const totalTokens = plan.reduce((n, p) => n + Math.max(1, p.tokens.length), 0);
+  let w = 0;
+  plan.forEach((p, i) => {
+    const share = Math.max(1, p.tokens.length);
+    const count = i === plan.length - 1
+      ? Math.max(0, words.length - w)
+      : Math.max(1, Math.round(words.length * (share / totalTokens)));
+    p.wordStart = w;
+    p.wordEnd = Math.min(words.length - 1, w + count - 1);
+    w = p.wordEnd + 1;
+  });
+  if (plan.length && words.length) plan[plan.length - 1].wordEnd = words.length - 1;
+}
+function narrApplyBoardTyping(activeWord) {
+  const plan = Narr.typePlan || [];
+  if (!plan.length || !Narr.words.length) return;
+  plan.forEach(p => {
+    const caret = p.el.querySelector('.wb-caret');
+    if (activeWord < p.wordStart) {
+      p.host.textContent = '';
+      if (caret) caret.hidden = false;
+      return;
+    }
+    const end = Math.min(activeWord, p.wordEnd < 0 ? activeWord : p.wordEnd);
+    const slice = Narr.words.slice(p.wordStart, end + 1).map(x => x.text);
+    p.host.textContent = slice.join(' ');
+    if (caret) caret.hidden = activeWord >= p.wordEnd && p.wordEnd >= 0;
+    if (T.follow && activeWord === end && p.el) twScrollTo(p.el);
+  });
+}
+function narrFinalizeTyping(section) {
+  const L = T.L; if (!L || !section) return;
+  (section.blocks || []).forEach(bi => {
+    const b = L.blocks[bi];
+    const el = document.querySelector(`.wb-block[data-b="${bi}"]`);
+    if (!b || !el) return;
+    el.classList.remove('wb-typing', 'wb-narrating');
+    el.innerHTML = blockHTML(b);
+    paintRich(el, b);
+  });
+  Narr.typePlan = [];
+}
+function narrUpdateUi() {
+  const root = $('#twNarr'); if (!root) return;
+  const total = Narr.sections.length;
+  const section = Narr.sections[Narr.index];
+  root.dataset.state = Narr.state;
+  const statusKey = ({ ready: 'narr.ready', loading: 'narr.loading', playing: 'narr.playing', paused: 'narr.paused', done: 'narr.done', failed: 'narr.failed' })[Narr.state] || 'narr.ready';
+  const st = $('#twNarrStatus'); if (st) st.textContent = t(statusKey);
+  const meta = $('#twNarrSection');
+  if (meta) meta.textContent = total ? t('narr.section', { n: Narr.index + 1, total }) : '';
+  const bar = $('#twNarrBar'); if (bar) bar.style.width = Math.round((Narr.progress || 0) * 100) + '%';
+  const play = $('#twNarrPlay');
+  if (play) {
+    const pausedOrIdle = Narr.state === 'paused' || Narr.state === 'ready' || Narr.state === 'done' || Narr.state === 'failed';
+    play.innerHTML = Narr.state === 'loading' ? '<span class="tw-spin sm"></span>' : icon(pausedOrIdle || Narr.state !== 'playing' ? 'play' : 'pause', 18);
+    play.disabled = Narr.state === 'loading' || !total;
+    play.setAttribute('aria-label', Narr.state === 'playing' ? t('narr.pause') : t('narr.play'));
+    play.title = play.getAttribute('aria-label');
+  }
+  const stop = $('#twNarrStop'); if (stop) stop.disabled = !(Narr.state === 'playing' || Narr.state === 'paused' || Narr.state === 'loading');
+  const prev = $('#twNarrPrev'); if (prev) prev.disabled = !total || Narr.index <= 0 || Narr.state === 'loading';
+  const next = $('#twNarrNext'); if (next) next.disabled = !total || Narr.index >= total - 1 || Narr.state === 'loading';
+  const replay = $('#twNarrReplay'); if (replay) replay.disabled = !total || Narr.state === 'loading';
+  const vol = $('#twVol');
+  if (vol) {
+    vol.innerHTML = icon(Narr.muted ? 'volumeOff' : 'volume', 18);
+    vol.setAttribute('aria-pressed', String(Narr.muted));
+    vol.setAttribute('aria-label', Narr.muted ? t('narr.unmute') : t('narr.mute'));
+    vol.title = vol.getAttribute('aria-label');
+  }
+  if (section && Narr.state === 'loading') {
+    twCaption((section.title ? section.title + ' — ' : '') + t('narr.loading'));
+  }
+}
+function b64ToBlob(b64, mime) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: mime || 'audio/wav' });
+}
+function narrCacheKey(text, lang, voice) {
+  return [lang, voice, text].join('\n');
+}
+async function narrFetchAudio(section) {
+  const L = T.L;
+  const lang = lessonLang(L);
+  const pack = L.narrPack && L.narrPack[Narr.index];
+  if (pack && (pack.url || pack.audioBase64)) return pack;
+  const key = narrCacheKey(section.text, lang, Narr.voice);
+  if (Narr.cache.has(key)) return Narr.cache.get(key);
+  const data = await postJson('/api/whiteboard/narration', {
+    text: section.text,
+    language: lang,
+    voice: Narr.voice,
+    sectionId: String(Narr.index),
+    lessonId: L.id || ''
+  }, Narr.abort && Narr.abort.signal);
+  const entry = {
+    mimeType: data.mimeType || 'audio/wav',
+    audioBase64: data.audioBase64,
+    provider: data.provider || 'gemini-tts',
+    text: data.text || section.text,
+    duration: data.duration || 0,
+    words: Array.isArray(data.words) ? data.words : []
+  };
+  if (Narr.cache.size > 24) Narr.cache.delete(Narr.cache.keys().next().value);
+  Narr.cache.set(key, entry);
+  return entry;
+}
+function narrEstimateLocalWords(text, duration) {
+  const tokens = String(text || '').match(/[\u1000-\u109F\uAA60-\uAA7F\uA9E0-\uA9FF]+|[A-Za-z0-9]+|[^\s]/g) || [];
+  const list = tokens.filter(t => /[\u1000-\u109FA-Za-z0-9]/.test(t));
+  if (!list.length) return [];
+  const dur = Math.max(0.8, Number(duration) || list.length * 0.32);
+  const each = dur / list.length;
+  return list.map((w, i) => ({ text: w, start: i * each, end: (i + 1) * each }));
+}
+function narrBrowserSpeak(text, lang, token) {
+  return new Promise((resolve, reject) => {
+    if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') {
+      reject(Object.assign(new Error(''), { code: 'audio' }));
+      return;
+    }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang === 'my' ? 'my-MM' : 'en-US';
+    u.rate = Math.min(2, Math.max(0.5, T.speed));
+    const voices = speechSynthesis.getVoices();
+    const prefer = voices.find(v => lang === 'my'
+      ? /my|burmese|myanmar/i.test(v.lang + ' ' + v.name)
+      : /^en/i.test(v.lang) && /female|zira|samantha|google/i.test(v.name))
+      || voices.find(v => lang === 'my' ? /my/i.test(v.lang) : /^en/i.test(v.lang));
+    if (prefer) u.voice = prefer;
+    u.onend = () => { if (token === Narr.token) resolve(); };
+    u.onerror = () => reject(Object.assign(new Error(''), { code: 'audio' }));
+    Narr.state = 'playing'; narrUpdateUi();
+    toast(t('narr.browser'));
+    speechSynthesis.speak(u);
+  });
+}
+async function narrPlayIndex(index, opts) {
+  const L = T.L;
+  if (!L || !Narr.sections.length) return;
+  const i = Math.max(0, Math.min(Narr.sections.length - 1, index));
+  const force = !!(opts && opts.force);
+  if (!force && Narr.state === 'playing' && Narr.index === i && Narr.audio && !Narr.audio.paused) return;
+  if (!force && Narr.state === 'paused' && Narr.index === i && Narr.audio) {
+    try {
+      await Narr.audio.play();
+      Narr.state = 'playing';
+      narrUpdateUi();
+      return;
+    } catch { /* regenerate */ }
+  }
+  const prevSection = Narr.sections[Narr.index];
+  if (prevSection && Narr.typePlan && Narr.typePlan.length) narrFinalizeTyping(prevSection);
+  narrStopAudio();
+  Narr.index = i;
+  Narr.token++;
+  const token = Narr.token;
+  const section = Narr.sections[i];
+  if (!section) return;
+  Narr.state = 'loading';
+  Narr.driving = true;
+  narrOpenTypingSection(section);
+  narrUpdateUi();
+  const ac = new AbortController(); Narr.abort = ac;
+  try {
+    let entry;
+    try {
+      entry = await narrFetchAudio(section);
+    } catch (err) {
+      if (err.name === 'AbortError' || token !== Narr.token) return;
+      if (err.code === 'config' || err.code === 'model' || err.code === 'audio' || err.code === 'upstream') {
+        narrFinalizeTyping(section);
+        await narrBrowserSpeak(section.text, lessonLang(L), token);
+        if (token !== Narr.token) return;
+        Narr.state = 'done';
+        narrOnSectionEnd();
+        return;
+      }
+      throw err;
+    }
+    if (token !== Narr.token || ac.signal.aborted) return;
+    let url = entry.url || null;
+    Narr.ownsUrl = false;
+    if (!url) {
+      if (!entry.audioBase64) throw Object.assign(new Error(''), { code: 'audio' });
+      url = URL.createObjectURL(b64ToBlob(entry.audioBase64, entry.mimeType));
+      Narr.ownsUrl = true;
+    }
+    Narr.url = url;
+    const audio = new Audio(url);
+    Narr.audio = audio;
+    audio.playbackRate = T.speed;
+    audio.muted = Narr.muted;
+    const words = (entry.words && entry.words.length)
+      ? entry.words
+      : narrEstimateLocalWords(entry.text || section.text, entry.duration || 0);
+    narrAssignWordRanges(words);
+    narrRenderWords(words);
+    narrApplyBoardTyping(-1);
+    audio.ontimeupdate = () => {
+      if (token !== Narr.token || !audio.duration) return;
+      Narr.progress = audio.currentTime / audio.duration;
+      const bar = $('#twNarrBar'); if (bar) bar.style.width = Math.round(Narr.progress * 100) + '%';
+      narrSyncWords(audio.currentTime);
+    };
+    audio.onended = () => {
+      if (token !== Narr.token) return;
+      Narr.progress = 1;
+      if (Narr.words.length) narrSyncWords(Narr.words[Narr.words.length - 1].end + 1);
+      narrFinalizeTyping(section);
+      Narr.state = 'done';
+      narrUpdateUi();
+      narrOnSectionEnd();
+    };
+    audio.onerror = () => {
+      if (token !== Narr.token) return;
+      Narr.state = 'failed';
+      narrUpdateUi();
+      toast(t('err.audio'));
+    };
+    Narr.state = 'playing';
+    narrUpdateUi();
+    try {
+      await audio.play();
+    } catch (playErr) {
+      if (token !== Narr.token) return;
+      Narr.state = 'paused';
+      narrUpdateUi();
+      toast(t('narr.tap'));
+      return;
+    }
+  } catch (err) {
+    if (err.name === 'AbortError' || token !== Narr.token) return;
+    Narr.state = 'failed';
+    Narr.driving = false;
+    narrUpdateUi();
+    toast(friendlyError(err));
+    if (T.playing && !T.q) twSchedule(400);
+  } finally {
+    if (Narr.abort === ac) Narr.abort = null;
+  }
+}
+function narrOnSectionEnd() {
+  const section = Narr.sections[Narr.index];
+  if (section && Narr.typePlan && Narr.typePlan.length) narrFinalizeTyping(section);
+  if (!Narr.autoContinue && !Narr.driving) { narrUpdateUi(); return; }
+  if (Narr.index < Narr.sections.length - 1) {
+    setTimeout(() => { if (T.L && Narr.state === 'done') narrPlayIndex(Narr.index + 1, { force: true }); }, 280);
+  } else {
+    Narr.state = 'done';
+    Narr.driving = false;
+    narrHighlight(null);
+    narrClearWords();
+    narrUpdateUi();
+    twCaption(t('narr.done'));
+    if (T.playing && T.L && !T.L.finished && !T.L.ended && T.q == null) twSchedule(450);
+  }
+}
+function narrPause() {
+  if (Narr.audio && !Narr.audio.paused) {
+    Narr.audio.pause();
+    Narr.state = 'paused';
+    narrUpdateUi();
+    return;
+  }
+  if (typeof speechSynthesis !== 'undefined' && speechSynthesis.speaking) {
+    speechSynthesis.pause();
+    Narr.state = 'paused';
+    narrUpdateUi();
+  }
+}
+function narrTogglePlay() {
+  if (!Narr.sections.length) {
+    Narr.sections = narrSections(T.L);
+    narrUpdateUi();
+  }
+  if (!Narr.sections.length) { toast(t('narr.off')); return; }
+  if (Narr.state === 'playing') narrPause();
+  else if (Narr.state === 'paused' && Narr.audio) narrPlayIndex(Narr.index);
+  else if (Narr.state === 'paused' && typeof speechSynthesis !== 'undefined' && speechSynthesis.paused) {
+    speechSynthesis.resume(); Narr.state = 'playing'; narrUpdateUi();
+  } else narrPlayIndex(Narr.index, { force: true });
+}
+function narrStop() {
+  const section = Narr.sections[Narr.index];
+  if (section && Narr.typePlan && Narr.typePlan.length) narrFinalizeTyping(section);
+  narrStopAudio();
+  Narr.state = 'ready';
+  Narr.progress = 0;
+  Narr.driving = false;
+  narrHighlight(null);
+  narrClearWords();
+  narrUpdateUi();
+}
+function narrBindControls() {
+  const L = T.L;
+  Narr.sections = (L && L.narrSections && L.narrSections.length) ? L.narrSections : narrSections(L);
+  narrUpdateUi();
+  $('#twNarrPlay').onclick = narrTogglePlay;
+  $('#twNarrStop').onclick = narrStop;
+  $('#twNarrReplay').onclick = () => narrPlayIndex(Narr.index, { force: true });
+  $('#twNarrPrev').onclick = () => { if (Narr.index > 0) narrPlayIndex(Narr.index - 1, { force: true }); };
+  $('#twNarrNext').onclick = () => { if (Narr.index < Narr.sections.length - 1) narrPlayIndex(Narr.index + 1, { force: true }); };
+  $('#twVol').onclick = () => {
+    Narr.muted = !Narr.muted;
+    if (Narr.audio) Narr.audio.muted = Narr.muted;
+    narrUpdateUi();
+  };
+  $('#twNarrAuto').onchange = e => {
+    Narr.autoStart = !!e.target.checked;
+    Narr.autoContinue = Narr.autoStart;
+    if (Narr.autoStart && T.L && !T.L.finished && !T.L.ended && Narr.state !== 'playing' && Narr.state !== 'loading' && T.q == null) {
+      narrAutoBegin();
+    }
+  };
+  $('#twNarrVoice').onchange = e => {
+    Narr.voice = e.target.value || 'Kore';
+    if (Narr.state === 'playing' || Narr.state === 'paused') narrPlayIndex(Narr.index, { force: true });
+  };
+  fetch('/api/whiteboard/narration').then(r => r.json()).then(meta => {
+    if (!meta || !Array.isArray(meta.voices) || !meta.voices.length) return;
+    Narr.metaLoaded = true;
+    const sel = $('#twNarrVoice'); if (!sel) return;
+    const cur = Narr.voice;
+    sel.innerHTML = meta.voices.map(v => `<option value="${esc(v.id)}">${esc(v.label || v.id)}</option>`).join('');
+    sel.value = meta.voices.some(v => v.id === cur) ? cur : meta.voices[0].id;
+    Narr.voice = sel.value;
+  }).catch(() => {});
+}
+function narrOnQuestionOpen() {
+  if (Narr.state === 'playing') narrPause();
+}
+function narrOnQuestionClose() {
+  if (Narr.resumeAfterQ && Narr.state === 'paused' && (Narr.autoContinue || Narr.autoStart)) narrTogglePlay();
+  else if (T.playing && Narr.autoStart && Narr.index < Narr.sections.length - 1) {
+    setTimeout(() => { if (T.L && T.q == null) narrPlayIndex(Narr.index + 1, { force: true }); }, 300);
+  }
+}
+
 /* questions and tutor chat */
 function choiceIndex(b) {
   if (typeof b.answer === 'number' && b.answer >= 0) return b.answer;
@@ -1512,6 +2179,7 @@ function twSyncAsk() {
 function twShowQ(i, opts) {
   const L = T.L, b = L.blocks[i], card = $('#twQ');
   if (!card || !b) return;
+  narrOnQuestionOpen();
   const extra = !!(opts && opts.extra);
   const qs = L.blocks.filter(x => x.t === 'q');
   const qn = Math.max(1, qs.indexOf(b) + 1);
@@ -1604,6 +2272,7 @@ function twCloseQ(i, extra) {
   const card = $('#twQ'); if (card) card.hidden = true;
   T.q = null;
   const L = T.L; if (!L) return;
+  narrOnQuestionClose();
   if (extra) {
     if (L.finished || L.ended) twFinish(true);
     else if (T.playing) twSchedule(450);
@@ -1769,6 +2438,7 @@ function twEndConfirm() {
     box.querySelector('[data-close]').onclick = closeModal;
     $('#twEndYes').onclick = () => {
       if (T.chatAbort) { T.chatAbort.abort(); T.chatAbort = null; }
+      narrStop();
       if (!L.finished) L.ended = true;
       T.playing = false; clearTimeout(T.timer); clearInterval(T.capTimer);
       twFinish(true); twCaption(t('tw.endedTitle'));

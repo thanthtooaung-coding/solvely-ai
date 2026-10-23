@@ -25,13 +25,16 @@ On macOS or Linux, use `cp .env.example .env`.
 ```
 GEMINI_API_KEY=your_key_here
 GEMINI_MODEL=gemini-3.5-flash
+GEMINI_TTS_MODEL=gemini-3.8-flash-lite-tts
 PORT=3000
 GEMINI_TIMEOUT_MS=120000
 ```
 
 Put the key only in `.env`. Do not paste it into HTML, CSS, JavaScript, or this README. `.env` is listed in `.gitignore`.
 
-`GEMINI_MODEL` must be a model id your key can use. Current Gemini docs use ids such as `gemini-3.5-flash` and `gemini-3.8-flash`. If lesson creation says the model is unavailable, change `GEMINI_MODEL` and restart the server.
+`GEMINI_MODEL` must be a model id your key can use for lesson text. Current Gemini docs use ids such as `gemini-3.5-flash` and `gemini-3.8-flash`. If lesson creation says the model is unavailable, change `GEMINI_MODEL` and restart the server.
+
+`GEMINI_TTS_MODEL` is a separate Gemini text-to-speech model used only for whiteboard narration (default `gemini-3.8-flash-lite-tts`). `GEMINI_TRANSCRIBE_MODEL` (default `gemini-3.5-transcribe`) is used after TTS to recover word timings for karaoke-style highlighting. The lesson text model does not produce audio. The same `GEMINI_API_KEY` is used for all three. If narration fails with a model error, set the matching env var to a model your key supports and restart.
 
 ## Run
 
@@ -58,6 +61,10 @@ Lesson generation: on the Home page, choose **Whiteboard Tutor**, enter a topic 
 Download: the download button on the whiteboard saves a two-column PDF of the lesson notes. It needs Chrome or Edge on the same computer as the server.
 
 Tutor chat: after the lesson opens, type a follow-up such as `Explain this part more simply` and send it. The reply streams onto the board.
+
+Audio narration: on the whiteboard, use the narration controls next to the tutor avatar. Press Play to generate speech for the current lesson section with Gemini TTS. Pause, stop, replay, previous/next section, mute, voice, and speed (0.75x–2.0x) are supported. Auto-continue moves to the next section when enabled. Narration pauses when a question card opens. English and Burmese lessons are narrated in the lesson language.
+
+Word sync: after TTS, the server runs Gemini Transcribe (`GEMINI_TRANSCRIBE_MODEL`, default `gemini-3.5-transcribe`) with word timestamps, aligns them to the script, and the UI highlights each word through the last word as audio plays. If alignment fails, timings are estimated evenly. If Gemini TTS is unavailable, the browser speech synthesizer is used as a fallback for that section (without cloud word marks).
 
 Another check, from the shell:
 
