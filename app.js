@@ -1,5 +1,6 @@
-/* Solvely-style Home + AI Study mockup — frontend-only, mock data.
-   No real AI model, file processing or exam-prediction service is connected. */
+/* Solvely-style Home + AI Study.
+   Whiteboard Tutor calls Gemini through the local server.
+   Solver, flashcards, quizzes, and the other study tools on this page are still local demos. */
 (() => {
 'use strict';
 
@@ -103,8 +104,30 @@ const I18N = {
     'prep.s1': 'Understanding “{topic}”…', 'prep.s2': 'Planning your lesson flow…', 'prep.s3': 'Sketching visual explanations…',
     'prep.s4': 'Preparing guided practice…', 'prep.s5': 'Starting your interactive lesson…',
     'prep.err': 'We couldn’t prepare this lesson',
-    'prep.errEmpty': 'There’s nothing to build a lesson from yet. PDF, Word and PowerPoint text extraction isn’t supported in this prototype — add a topic or a .txt file and try again.',
-    'prep.note': 'Prototype: lessons are assembled locally from templates — no AI tutor is connected.',
+    'prep.errEmpty': 'Add a topic or upload a PDF, Word, PowerPoint, text, or image file.',
+    'prep.note': 'Gemini is writing this lesson. A step is marked done only after it actually finishes. With မြန်မာ selected, the whole lesson stays in Burmese.',
+    'prep.working': 'Still working on this step',
+    'prep.cancel': 'Cancel',
+    'prep.readyToast': 'Your lesson “{topic}” is ready — open it from History.',
+    'prep.fileBig': '“{name}” is larger than 8 MB. Upload a smaller file.',
+    'prep.fileType': '“{name}” isn’t supported. Use PDF, PNG, JPG, WEBP, TXT, DOCX, or PPTX.',
+    'prep.fileCount': 'You can upload up to 4 files for one lesson.',
+    'err.config': 'The tutor isn’t configured yet. Add the Gemini API key on the server and restart.',
+    'err.auth': 'The tutor could not sign in to Gemini. Check the API key on the server.',
+    'err.model': 'The selected Gemini model isn’t available. Update GEMINI_MODEL and restart the server.',
+    'err.rate_limit': 'The tutor has hit its usage limit. Wait a moment, then try again.',
+    'err.timeout': 'The tutor took too long to respond. Try again.',
+    'err.network': 'You appear to be offline. Check your connection and try again.',
+    'err.invalid_response': 'The tutor sent something that couldn’t be read. Try again.',
+    'err.validation': 'Check the topic and files, then try again.',
+    'err.empty': 'Add a topic or a supported file before creating a lesson.',
+    'err.file_type': 'That file type isn’t supported. Use PDF, PNG, JPG, WEBP, TXT, DOCX, or PPTX.',
+    'err.file_size': 'Each file must be 8 MB or smaller.',
+    'err.file_count': 'You can upload up to 4 files for one lesson.',
+    'err.file_read': 'One of the files couldn’t be read. Try a different file.',
+    'err.upstream': 'The tutor couldn’t complete that request. Try again.',
+    'err.language': 'The tutor replied in English instead of Burmese. Try again.',
+    'err.pdf': 'The PDF could not be created. Try the download again.',
     'prep.missing': 'This lesson is no longer available', 'prep.missingSub': 'Lessons are kept only while this page is open. Start a new one from Home.',
     'prep.sample': 'Open a sample lesson',
     'slide1.t': 'Visual Explanations', 'slide1.s': 'Circle anything to see it explained',
@@ -117,7 +140,21 @@ const I18N = {
     'tw.preparing': 'Tutor is preparing the board', 'tw.preparingSub': 'The explanation and visuals will appear here in real time.',
     'tw.speed': 'Speed', 'tw.end': 'End lesson', 'tw.ask': 'Type your question or response', 'tw.follow': 'Follow tutor',
     'tw.skip': 'Skip', 'tw.continue': 'Continue', 'tw.correct': 'Correct!', 'tw.wrong': 'Not quite.', 'tw.you': 'You', 'tw.tutor': 'Tutor',
-    'tw.clearInk': 'Clear ink', 'tw.qcap': 'Quick check — pick an answer, or skip to keep going.', 'tw.qof': 'Question {n} of {total}'
+    'tw.clearInk': 'Clear ink', 'tw.qcap': 'Quick check — pick an answer, or skip to keep going.', 'tw.qof': 'Question {n} of {total}',
+    'tw.thinking': 'Tutor is thinking…', 'tw.reveal': 'Reveal answer', 'tw.submit': 'Submit', 'tw.sa': 'Type your answer',
+    'tw.expected': 'Expected answer', 'tw.another': 'Another question', 'tw.partial': 'Only part of a file was used.',
+    'tw.checking': 'Checking your answer…', 'tw.doneTitle': 'Lesson complete', 'tw.endedTitle': 'Lesson ended',
+    'tw.leave': 'Leave this lesson?', 'tw.endAsk': 'End this lesson?', 'tw.keep': 'Keep learning', 'tw.review': 'Review board',
+    'tw.notes': 'Download PDF', 'tw.saving': 'Creating the PDF…', 'tw.saved': 'PDF downloaded.',
+    'tw.stopped': 'Stopped.', 'tw.qcapShort': 'Type your answer, or skip to keep going.',
+    'tw.finishQ': 'Answer or skip the question on the card first.',
+    'tw.miss': 'Circle a line of text or part of a diagram.',
+    'tw.summary': 'You covered {shown} of {total} board steps and answered {correct} of {qs} questions correctly.',
+    'tw.summaryAsk': 'You covered {shown} of {total} board steps and answered {answered} of {qs} questions ({correct} correct).',
+    'tw.asked': 'You also asked {n}.', 'tw.added': 'Added {n}. The tutor will use them with your next question.',
+    'src.queued': 'Ready to send', 'src.used': 'Used in this lesson', 'src.partial': 'Only part of this file was used',
+    'src.preview': 'Image attached', 'src.unsupported': 'This file type isn’t supported', 'src.error': 'Could not process this file',
+    'src.read': 'Text extracted', 'src.pending': 'Reading…'
   },
   my: {
     'nav.home': 'ပင်မ', 'nav.study': 'AI လေ့လာရေး',
@@ -151,8 +188,30 @@ const I18N = {
     'prep.s1': '“{topic}” ကို နားလည်အောင် ဖတ်နေသည်…', 'prep.s2': 'သင်ခန်းစာ အစီအစဉ် ရေးဆွဲနေသည်…', 'prep.s3': 'ပုံဖြင့် ရှင်းလင်းချက်များ ဆွဲနေသည်…',
     'prep.s4': 'လေ့ကျင့်ခန်းများ ပြင်ဆင်နေသည်…', 'prep.s5': 'အပြန်အလှန် သင်ခန်းစာ စတင်နေသည်…',
     'prep.err': 'ဤသင်ခန်းစာကို ပြင်ဆင်၍ မရပါ',
-    'prep.errEmpty': 'သင်ခန်းစာ ဖန်တီးရန် အကြောင်းအရာ မရှိသေးပါ။ PDF၊ Word နှင့် PowerPoint စာသား ထုတ်ယူခြင်းကို ဤရှေ့ပြေးပုံစံတွင် မပံ့ပိုးသေးပါ — ခေါင်းစဉ် သို့မဟုတ် .txt ဖိုင် ထည့်ပြီး ထပ်စမ်းပါ။',
-    'prep.note': 'ရှေ့ပြေးပုံစံ — သင်ခန်းစာများကို နမူနာပုံစံများမှ ဖန်တီးထားခြင်းဖြစ်ပြီး AI ဆရာ ချိတ်ဆက်ထားခြင်း မရှိပါ။',
+    'prep.errEmpty': 'ခေါင်းစဉ် ထည့်ပါ၊ သို့မဟုတ် PDF၊ Word၊ PowerPoint၊ စာသား သို့မဟုတ် ပုံ ဖိုင် တင်ပါ။',
+    'prep.note': 'Gemini က ဤသင်ခန်းစာကို ရေးနေသည်။ အဆင့်တစ်ခု ပြီးမှသာ ပြီးကြောင်း ပြပါမည်။ မြန်မာ ကို ရွေးထားလျှင် သင်ခန်းစာ တစ်ခုလုံး မြန်မာဘာသာဖြင့် ရေးပါမည်။',
+    'prep.working': 'ဤအဆင့်ကို လုပ်နေဆဲဖြစ်သည်',
+    'prep.cancel': 'မလုပ်တော့ပါ',
+    'prep.readyToast': 'သင်ခန်းစာ “{topic}” အဆင်သင့်ဖြစ်ပါပြီ — မှတ်တမ်းမှ ဖွင့်ပါ။',
+    'prep.fileBig': '“{name}” သည် 8 MB ထက်ကြီးသည်။ ပိုသေးသော ဖိုင် တင်ပါ။',
+    'prep.fileType': '“{name}” ကို မပံ့ပိုးပါ။ PDF၊ PNG၊ JPG၊ WEBP၊ TXT၊ DOCX သို့မဟုတ် PPTX သုံးပါ။',
+    'prep.fileCount': 'သင်ခန်းစာတစ်ခုအတွက် ဖိုင် 4 ဖိုင်အထိ တင်နိုင်သည်။',
+    'err.config': 'ဆရာကို မချိန်ညှိရသေးပါ။ ဆာဗာတွင် Gemini API သော့ ထည့်ပြီး ပြန်ဖွင့်ပါ။',
+    'err.auth': 'Gemini သို့ ဝင်၍ မရပါ။ ဆာဗာရှိ API သော့ကို စစ်ပါ။',
+    'err.model': 'ရွေးထားသော Gemini မော်ဒယ်ကို သုံး၍ မရပါ။ GEMINI_MODEL ကို ပြင်ပြီး ဆာဗာကို ပြန်ဖွင့်ပါ။',
+    'err.rate_limit': 'အသုံးပြုမှု ကန့်သတ်ချက် ပြည့်သွားပါပြီ။ ခဏစောင့်ပြီး ထပ်စမ်းပါ။',
+    'err.timeout': 'ဆရာက အချိန်ကြာလွန်းသည်။ ထပ်စမ်းပါ။',
+    'err.network': 'အင်တာနက် ချိတ်ဆက်မှု မရှိသလို ဖြစ်နေသည်။ စစ်ဆေးပြီး ထပ်စမ်းပါ။',
+    'err.invalid_response': 'ဆရာ၏ အဖြေကို ဖတ်၍ မရပါ။ ထပ်စမ်းပါ။',
+    'err.validation': 'ခေါင်းစဉ်နှင့် ဖိုင်များကို စစ်ပြီး ထပ်စမ်းပါ။',
+    'err.empty': 'သင်ခန်းစာ မဖန်တီးမီ ခေါင်းစဉ် သို့မဟုတ် ပံ့ပိုးသော ဖိုင် ထည့်ပါ။',
+    'err.file_type': 'ဤဖိုင်အမျိုးအစားကို မပံ့ပိုးပါ။ PDF၊ PNG၊ JPG၊ WEBP၊ TXT၊ DOCX သို့မဟုတ် PPTX သုံးပါ။',
+    'err.file_size': 'ဖိုင်တစ်ဖိုင်လျှင် 8 MB သို့မဟုတ် ပိုသေးရပါမည်။',
+    'err.file_count': 'သင်ခန်းစာတစ်ခုအတွက် ဖိုင် 4 ဖိုင်အထိ တင်နိုင်သည်။',
+    'err.file_read': 'ဖိုင်တစ်ဖိုင်ကို ဖတ်၍ မရပါ။ အခြားဖိုင် စမ်းပါ။',
+    'err.upstream': 'ဆရာက ဤတောင်းဆိုမှုကို မပြီးမြောက်နိုင်ပါ။ ထပ်စမ်းပါ။',
+    'err.language': 'ဆရာက မြန်မာဘာသာအစား အင်္ဂလိပ်လို ပြန်ခဲ့သည်။ ထပ်စမ်းပါ။',
+    'err.pdf': 'PDF မဖန်တီးနိုင်ပါ။ ဒေါင်းလုဒ်ကို ထပ်စမ်းပါ။',
     'prep.missing': 'ဤသင်ခန်းစာ မရှိတော့ပါ', 'prep.missingSub': 'သင်ခန်းစာများကို ဤစာမျက်နှာ ဖွင့်ထားစဉ်သာ သိမ်းထားပါသည်။ ပင်မမှ အသစ်စတင်ပါ။',
     'prep.sample': 'နမူနာ သင်ခန်းစာ ဖွင့်ရန်',
     'slide1.t': 'ပုံဖြင့် ရှင်းလင်းချက်', 'slide1.s': 'မည်သည့်အရာကိုမဆို ဝိုင်းပြီး ရှင်းလင်းချက် ကြည့်ပါ',
@@ -165,7 +224,21 @@ const I18N = {
     'tw.preparing': 'ဆရာက ဘုတ်ပြားကို ပြင်ဆင်နေသည်', 'tw.preparingSub': 'ရှင်းလင်းချက်နှင့် ပုံများ ဤနေရာတွင် ပေါ်လာပါမည်။',
     'tw.speed': 'အမြန်နှုန်း', 'tw.end': 'သင်ခန်းစာ ပြီးဆုံးရန်', 'tw.ask': 'မေးခွန်း သို့မဟုတ် အဖြေ ရိုက်ထည့်ပါ', 'tw.follow': 'ဆရာနှင့်အတူ လိုက်ကြည့်ရန်',
     'tw.skip': 'ကျော်ရန်', 'tw.continue': 'ဆက်ရန်', 'tw.correct': 'မှန်ပါသည်!', 'tw.wrong': 'မမှန်သေးပါ။', 'tw.you': 'သင်', 'tw.tutor': 'ဆရာ',
-    'tw.clearInk': 'မင်ရေး ဖျက်ရန်', 'tw.qcap': 'အမြန်စစ်ဆေးချက် — အဖြေရွေးပါ သို့မဟုတ် ကျော်ပါ။', 'tw.qof': 'မေးခွန်း {n} / {total}'
+    'tw.clearInk': 'မင်ရေး ဖျက်ရန်', 'tw.qcap': 'အမြန်စစ်ဆေးချက် — အဖြေရွေးပါ သို့မဟုတ် ကျော်ပါ။', 'tw.qof': 'မေးခွန်း {n} / {total}',
+    'tw.thinking': 'ဆရာ စဉ်းစားနေသည်…', 'tw.reveal': 'အဖြေ ပြရန်', 'tw.submit': 'တင်သွင်းရန်', 'tw.sa': 'အဖြေ ရိုက်ထည့်ပါ',
+    'tw.expected': 'မျှော်မှန်းထားသော အဖြေ', 'tw.another': 'နောက်ထပ် မေးခွန်း', 'tw.partial': 'ဖိုင်၏ တစ်စိတ်တစ်ပိုင်းကိုသာ သုံးထားသည်။',
+    'tw.checking': 'အဖြေကို စစ်ဆေးနေသည်…', 'tw.doneTitle': 'သင်ခန်းစာ ပြီးပါပြီ', 'tw.endedTitle': 'သင်ခန်းစာ ရပ်လိုက်ပါပြီ',
+    'tw.leave': 'ဤသင်ခန်းစာမှ ထွက်မလား?', 'tw.endAsk': 'ဤသင်ခန်းစာကို အဆုံးသတ်မလား?', 'tw.keep': 'ဆက်လေ့လာမည်', 'tw.review': 'ဘုတ်ပြား ပြန်ကြည့်ရန်',
+    'tw.notes': 'PDF ဒေါင်းလုဒ်', 'tw.saving': 'PDF ဖန်တီးနေသည်…', 'tw.saved': 'PDF ဒေါင်းလုဒ် လုပ်ပြီးပါပြီ။',
+    'tw.stopped': 'ရပ်လိုက်ပါပြီ။', 'tw.qcapShort': 'အဖြေ ရိုက်ပါ၊ သို့မဟုတ် ကျော်ပါ။',
+    'tw.finishQ': 'ကတ်ပေါ်က မေးခွန်းကို အရင် ဖြေပါ သို့မဟုတ် ကျော်ပါ။',
+    'tw.miss': 'စာသား သို့မဟုတ် ပုံ၏ အပိုင်းကို ဝိုင်းပါ။',
+    'tw.summary': 'ဘုတ်ပြား အဆင့် {shown}/{total} ကို လေ့လာပြီး မေးခွန်း {qs} ခုတွင် {correct} ခု မှန်သည်။',
+    'tw.summaryAsk': 'ဘုတ်ပြား အဆင့် {shown}/{total} ကို လေ့လာပြီး မေးခွန်း {qs} ခုတွင် {answered} ခု ဖြေထားသည် ({correct} ခု မှန်)။',
+    'tw.asked': 'မေးခွန်း {n} ခုလည်း မေးထားသည်။', 'tw.added': '{n} ထည့်ပြီးပါပြီ။ နောက်မေးခွန်းနှင့်အတူ ဆရာက သုံးပါမည်။',
+    'src.queued': 'ပို့ရန် အသင့်', 'src.used': 'ဤသင်ခန်းစာတွင် သုံးထားသည်', 'src.partial': 'ဖိုင်၏ တစ်စိတ်တစ်ပိုင်းကိုသာ သုံးထားသည်',
+    'src.preview': 'ပုံ ပူးတွဲထားသည်', 'src.unsupported': 'ဤဖိုင်အမျိုးအစားကို မပံ့ပိုးပါ', 'src.error': 'ဤဖိုင်ကို မလုပ်ဆောင်နိုင်ပါ',
+    'src.read': 'စာသား ထုတ်ယူပြီး', 'src.pending': 'ဖတ်နေသည်…'
   }
 };
 
@@ -268,6 +341,8 @@ function route() {
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/');
   const top = parts[0];
   const isLesson = top === 'tutor' && parts[2] === 'lesson';
+  const prepId = top === 'tutor' && parts[1] && !isLesson ? parts[1] : null;
+  abortOtherLessons(prepId);
   if (!isLesson && T.id) tutorTeardown();
   if (!(top === 'tutor' && !isLesson)) stopPrepSlides();
   document.body.classList.toggle('tutor-mode', isLesson);
@@ -420,9 +495,15 @@ function renderAnswer(entry) {
 function doSolve() {
   const q = $('#question').value.trim();
   if (!q && !state.files.length) return;
-  if (state.tab === 'whiteboard') {                // Whiteboard Tutor → interactive lesson
-    const lessonId = createLesson(q, state.files.map(f => f.file).filter(Boolean));
-    if (lessonId) { state.history.unshift({ q, tab: 'whiteboard', model: state.model, files: state.files.map(f => f.name), time: new Date(), lessonId }); renderHistory(); }
+  if (state.tab === 'whiteboard') {                // Whiteboard Tutor → Gemini lesson
+    if (state.creatingLesson) return;
+    state.creatingLesson = true;
+    try {
+      const lessonId = createLesson(q, state.files.map(f => f.file).filter(Boolean));
+      if (lessonId) { state.history.unshift({ q, tab: 'whiteboard', model: state.model, files: state.files.map(f => f.name), time: new Date(), lessonId }); renderHistory(); }
+    } finally {
+      setTimeout(() => { state.creatingLesson = false; }, 800);
+    }
     return;
   }
   const entry = { q, tab: state.tab, model: state.model, files: state.files.map(f => f.name), time: new Date() };
@@ -760,18 +841,27 @@ function renderSet(id) {
 }
 
 /* ================================================================
-   Whiteboard Tutor — lesson preparation + interactive lesson workspace
-   Prototype: lessons are assembled locally from templates in this file.
-   Not connected: an AI tutor, audio narration, speech recognition,
-   PDF/Word/PowerPoint text extraction, or a billing service.
+   Whiteboard Tutor — Gemini lesson, board, questions, and chat.
+   Audio narration and speech recognition are not connected.
    ================================================================ */
+function abortOtherLessons(keepId) {
+  Object.keys(lessons).forEach(id => {
+    const L = lessons[id];
+    if (!L || id === keepId || !L.abort || L.status !== 'preparing') return;
+    L.abort.abort();
+    L.abort = null;
+    L.running = false;
+    L.waiting = false;
+  });
+}
 const TUTOR_DAILY_LIMIT = null; // e.g. 3 → the plan modal appears after 3 lessons in a session. null = no limit.
 const lessons = {};             // id → lesson (kept only while the page is open)
 let lessonsCreated = 0;
 const SPEEDS = [0.75, 1, 1.25, 1.5];
 const fmtSpeed = s => (Number.isInteger(s * 10) ? s.toFixed(1) : String(s)) + 'x';
-const SRC_ACCEPT = '.pdf,.png,.jpg,.jpeg,.webp,.gif,.doc,.docx,.ppt,.pptx,.txt,.md,.csv,.sql,.json';
-const T = { id: null, L: null, playing: true, speed: 1, timer: null, startTimer: null, capTimer: null, q: null, follow: true, captions: true, pen: false, strokes: [], ro: null, slideTimer: null };
+const SRC_ACCEPT = '.pdf,.png,.jpg,.jpeg,.webp,.docx,.pptx,.txt,.md,.csv,.sql,.json';
+const FILE_MAX_BYTES = 8 * 1024 * 1024;
+const T = { id: null, L: null, playing: true, speed: 1, timer: null, startTimer: null, capTimer: null, q: null, follow: true, captions: true, pen: false, strokes: [], ro: null, slideTimer: null, chatAbort: null, chatBusy: false, qBusy: false };
 
 const fmtSize = n => n < 1024 ? n + ' B' : n < 1048576 ? Math.round(n / 1024) + ' KB' : (n / 1048576).toFixed(1) + ' MB';
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'lesson';
@@ -782,28 +872,28 @@ function inl(s) {
 }
 const plain = s => String(s).replace(/_\{([^}]+)\}/g, '_$1').replace(/\^\{([^}]+)\}/g, '^$1').replace(/\*\*/g, '');
 function blockText(b) {
-  const raw = b.t === 'ul' ? b.items.join(' · ') : b.t === 'q' ? b.question : (b.text || b.caption || '');
+  const raw = b.t === 'ul' ? (b.items || []).join(' · ') : b.t === 'q' ? b.question : b.t === 'table' ? (b.headers || []).join(' ') : (b.text || b.caption || '');
   return plain(raw).replace(/`/g, '');
 }
 const lessonTitle = L => (L.blocks.find(b => b.t === 'title') || {}).text || L.topic || 'Lesson';
 
 /* ---------- source files ---------- */
 function classifyFile(f) {
-  const n = f.name.toLowerCase();
-  if ((f.type || '').startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp)$/.test(n)) return 'image';
-  if (/^text\/|json|sql/.test(f.type || '') || /\.(txt|md|csv|sql|json)$/.test(n)) return 'text';
+  const n = (f.name || '').toLowerCase();
+  if (/\.(png|jpe?g|webp)$/.test(n)) return 'image';
+  if (/\.(txt|md|csv|sql|json)$/.test(n)) return 'text';
   if (/\.pdf$/.test(n)) return 'pdf';
-  if (/\.docx?$/.test(n)) return 'word';
-  if (/\.pptx?$/.test(n)) return 'slides';
+  if (/\.docx$/.test(n)) return 'word';
+  if (/\.pptx$/.test(n)) return 'slides';
   return 'other';
 }
 function makeSource(file) {
   const kind = classifyFile(file);
   return { name: file.name, size: file.size, kind, file, text: '', url: kind === 'image' ? URL.createObjectURL(file) : null,
-    status: kind === 'text' ? 'pending' : kind === 'image' ? 'preview' : 'unsupported' };
+    status: kind === 'other' ? 'unsupported' : kind === 'text' ? 'pending' : kind === 'image' ? 'preview' : 'queued', sent: false };
 }
 function readSource(src) {
-  if (src.status !== 'pending') return Promise.resolve(src);
+  if (src.status !== 'pending' || !src.file) return Promise.resolve(src);
   return new Promise(res => {
     const r = new FileReader();
     r.onload = () => { src.text = String(r.result).slice(0, 20000); src.status = 'read'; res(src); };
@@ -811,218 +901,181 @@ function readSource(src) {
     r.readAsText(src.file);
   });
 }
-const srcStatus = s => ({ pending: 'Reading…', read: 'Text extracted', preview: 'Image attached · preview only',
-  unsupported: 'Attached · content extraction not supported yet', error: 'Could not read this file' })[s.status];
-const sourceText = L => L.sources.filter(s => s.text).map(s => s.text).join('\n\n');
+const srcStatus = s => t(({
+  pending: 'src.pending', read: 'src.read', preview: 'src.preview', queued: 'src.queued',
+  used: 'src.used', partial: 'src.partial', unsupported: 'src.unsupported', error: 'src.error'
+})[s.status] || 'src.error');
 
 /* ---------- create ---------- */
+function wantsBurmese(topic) {
+  return state.lang === 'my' || /[\u1000-\u109F]/.test(topic || '');
+}
+function lessonLang(L) {
+  if (L && (L.language === 'my' || (L.apiLesson && L.apiLesson.language === 'my'))) return 'my';
+  return state.lang === 'my' ? 'my' : 'en';
+}
 function createLesson(topic, files) {
   if (TUTOR_DAILY_LIMIT != null && lessonsCreated >= TUTOR_DAILY_LIMIT) { openPlans(true); return null; }
   const id = 'l' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-  lessons[id] = { id, topic: (topic || '').trim(), sources: files.map(makeSource), status: 'preparing', step: 0,
+  const text = (topic || '').trim();
+  lessons[id] = { id, topic: text, language: wantsBurmese(text) ? 'my' : 'en', sources: files.map(makeSource), status: 'preparing', step: 0,
     blocks: [], idx: 0, answers: {}, qa: [], strokes: [], created: Date.now() };
   lessonsCreated++;
   location.hash = `#/tutor/${id}/prep`;
   return id;
 }
 
-/* ---------- lesson templates ---------- */
-const SAMPLE_SQL = `SELECT
-    g.code AS groupNo,
-    IFNULL(loan_totals.total_amount_due, 0) AS totalPrincipalForEachGroup,
-    MAX(subquery.fivePercentDisbursedAmount) AS fivePercentDisbursedAmount,
-    SUM(CASE
-        WHEN l.loan_status_id = 200
-         AND l.expected_disbursedon_date = ?
-         AND charge.charge_type_enum = 1
-        THEN lc.amount ELSE 0
-    END) AS serviceFeeChargesAmount
-FROM m_group g
-JOIN m_loan l ON l.group_id = g.id
-LEFT JOIN (
-    SELECT l.group_id, SUM(rs.principal_amount) AS total_amount_due
-    FROM m_loan l
-    JOIN m_loan_repayment_schedule rs ON rs.loan_id = l.id
-    LEFT JOIN m_loan_freeze f ON f.loan_id = l.id
-    WHERE rs.duedate = ?
-    GROUP BY l.group_id
-) loan_totals ON loan_totals.group_id = g.id
-LEFT JOIN (
-    SELECT l.group_id,
-           SUM(l.principal_amount) * 0.05 AS fivePercentDisbursedAmount
-    FROM m_loan l
-    WHERE l.expected_disbursedon_date = ?
-    GROUP BY l.group_id
-) subquery ON subquery.group_id = g.id
-LEFT JOIN m_loan_charge lc ON lc.loan_id = l.id
-LEFT JOIN m_charge charge ON charge.id = lc.charge_id
-LEFT JOIN m_savings_account msa ON msa.client_id = l.client_id
-LEFT JOIN m_loan_freeze lf ON lf.loan_id = l.id
-WHERE g.parent_id = ?
-  AND msa.product_id = 1
-GROUP BY g.code, loan_totals.total_amount_due
-ORDER BY g.code;`;
-
-function pickTemplate(L) {
-  const s = (L.topic + ' ' + sourceText(L)).toLowerCase();
-  if (/\bsql\b|\bselect\b|\bjoin\b|big.?o|complexity|\bquery\b/.test(s)) return 'sql';
-  if (parseLinear(L.topic) || parseLinear(sourceText(L))) return 'linear';
-  return 'generic';
+/* ---------- Gemini lesson mapping ---------- */
+function clipText(s, n) {
+  const t = String(s || '').replace(/\s+/g, ' ').trim();
+  return t.length > n ? t.slice(0, n) : t;
 }
-
-function sqlLesson() {
-  return [
-    { t: 'title', side: 'L', text: 'SQL Query Big-O Complexity Analysis', say: "Let's put our lesson title and the big-picture roadmap on the board." },
-    { t: 'ul', side: 'L', items: [
-      '**Core Idea:** SQL complexity depends on table cardinalities (N), join fan-out, and index availability',
-      '**Query Structure:** 3 major execution blocks (`loan_totals` subquery, `subquery` 5% disbursement, and the Outer Query join chain)',
-      '**Goal:** Determine the time complexity for each block and combine them into the overall Big-O cost'],
-      say: 'Query performance is like a factory line: cost depends on how many rows enter each stage, and how many copies each join creates.',
-      explain: 'The roadmap: name the input sizes, cost each of the three blocks, then add them up and find the dominant term.' },
-    { t: 'diagram', side: 'R', kind: 'sqlBlocks', caption: 'Two subqueries feed the outer join chain, which is then grouped and sorted',
-      say: 'Here is the shape of the query: two subqueries feed the outer join chain, which is grouped and sorted at the end.',
-      explain: 'Block A and Block B each produce one row per group. The outer query joins them back to every loan in the group, and that is where the row count can explode.' },
-    { t: 'h', side: 'L', text: '1. Defining Table Cardinalities (Input Sizes)', say: 'First, we give every table a size so we can reason about cost precisely.' },
-    { t: 'ul', side: 'L', items: [
-      'G = |m_group| (total groups, with G_{p} ≤ G matching `parent_id = ?`)',
-      'C = |m_client| and GC = |m_group_client| (clients and group memberships)',
-      'L = |m_loan| (total loans)',
-      'R = |m_loan_repayment_schedule| (installment rows, typically R ≈ k_{rep} · L)',
-      'LC = |m_loan_charge| (loan charges)',
-      'S = |m_savings_account| (savings accounts)',
-      'F = |m_loan_freeze| (freeze records)'],
-      say: 'Each letter is an input size. Repayment rows grow with the number of loans — about k-rep installments per loan.',
-      explain: 'Cardinalities are the “n” in Big-O. Naming them lets us write each block’s cost exactly instead of just saying “it’s slow”.' },
-    { t: 'h', side: 'R', text: '2. Block A: `loan_totals` Subquery Cost', say: 'Now the first block — the loan totals subquery.' },
-    { t: 'ul', side: 'R', items: [
-      'Operations: joins `m_loan` (L) with `m_loan_repayment_schedule` (R) and `m_loan_freeze` (F), then groups by `l.group_id`',
-      'With hash joins: O(L + R + F); a sort-based GROUP BY adds O(L log L)',
-      '**Bottleneck:** no `parent_id` filter inside `loan_totals`, so it aggregates loans for every group'],
-      say: 'Block A touches every loan and every schedule row, because nothing limits it to the requested parent group.',
-      explain: 'Without a parent filter, the subquery totals loans for all groups — work the outer query later throws away. Pushing the filter inside shrinks L to L_p.' },
-    { t: 'q', question: 'In the outer query, a loan l joins to `m_loan_charge` (k_{lc} charges), `m_savings_account` (k_{msa} accounts), and `m_loan_freeze` (k_{lf} records). What happens to the number of intermediate rows produced per loan?',
-      options: ['It multiplies the rows per loan (a Cartesian fan-out of charges × savings accounts × freeze rows)', 'It adds the rows sequentially without multiplying them', 'It only checks the first matching row in each table because of LEFT JOIN'],
-      answer: 0, explain: 'Independent one-to-many joins multiply: each loan yields k_{lc} × k_{msa} × k_{lf} rows before GROUP BY collapses them. That fan-out is the main cost — and it can also inflate SUM(…) totals.' },
-    { t: 'h', side: 'R', text: '3. Block B: 5% Disbursement Subquery', say: 'Block B is smaller: it only looks at loans disbursed on the given date.' },
-    { t: 'ul', side: 'R', items: [
-      'Filters `m_loan` by `expected_disbursedon_date = ?`, then groups by `group_id`',
-      'With an index on (expected_disbursedon_date, group_id): O(log L + m), where m = matching loans',
-      'Without that index: a full scan, O(L)'],
-      say: 'With the right index this block is cheap; without it, it is another full pass over the loans table.',
-      explain: 'An index on the filter column turns a full scan into a range lookup: O(log L) to find the date, plus the m matching rows.' },
-    { t: 'h', side: 'L', text: '4. Outer Query: Join Chain & Fan-out', say: 'Now the outer query, where the joins multiply.' },
-    { t: 'ul', side: 'L', items: [
-      'Loans in the requested groups: L_{p}',
-      'Rows after the LEFT JOIN chain ≈ L_{p} · max(k_{lc},1) · max(k_{msa},1) · max(k_{lf},1)',
-      '`GROUP BY g.code` then `ORDER BY g.code`: O(M log M), with M ≤ G_{p} groups'],
-      say: 'Every loan in the requested groups is copied once per matching charge, savings account and freeze record.',
-      explain: 'A LEFT JOIN with no match still keeps one row, which is why each factor is max(k, 1) rather than k.' },
-    { t: 'math', side: 'L', text: 'T = O(L + R + F)  +  O(L_{p} · k_{lc} · k_{msa} · k_{lf})  +  O(G_{p} log G_{p})',
-      say: 'Adding the three blocks gives the total cost of the query.', explain: 'Total cost = Block A + the outer join chain (which includes Block B’s small result) + the final sort.' },
-    { t: 'q', question: 'A loan has 2 charges, 1 savings account and no freeze records. How many rows does it produce before GROUP BY?',
-      options: ['2 rows — a LEFT JOIN with no match still keeps one row (with NULLs)', '0 rows — the missing freeze record removes the loan', '3 rows — the counts are added together'],
-      answer: 0, explain: '2 × 1 × max(0, 1) = 2. The unmatched LEFT JOIN keeps the loan and fills the freeze columns with NULL, so its factor is 1, not 0.' },
-    { t: 'h', side: 'R', text: '5. Overall Complexity & the Fix', say: 'Finally, what dominates — and how to fix it.' },
-    { t: 'callout', side: 'R', text: '**Dominant term:** the join fan-out O(L_{p} · k_{lc} · k_{msa} · k_{lf}). Pre-aggregate charges, savings and freezes per loan (or use EXISTS) before joining, index the foreign keys, and the query approaches O((L + R) log L).',
-      say: 'The fan-out dominates. Pre-aggregating each child table per loan removes the multiplication.',
-      explain: 'Once every child table is reduced to one row per loan, each join becomes one-to-one and the per-loan factor drops to 1.' },
-    { t: 'q', question: 'Which change reduces the outer query’s cost the most?',
-      options: ['Pre-aggregate each child table per loan before joining', 'Move ORDER BY into the subqueries', 'Replace every LEFT JOIN with a RIGHT JOIN'],
-      answer: 0, explain: 'Pre-aggregating turns each one-to-many join into a one-to-one join, so the per-loan factor falls from k_{lc} · k_{msa} · k_{lf} to 1.' }
-  ];
+function sayOf(s) { return clipText(plain(s), 280); }
+function normAnswer(s) { return String(s || '').trim().toLowerCase().replace(/\s+/g, ' '); }
+function localError(key, vars) { const err = new Error(t(key, vars)); err.local = true; return err; }
+function apiErr(res, data) {
+  const err = new Error((data && data.error) || '');
+  err.code = (data && data.code) || (res.status === 429 ? 'rate_limit' : 'upstream');
+  err.status = res.status;
+  return err;
 }
-
-function eqLHS(a, b) { return `${a === 1 ? '' : a === -1 ? '−' : fmt(a)}x${b ? (b > 0 ? ' + ' : ' − ') + fmt(Math.abs(b)) : ''}`; }
-function linearLesson(L) {
-  const { a, b, c, x } = parseLinear(L.topic) || parseLinear(sourceText(L));
-  const lhs = eqLHS(a, b), my = BURMESE.test(L.topic);
-  const first = b > 0 ? `Subtract ${fmt(b)} from both sides` : b < 0 ? `Add ${fmt(-b)} to both sides` : `Divide both sides by ${fmt(a)}`;
-  const wrongs = [`Divide both sides by ${fmt(c)}`, `Multiply both sides by ${fmt(a)}`];
-  const vals = [...new Set([fmt(x), fmt((c + b) / a), fmt(c / a - b), fmt(x + 1), fmt(x - 1)])].slice(0, 3);
-  const blocks = [
-    { t: 'title', side: 'L', text: 'Solving Linear Equations', say: "Let's set up the lesson: one equation, one unknown." },
-    { t: 'ul', side: 'L', items: ['**Core Idea:** an equation is a balance — whatever you do to one side, do to the other', `**Goal:** isolate x in \`${lhs} = ${fmt(c)}\``, '**Strategy:** undo addition or subtraction first, then multiplication'],
-      say: 'Think of the equation as a balance scale. We keep it level while we peel layers away from x.', explain: 'Inverse operations undo each other: subtraction undoes addition, division undoes multiplication.' },
-    { t: 'diagram', side: 'R', kind: 'balance', lhs, rhs: fmt(c), caption: 'Both sides must stay equal', say: 'Here is the balance. The left pan holds the expression; the right pan holds the value.' },
-    { t: 'q', question: `What should we do first to isolate x in \`${lhs} = ${fmt(c)}\`?`, options: [wrongs[0], first, wrongs[1]], answer: 1,
-      explain: b ? `The constant ${fmt(Math.abs(b))} is attached by ${b > 0 ? 'addition' : 'subtraction'}, so we undo it first.` : 'There is no constant to remove, so we divide by the coefficient straight away.' }
-  ];
-  if (b) blocks.push({ t: 'h', side: 'L', text: '1. Undo the constant', say: 'Step one: remove the constant from the left side.' },
-    { t: 'math', side: 'L', text: `${a === 1 ? '' : fmt(a)}x = ${fmt(c)} ${b > 0 ? '−' : '+'} ${fmt(Math.abs(b))} = ${fmt(c - b)}`, say: `Doing the same to both sides leaves ${a === 1 ? '' : fmt(a)}x equals ${fmt(c - b)}.` });
-  if (a !== 1) blocks.push({ t: 'h', side: 'L', text: `${b ? 2 : 1}. Undo the coefficient`, say: 'Next, divide by the number in front of x.' },
-    { t: 'math', side: 'L', text: `x = ${fmt(c - b)} ÷ ${fmt(a)} = ${fmt(x)}`, say: `So x equals ${fmt(x)}.` });
-  blocks.push(
-    { t: 'q', question: 'So what is x?', options: vals, answer: vals.indexOf(fmt(x)), explain: `x = ${fmt(c - b)} ÷ ${fmt(a)} = ${fmt(x)}.` },
-    { t: 'h', side: 'R', text: 'Check your answer', say: 'Always check by substituting back.' },
-    { t: 'math', side: 'R', text: `${a === 1 ? '' : fmt(a)}(${fmt(x)})${b ? (b > 0 ? ' + ' : ' − ') + fmt(Math.abs(b)) : ''} = ${fmt(c)} ✓`, say: 'Both sides match, so the answer is right.' },
-    { t: 'callout', side: 'R', text: 'Undo operations in reverse order, and always substitute back to check.', say: 'That is the whole method: reverse the operations, then check.' });
-  if (my) blocks.push({ t: 'p', side: 'R', text: `အဖြေ: x = ${fmt(x)} — အဆင့်ဆင့် ပြန်စစ်ပါ။`, say: `အဖြေမှာ x = ${fmt(x)} ဖြစ်ပါသည်။` });
+function friendlyError(err) {
+  if (err && err.local) return err.message;
+  if (err && err.name === 'AbortError') return t('err.timeout');
+  if (err && err.code && I18N.en['err.' + err.code]) return t('err.' + err.code);
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return t('err.network');
+  if (err && /Failed to fetch|NetworkError|Load failed/i.test(err.message || '')) return t('err.network');
+  return t('err.upstream');
+}
+function questionToBlock(q) {
+  const mc = q.type !== 'short-answer';
+  const options = mc ? (q.options || []) : [];
+  const answer = mc ? options.findIndex(o => normAnswer(o) === normAnswer(q.correctAnswer)) : -1;
+  return { t: 'q', qtype: mc ? 'multiple-choice' : 'short-answer', question: q.question, options, answer, correctAnswer: q.correctAnswer || '', explain: q.explanation || '', difficulty: q.difficulty || 'medium', relatedSection: q.relatedSection || '', say: q.question };
+}
+function lessonToBlocks(lesson, note) {
+  const my = lesson.language === 'my';
+  const blocks = [];
+  const side = i => (i % 2 === 0 ? 'L' : 'R');
+  blocks.push({ t: 'title', side: 'L', text: lesson.title, say: sayOf(lesson.summary || lesson.title) });
+  if (note) blocks.push({ t: 'callout', side: 'L', text: note, say: sayOf(note) });
+  if (lesson.summary) blocks.push({ t: 'p', side: 'L', text: lesson.summary, say: sayOf(lesson.summary) });
+  if (lesson.learningObjectives && lesson.learningObjectives.length) {
+    blocks.push({ t: 'h', side: 'L', text: my ? 'သင်ယူရမည့် ရည်မှန်းချက်များ' : 'Learning objectives', say: sayOf(lesson.learningObjectives[0]) });
+    blocks.push({ t: 'ul', side: 'L', items: lesson.learningObjectives, say: sayOf(lesson.learningObjectives.join('. ')) });
+  }
+  const questions = (lesson.questions || []).map(questionToBlock);
+  const used = new Set();
+  (lesson.sections || []).forEach((sec, i) => {
+    const sd = side(i);
+    if (sec.heading) blocks.push({ t: 'h', side: sd, text: sec.heading, say: sayOf(sec.explanation || sec.heading) });
+    if (sec.explanation) blocks.push({ t: 'p', side: sd, text: sec.explanation, say: sayOf(sec.explanation) });
+    if (sec.bulletPoints && sec.bulletPoints.length) blocks.push({ t: 'ul', side: sd, items: sec.bulletPoints, say: sayOf(sec.bulletPoints[0]) });
+    (sec.examples || []).forEach(ex => { if (ex) blocks.push({ t: 'p', side: sd, text: ex, say: sayOf(ex) }); });
+    if (sec.codeExample) blocks.push({ t: 'code', side: sd, lang: sec.codeLanguage || '', text: sec.codeExample, say: sayOf(sec.heading || sec.codeExample) });
+    (sec.mathExpressions || []).forEach(m => { if (m) blocks.push({ t: 'math', side: sd, text: m, say: sayOf(m) }); });
+    if (sec.table && sec.table.headers && sec.table.headers.length) blocks.push({ t: 'table', side: sd, headers: sec.table.headers, rows: sec.table.rows || [], say: sayOf(sec.diagramDescription || sec.heading) });
+    if (sec.visualType && sec.visualType !== 'none' && sec.visualType !== 'table' && (sec.mermaid || sec.diagramDescription)) {
+      blocks.push({ t: 'diagram', side: sd, mermaid: sec.mermaid || '', caption: sec.diagramDescription || sec.heading || '', fallback: sec.diagramDescription || '', say: sayOf(sec.diagramDescription || sec.heading) });
+    } else if (sec.diagramDescription && sec.visualType !== 'table') {
+      blocks.push({ t: 'callout', side: sd, text: sec.diagramDescription, say: sayOf(sec.diagramDescription) });
+    }
+    const related = questions.findIndex((q, idx) => !used.has(idx) && q.relatedSection && sec.heading && normAnswer(q.relatedSection) === normAnswer(sec.heading));
+    const pick = related >= 0 ? related : (i < questions.length ? questions.findIndex((_, idx) => !used.has(idx)) : -1);
+    if (pick >= 0) { used.add(pick); blocks.push(questions[pick]); }
+  });
+  questions.forEach((q, idx) => { if (!used.has(idx)) blocks.push(q); });
+  if (lesson.keyTakeaways && lesson.keyTakeaways.length) {
+    blocks.push({ t: 'h', side: 'R', text: my ? 'အဓိက အချက်များ' : 'Key takeaways', say: sayOf(lesson.keyTakeaways[0]) });
+    blocks.push({ t: 'ul', side: 'R', items: lesson.keyTakeaways, say: sayOf(lesson.keyTakeaways.join('. ')) });
+  }
+  if (lesson.conclusion) blocks.push({ t: 'callout', side: 'R', text: lesson.conclusion, say: sayOf(lesson.conclusion) });
   return blocks;
 }
-
-function genericLesson(L) {
-  const raw = (L.topic || (L.sources[0] ? L.sources[0].name.replace(/\.[^.]+$/, '') : 'Your topic')).replace(/\s+/g, ' ');
-  const topic = raw.length > 70 ? raw.slice(0, 68) + '…' : raw;
-  const title = topic.charAt(0).toUpperCase() + topic.slice(1);
-  const sentences = sourceText(L).replace(/\s+/g, ' ').split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 25).slice(0, 4);
-  const blocks = [
-    { t: 'title', side: 'L', text: title, say: `Let's build a quick map of ${topic}.` },
-    { t: 'ul', side: 'L', items: [`**What it is:** put “${topic}” into one plain sentence of your own`, '**Why it matters:** where it shows up in your course and in exams', '**How we’ll learn:** key ideas → a worked example → a quick check'],
-      say: 'We start with a definition in your own words, then connect it to why it matters.', explain: 'Explaining an idea in your own words is the fastest way to find gaps in your understanding.' },
-    { t: 'diagram', side: 'R', kind: 'map', label: topic.length > 22 ? topic.slice(0, 20) + '…' : topic, caption: 'A study map for this topic', say: 'Here is the study map we will follow.' },
-    { t: 'q', question: `What is the best first step when learning “${topic}”?`, options: ['Memorize every detail before anything else', 'Write a clear definition in your own words', 'Skip straight to the hardest exam questions'], answer: 1,
-      explain: 'A definition in your own words gives you an anchor; details and hard problems stick better once that anchor exists.' }
-  ];
-  if (sentences.length) blocks.push({ t: 'h', side: 'R', text: 'From your materials', say: 'These points come straight from the file you uploaded.' },
-    { t: 'ul', side: 'R', items: sentences.map(s => s.length > 180 ? s.slice(0, 178) + '…' : s), say: 'Read these lines from your material and underline the key terms.' });
-  blocks.push(
-    { t: 'h', side: 'L', text: 'Key ideas to collect', say: 'Next, collect the three to five ideas everything else depends on.' },
-    { t: 'ul', side: 'L', items: ['List 3–5 terms your teacher or textbook repeats', 'For each term: definition, one example, one non-example', 'Link the terms: which ones cause or depend on the others?'], say: 'Examples and non-examples make the boundaries of each idea clear.' },
-    { t: 'callout', side: 'R', text: 'This outline was assembled locally from a template. Connect an AI tutor service to get full, subject-specific explanations for any topic.', say: 'This prototype uses a general template for this topic. A connected tutor service would fill in subject-specific explanations.' });
-  return blocks;
+function compactLesson(lesson) {
+  return {
+    language: lesson.language === 'my' ? 'my' : 'en',
+    title: clipText(lesson.title, 180),
+    topic: clipText(lesson.topic, 400),
+    summary: clipText(lesson.summary, 800),
+    learningObjectives: (lesson.learningObjectives || []).slice(0, 6),
+    sections: (lesson.sections || []).slice(0, 8).map(s => ({ heading: clipText(s.heading, 180), explanation: clipText(s.explanation, 900), bulletPoints: (s.bulletPoints || []).slice(0, 6) })),
+    keyTakeaways: (lesson.keyTakeaways || []).slice(0, 6),
+    conclusion: clipText(lesson.conclusion, 600)
+  };
 }
-
-/* ---------- diagrams (inline SVG) ---------- */
-const cyl = (x, y, label, fill) => `<g transform="translate(${x} ${y})"><path d="M0 5v17c0 3 7 5 16 5s16-2 16-5V5" fill="${fill}" stroke="#5b6573"/><ellipse cx="16" cy="5" rx="16" ry="5" fill="${fill}" stroke="#5b6573"/><text x="16" y="40" text-anchor="middle" font-size="9.5">${label}</text></g>`;
-const tab = (x, y, w, label, fill, stroke) => `<rect x="${x}" y="${y}" width="${w}" height="20" rx="10" fill="${fill}" stroke="${stroke}"/><text x="${x + w / 2}" y="${y + 14}" text-anchor="middle" font-size="11">${label}</text>`;
-const DIAGRAMS = {
-  sqlBlocks: () => `<svg viewBox="0 0 470 330" role="img" aria-label="Query execution blocks" font-family="Patrick Hand, Segoe Print, cursive" fill="#2b2f36">
-    <defs><marker id="wbArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#5b8bd6"/></marker></defs>
-    <rect x="8" y="22" width="210" height="122" rx="12" fill="#fff6ea" stroke="#d9b38c"/>${tab(20, 12, 150, 'Block A · loan_totals', '#ffe2bf', '#d9b38c')}
-    ${cyl(26, 46, 'm_loan', '#dbeafe')}${cyl(88, 46, 'schedule', '#dcf3e5')}${cyl(150, 46, 'freeze', '#fde2e2')}
-    <rect x="44" y="110" width="138" height="20" rx="10" fill="#fff" stroke="#d9b38c"/><text x="113" y="124" text-anchor="middle" font-size="10.5">GROUP BY l.group_id</text>
-    <path d="M196 54l10-14 10 14z" fill="#ffd84d" stroke="#b48a00"/><text x="206" y="51" text-anchor="middle" font-size="9" font-weight="700">!</text>
-    <rect x="252" y="22" width="210" height="122" rx="12" fill="#eef5ff" stroke="#9db8e6"/>${tab(264, 12, 160, 'Block B · 5% disbursed', '#d8e7ff', '#9db8e6')}
-    ${cyl(274, 50, 'm_loan', '#dbeafe')}<path d="M318 66h18" stroke="#5b8bd6" marker-end="url(#wbArrow)"/>
-    <path d="M342 54h40l-14 16v12l-12 6V70z" fill="#fff3c4" stroke="#b48a00"/><text x="362" y="104" text-anchor="middle" font-size="9.5">date filter</text>
-    <rect x="300" y="112" width="140" height="20" rx="10" fill="#fff" stroke="#9db8e6"/><text x="370" y="126" text-anchor="middle" font-size="10.5">SUM × 0.05 by group</text>
-    <path d="M113 146C113 172 160 176 190 192" fill="none" stroke="#5b8bd6" stroke-width="1.6" marker-end="url(#wbArrow)"/>
-    <path d="M357 146C357 172 310 176 282 192" fill="none" stroke="#5b8bd6" stroke-width="1.6" marker-end="url(#wbArrow)"/>
-    <text x="96" y="178" font-size="9.5" fill="#4a6fae">hash / index join on group_id</text>
-    <rect x="30" y="204" width="410" height="116" rx="12" fill="#f1f8ec" stroke="#a5c98f"/>${tab(160, 194, 150, 'Outer main query', '#dff0d3', '#a5c98f')}
-    ${cyl(44, 226, 'm_group', '#e9ddff')}${cyl(108, 226, 'm_loan', '#dbeafe')}${cyl(172, 226, 'loan_charge', '#fde2e2')}${cyl(236, 226, 'm_charge', '#fff1c2')}${cyl(300, 226, 'savings', '#dcf3e5')}${cyl(364, 226, 'freeze', '#fde2e2')}
-    <g fill="#d14343" font-size="15" font-weight="700"><text x="224" y="248">×</text><text x="288" y="248">×</text><text x="352" y="248">×</text></g>
-    <rect x="140" y="290" width="190" height="20" rx="10" fill="#fff" stroke="#a5c98f"/><text x="235" y="304" text-anchor="middle" font-size="10.5">GROUP BY &amp; ORDER BY g.code</text>
-  </svg>`,
-  balance: b => `<svg viewBox="0 0 360 200" role="img" aria-label="Balance scale" font-family="Patrick Hand, Segoe Print, cursive" fill="#2b2f36">
-    <path d="M180 70 160 170h40z" fill="#e7dcc8" stroke="#8a7a60"/><rect x="130" y="170" width="100" height="10" rx="4" fill="#cbbd9f"/>
-    <path d="M40 70h280" stroke="#5b6573" stroke-width="4" stroke-linecap="round"/><circle cx="180" cy="70" r="6" fill="#5b6573"/>
-    <path d="M60 70 40 120M60 70l20 50M300 70l-20 50M300 70l20 50" stroke="#8a93a0"/>
-    <path d="M25 120h70c0 16-16 24-35 24s-35-8-35-24z" fill="#dbeafe" stroke="#5b8bd6"/><path d="M265 120h70c0 16-16 24-35 24s-35-8-35-24z" fill="#dcf3e5" stroke="#4f9d6b"/>
-    <text x="60" y="112" text-anchor="middle" font-size="18">${esc(b.lhs)}</text><text x="300" y="112" text-anchor="middle" font-size="18">${esc(b.rhs)}</text>
-    <text x="180" y="40" text-anchor="middle" font-size="22" fill="#0f7b52">=</text></svg>`,
-  map: b => `<svg viewBox="0 0 400 220" role="img" aria-label="Study map" font-family="Patrick Hand, Segoe Print, cursive" fill="#2b2f36">
-    <path d="M200 110 80 40M200 110 320 40M200 110 80 180M200 110 320 180" stroke="#9db8e6" stroke-width="1.6" stroke-dasharray="4 4"/>
-    <ellipse cx="200" cy="110" rx="92" ry="30" fill="#fff6ea" stroke="#d9b38c"/><text x="200" y="116" text-anchor="middle" font-size="16">${esc(b.label)}</text>
-    <g font-size="13.5"><rect x="22" y="24" width="116" height="30" rx="15" fill="#dbeafe" stroke="#5b8bd6"/><text x="80" y="44" text-anchor="middle">Definition</text>
-    <rect x="262" y="24" width="116" height="30" rx="15" fill="#e9ddff" stroke="#8b6fd6"/><text x="320" y="44" text-anchor="middle">Key ideas</text>
-    <rect x="22" y="166" width="116" height="30" rx="15" fill="#dcf3e5" stroke="#4f9d6b"/><text x="80" y="186" text-anchor="middle">Worked example</text>
-    <rect x="262" y="166" width="116" height="30" rx="15" fill="#fde2e2" stroke="#d16b6b"/><text x="320" y="186" text-anchor="middle">Quick check</text></g></svg>`
-};
-
+function progressPayload(L) {
+  let current = '';
+  L.blocks.forEach((b, i) => { if (i < L.idx && (b.t === 'h' || b.t === 'title')) current = plain(b.text || ''); });
+  const recentAnswers = [];
+  L.blocks.forEach((b, i) => {
+    const a = L.answers[i];
+    if (!a || b.t !== 'q' || a.pending) return;
+    recentAnswers.push({ question: clipText(b.question, 300), result: a.revealed ? 'revealed' : a.skipped ? 'skipped' : a.ok ? 'correct' : 'incorrect' });
+  });
+  return { currentSection: current, recentAnswers: recentAnswers.slice(-8) };
+}
+function validateLessonInput(L) {
+  if (L.sources.length > 4) throw localError('prep.fileCount');
+  for (const s of L.sources) {
+    if (s.kind === 'other' || s.status === 'unsupported') throw localError('prep.fileType', { name: s.name });
+    if (s.size > FILE_MAX_BYTES) throw localError('prep.fileBig', { name: s.name });
+  }
+  if (!L.topic && !L.sources.length) throw localError('prep.errEmpty');
+}
+async function postJson(path, body, signal) {
+  let res;
+  try {
+    res = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body), signal });
+  } catch (err) {
+    if (err.name === 'AbortError') throw err;
+    throw Object.assign(new Error(''), { code: 'network' });
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw apiErr(res, data);
+  return data;
+}
+async function readSSE(res, onEvent) {
+  if (!res.body) throw Object.assign(new Error(''), { code: 'upstream' });
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const parts = buf.split(/\n\n/);
+    buf = parts.pop();
+    for (const part of parts) {
+      const data = part.split(/\n/).filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('\n');
+      if (!data) continue;
+      let ev; try { ev = JSON.parse(data); } catch { continue; }
+      onEvent(ev);
+    }
+  }
+}
+function applyMaterials(L, materials) {
+  (materials || []).forEach(m => {
+    const src = L.sources.find(s => s.name === m.name);
+    if (!src) return;
+    src.status = m.status === 'partial' ? 'partial' : m.status === 'error' ? 'error' : 'used';
+    src.sent = true;
+  });
+}
+async function requestLesson(L, signal) {
+  const fd = new FormData();
+  fd.append('topic', L.topic || '');
+  fd.append('language', lessonLang(L));
+  L.sources.forEach(s => { if (s.file) fd.append('files', s.file, s.file.name); });
+  let res;
+  try { res = await fetch('/api/whiteboard/lesson', { method: 'POST', body: fd, signal }); }
+  catch (err) { if (err.name === 'AbortError') throw err; throw Object.assign(new Error(''), { code: 'network' }); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw apiErr(res, data);
+  return data;
+}
 /* ---------- preparation screen ---------- */
 const PREP_STEPS = ['prep.s1', 'prep.s2', 'prep.s3', 'prep.s4', 'prep.s5'];
-const PREP_STEP_MS = 650; // minimum time each real step stays visible
 const PREP_SLIDES = [
   { t: 'slide1.t', s: 'slide1.s', art: `<div class="pa-card"><p class="pa-hand">Which side is the hypotenuse?</p><svg viewBox="0 0 160 80" width="160" height="80"><path d="M30 12v56h104z" fill="none" stroke="#2b2f36" stroke-width="1.6"/><path d="M30 60h8v8" fill="none" stroke="#2b2f36"/><ellipse cx="88" cy="38" rx="30" ry="13" transform="rotate(24 88 38)" fill="none" stroke="#2479f2" stroke-width="1.6"/><text x="20" y="44" font-size="9">a</text><text x="92" y="36" font-size="9" fill="#2479f2">c</text></svg><div class="pa-row"><span class="pa-btn on">+ Explain</span><span class="pa-btn">+ Add to question</span></div><p class="pa-sub">c is opposite the right angle.</p></div>` },
   { t: 'slide2.t', s: 'slide2.s', art: `<div class="pa-card"><p class="pa-hand">Solve 2x + 10 = 25</p><div class="pa-opt">x = 5</div><div class="pa-opt ok">x = 7.5 ✓</div><div class="pa-opt">x = 17.5</div><p class="pa-sub">Subtract 10, then divide by 2.</p></div>` },
@@ -1061,48 +1114,65 @@ function drawPrep(L) {
   if (L.status === 'error') {
     box.innerHTML = `<div class="prep-head"><h2>${esc(t('prep.err'))}</h2></div><div class="prep-err">${icon('alert', 18)}<span>${esc(L.error)}</span></div>
       <div class="row-end" style="justify-content:flex-start;margin-top:18px"><button class="btn-primary" id="prepRetry">${icon('flip', 15)} ${esc(t('retry'))}</button><a class="btn-o" href="#/home">${esc(t('back'))}</a></div>`;
-    $('#prepRetry').onclick = () => { L.status = 'preparing'; runPrep(L); };
+    $('#prepRetry').onclick = () => { L.status = 'preparing'; L.running = false; runPrep(L); };
     return;
   }
-  const n = PREP_STEPS.length, done = L.step, pct = Math.round(done / n * 100), from = L.shownPct || 0;
-  const left = Math.ceil((n - done) * PREP_STEP_MS / 1000);
-  box.innerHTML = `<div class="prep-head"><h2>${esc(t('prep.title'))}</h2><span class="prep-pct">${pct}%</span></div>
-    <div class="prep-bar" role="progressbar" aria-label="Lesson preparation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${from}%"></span></div>
-    <div class="prep-time">${icon('clock', 16)} ${esc(done >= n ? t('prep.ready') : t('prep.left', { n: left }))}</div>
+  const n = PREP_STEPS.length, done = L.step, waiting = !!L.waiting;
+  box.innerHTML = `<div class="prep-head"><h2>${esc(t('prep.title'))}</h2><span class="prep-pct">${waiting ? '…' : ''}</span></div>
+    <div class="prep-bar${waiting ? ' indeterminate' : ''}" role="progressbar" aria-label="Lesson preparation" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${done}"><span style="width:${waiting ? '35%' : Math.round(done / n * 100) + '%'}"></span></div>
+    <div class="prep-time">${icon('clock', 16)} ${esc(done >= n ? t('prep.ready') : t('prep.working'))}</div>
     <ol class="prep-steps">${PREP_STEPS.map((k, i) => `<li class="${i < done ? 'done' : i === done ? 'cur' : ''}"><span class="ps-ico">${i < done ? icon('check', 12, 3) : ''}</span><span>${esc(t(k, { topic: prepTopic(L) }))}</span></li>`).join('')}</ol>
-    <p class="prep-note">${icon('info', 13)} ${esc(t('prep.note'))}</p>`;
-  requestAnimationFrame(() => { const bar = $('#prepBox .prep-bar span'); if (bar) bar.style.width = pct + '%'; });
-  L.shownPct = pct;
+    <p class="prep-note">${icon('info', 13)} ${esc(t('prep.note'))}</p>
+    <div class="prep-actions"><button class="btn-o" id="prepCancel" type="button">${esc(t('prep.cancel'))}</button></div>`;
+  $('#prepCancel').onclick = () => {
+    if (L.abort) L.abort.abort();
+    L.running = false; L.waiting = false;
+    location.hash = '#/home';
+  };
 }
 async function runPrep(L) {
-  L.running = true; L.step = 0; L.error = null; L.shownPct = 0; drawPrep(L);
-  const wait = ms => new Promise(r => setTimeout(r, ms));
-  const tasks = [
-    async () => {                                   // 1. read uploaded text files
-      await Promise.all(L.sources.map(readSource));
-      if (!L.topic && !sourceText(L).trim()) throw new Error(t('prep.errEmpty'));
-    },
-    async () => { L.template = pickTemplate(L); },  // 2. plan
-    async () => {                                   // 3. build board content + visuals
-      L.blocks = L.template === 'sql' ? sqlLesson(L) : L.template === 'linear' ? linearLesson(L) : genericLesson(L);
-      if (L.template === 'sql' && !/\bselect\b/i.test(L.topic) && !/\bselect\b/i.test(sourceText(L))) L.sampleSource = SAMPLE_SQL;
-    },
-    async () => { if (!L.blocks.some(b => b.t === 'q')) throw new Error('No practice questions could be prepared for this topic.'); }, // 4. practice
-    async () => { if (!L.blocks.length) throw new Error('The lesson came out empty.'); } // 5. ready
-  ];
+  if (L.running) return;
+  if (L.abort) L.abort.abort();
+  const ac = new AbortController();
+  L.abort = ac;
+  L.running = true; L.status = 'preparing'; L.step = 0; L.waiting = false; L.error = null;
+  L.blocks = []; L.apiLesson = null; L.idx = 0; L.answers = {}; L.qa = [];
+  drawPrep(L);
   try {
-    for (let i = 0; i < tasks.length; i++) {
-      const t0 = performance.now();
-      await tasks[i]();
-      const rest = PREP_STEP_MS - (performance.now() - t0); if (rest > 0) await wait(rest);
-      L.step = i + 1; drawPrep(L);
+    validateLessonInput(L);
+    await Promise.all(L.sources.map(readSource));
+    if (ac.signal.aborted) return;
+    L.step = 1; drawPrep(L);
+    L.waiting = true; drawPrep(L);
+    const data = await requestLesson(L, ac.signal);
+    if (ac.signal.aborted) return;
+    L.waiting = false;
+    const lesson = data && data.lesson;
+    if (!lesson || !Array.isArray(lesson.sections) || !lesson.sections.length || !Array.isArray(lesson.questions) || !lesson.questions.length) {
+      throw Object.assign(new Error(''), { code: 'invalid_response' });
     }
-    await wait(350);
-    L.status = 'ready'; L.running = false;
+    L.step = 2; drawPrep(L);
+    applyMaterials(L, data.materials);
+    const partial = (data.materials || []).filter(m => m.status === 'partial' || m.status === 'error').map(m => m.name);
+    L.language = lesson.language === 'my' ? 'my' : 'en';
+    L.apiLesson = lesson;
+    L.blocks = lessonToBlocks(lesson, partial.length ? t('tw.partial') + ' ' + partial.join(', ') : '');
+    if (!L.blocks.length || !L.blocks.some(b => b.t === 'q')) throw Object.assign(new Error(''), { code: 'invalid_response' });
+    L.sources.forEach(s => { s.sent = true; });
+    L.step = 3; drawPrep(L);
+    L.step = 4; drawPrep(L);
+    L.step = 5; drawPrep(L);
+    L.status = 'ready'; L.running = false; L.abort = null;
     if (location.hash === `#/tutor/${L.id}/prep`) location.replace(`#/tutor/${L.id}/lesson`);
-    else toast(`Your lesson “${prepTopic(L)}” is ready — open it from History.`);
+    else toast(t('prep.readyToast', { topic: prepTopic(L) }));
   } catch (err) {
-    L.status = 'error'; L.error = err.message || String(err); L.running = false; drawPrep(L);
+    if (err.name === 'AbortError' || ac.signal.aborted) {
+      L.running = false; L.waiting = false;
+      if (L.abort === ac) L.abort = null;
+      return;
+    }
+    L.status = 'error'; L.error = friendlyError(err); L.running = false; L.waiting = false; L.abort = null;
+    drawPrep(L);
   }
 }
 
@@ -1113,14 +1183,69 @@ function blockHTML(b) {
   switch (b.t) {
     case 'title': return `<h1 class="wb-title">${inl(b.text)}</h1>`;
     case 'h': return `<h2 class="wb-h">${inl(b.text)}</h2>`;
-    case 'ul': return `<ul class="wb-ul">${b.items.map(x => `<li>${inl(x)}</li>`).join('')}</ul>`;
+    case 'ul': return `<ul class="wb-ul">${(b.items || []).map(x => `<li>${inl(x)}</li>`).join('')}</ul>`;
     case 'p': return `<p class="wb-p">${inl(b.text)}</p>`;
-    case 'math': return `<div class="wb-math">${inl(b.text)}</div>`;
-    case 'code': return `<pre class="wb-code"><code>${esc(b.text)}</code></pre>`;
+    case 'math': return `<div class="wb-math"></div>`;
+    case 'code': return `<pre class="wb-code">${b.lang ? `<span class="wb-code-lang">${esc(b.lang)}</span>` : ''}<code>${esc(b.text || '')}</code></pre>`;
     case 'callout': return `<div class="wb-callout">${inl(b.text)}</div>`;
-    case 'diagram': return `<figure class="wb-fig">${DIAGRAMS[b.kind](b)}${b.caption ? `<figcaption>${inl(b.caption)}</figcaption>` : ''}</figure>`;
+    case 'table': return `<div class="wb-table-wrap"><table class="wb-table"><thead><tr>${(b.headers || []).map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${(b.rows || []).map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    case 'diagram': return `<figure class="wb-fig"><div class="wb-diagram"></div>${b.caption ? `<figcaption>${inl(b.caption)}</figcaption>` : ''}<p class="wb-diagram-note">${inl(b.fallback || b.caption || '')}</p></figure>`;
     default: return '';
   }
+}
+function paintRich(el, b) {
+  if (!el || !b) return;
+  if (b.t === 'math') {
+    const box = el.querySelector('.wb-math');
+    if (!box) return;
+    if (window.katex) {
+      try { window.katex.render(String(b.text || ''), box, { throwOnError: false, trust: false, displayMode: true }); return; } catch { /* show the source */ }
+    }
+    box.textContent = b.text || '';
+  }
+  if (b.t === 'diagram') renderDiagram(el, b);
+}
+function cleanMermaid(src) {
+  let s = String(src || '').trim().replace(/^```(?:mermaid)?\s*/i, '').replace(/```$/, '').trim();
+  if (!s || /<[^>]+>/.test(s) || /javascript:/i.test(s) || /\bclick\b/i.test(s)) return '';
+  if (!/^(flowchart|graph|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|mindmap|timeline|pie|gantt|journey)\b/.test(s)) return '';
+  return s;
+}
+function safeSvg(svg) {
+  const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+  if (doc.querySelector('parsererror, script, foreignObject, iframe, object, embed')) return null;
+  const root = doc.documentElement;
+  if (!root || root.tagName.toLowerCase() !== 'svg') return null;
+  root.querySelectorAll('*').forEach(node => {
+    [...node.attributes].forEach(attr => {
+      if (/^on/i.test(attr.name) || /javascript:/i.test(attr.value)) node.removeAttribute(attr.name);
+    });
+  });
+  return root;
+}
+async function ensureMermaid() {
+  if (window.mermaid) return window.mermaid;
+  const mod = await import('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.esm.min.mjs');
+  const mermaid = mod.default || mod;
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', htmlLabels: false, suppressErrorRendering: true });
+  window.mermaid = mermaid;
+  return mermaid;
+}
+async function renderDiagram(el, b) {
+  const host = el.querySelector('.wb-diagram');
+  const note = el.querySelector('.wb-diagram-note');
+  const src = cleanMermaid(b.mermaid);
+  if (!host || !src) return;
+  try {
+    const mermaid = await ensureMermaid();
+    if (mermaid.parse) await mermaid.parse(src);
+    const id = 'mmd' + Math.random().toString(36).slice(2, 9);
+    const out = await mermaid.render(id, src);
+    const svg = safeSvg(out.svg);
+    if (!svg) throw new Error('diagram');
+    host.replaceChildren(svg);
+    if (note) note.hidden = true;
+  } catch { /* keep the written description */ }
 }
 function twShellHTML() {
   return `<div class="tw" id="tw">
@@ -1146,7 +1271,7 @@ function twShellHTML() {
             <ul class="tw-speed-menu" id="twSpeedMenu" role="listbox" aria-label="Playback speed" hidden>${SPEEDS.map(s => `<li><button role="option" data-speed="${s}" aria-selected="${s === T.speed}">${fmtSpeed(s)}</button></li>`).join('')}</ul>
           </div>
           <span class="tw-sep"></span>
-          <button class="tw-ibtn" id="twDownload" aria-label="Download lesson notes" title="Download lesson notes (.md)">${icon('download', 18)}</button>
+          <button class="tw-ibtn" id="twDownload" aria-label="${esc(t('tw.notes'))}" title="${esc(t('tw.notes'))}">${icon('download', 18)}</button>
         </div>
         <button class="tw-end" id="twEnd"><span class="stop" aria-hidden="true"></span><span data-i18n="tw.end">${esc(t('tw.end'))}</span></button>
       </div>
@@ -1161,7 +1286,7 @@ function twShellHTML() {
       <button class="tw-follow" id="twFollow" hidden>${icon('expand', 15)}<span data-i18n="tw.follow">${esc(t('tw.follow'))}</span></button>
       <div class="tw-bar">
         <div class="tw-bar-l">
-          <span class="tw-avatar" title="Tutor (prototype)">${AVATAR}</span>
+          <span class="tw-avatar" title="Tutor">${AVATAR}</span>
           <button class="tw-round" id="twCapBtn" aria-pressed="true" aria-label="Captions" title="Show or hide captions">${icon('captions', 18)}</button>
           <button class="tw-round" id="twPlay" aria-label="Pause lesson" title="Pause lesson">${icon('pause', 18)}</button>
           <button class="tw-round is-off" id="twVol" aria-disabled="true" aria-label="Audio narration isn't available in this prototype" title="Audio narration isn't available in this prototype">${icon('volume', 18)}</button>
@@ -1196,18 +1321,29 @@ function twRenderSource() {
   $('#twFile').onchange = e => { twAddFiles(e.target.files); e.target.value = ''; };
 }
 async function twAddFiles(list) {
-  const L = T.L; if (!L || !list.length) return;
-  const added = [...list].map(makeSource); L.sources.push(...added); twRenderSource();
+  const L = T.L; if (!L || !list || !list.length) return;
+  const room = 4 - L.sources.length;
+  if (room <= 0) { toast(t('prep.fileCount')); return; }
+  const added = [];
+  [...list].slice(0, room).forEach(file => {
+    const src = makeSource(file);
+    if (src.kind === 'other') { toast(t('prep.fileType', { name: file.name })); return; }
+    if (src.size > FILE_MAX_BYTES) { toast(t('prep.fileBig', { name: file.name })); return; }
+    added.push(src);
+  });
+  if (!added.length) return;
+  L.sources.push(...added); twRenderSource();
   $('#tw').classList.remove('src-closed');
-  await Promise.all(added.map(readSource)); if (T.L === L) twRenderSource();
-  const unsupported = added.filter(s => s.status === 'unsupported').length;
-  toast(`Added ${added.length} file${added.length > 1 ? 's' : ''}.` + (unsupported ? ' PDF, Word and PowerPoint content can’t be extracted in this prototype yet.' : ''));
+  await Promise.all(added.map(readSource));
+  if (T.L === L) twRenderSource();
+  toast(t('tw.added', { n: added.length }));
 }
 
 function tutorTeardown() {
+  if (T.chatAbort) { T.chatAbort.abort(); T.chatAbort = null; }
   clearTimeout(T.timer); clearTimeout(T.startTimer); clearInterval(T.capTimer);
   if (T.ro) T.ro.disconnect();
-  Object.assign(T, { id: null, L: null, q: null, ro: null, timer: null, startTimer: null, capTimer: null, pen: false });
+  Object.assign(T, { id: null, L: null, q: null, ro: null, timer: null, startTimer: null, capTimer: null, pen: false, chatBusy: false, qBusy: false });
   const v = $('#view-tutor'); if (v) v.innerHTML = '';
 }
 function tutorView(id) {
@@ -1290,11 +1426,19 @@ function twBind() {
   };
   // ask
   const inp = $('#twAskInput');
-  inp.oninput = () => { const on = !!inp.value.trim(); $('#twSend').disabled = !on; $('#twSend').classList.toggle('on', on); };
+  inp.oninput = twSyncAsk;
   $('#twAsk').onsubmit = e => {
-    e.preventDefault(); const q = inp.value.trim(); if (!q) return;
-    const a = tutorReply(T.L, q); twAddQA(q, a); twCaption(a);
-    inp.value = ''; inp.oninput();
+    e.preventDefault(); const q = inp.value.trim(); if (!q || T.chatBusy) return;
+    inp.value = ''; twSyncAsk();
+    const intent = questionIntent(q);
+    if (intent) twFetchQuestion(intent);
+    else twAsk(q);
+  };
+  $('#twQA').onclick = e => {
+    const b = e.target.closest('[data-retry]');
+    if (!b || T.chatBusy || !T.L) return;
+    const item = T.L.qa[+b.dataset.retry];
+    if (item) twAsk(item.q, item);
   };
   $('#twFile2').onchange = e => { twAddFiles(e.target.files); e.target.value = ''; };
   // keep the ink layer the size of the board
@@ -1327,7 +1471,7 @@ function twRenderBlock(i, animate) {
   const el = document.createElement('div');
   el.className = 'wb-block' + (animate ? ' wb-in' : ''); el.dataset.b = i;
   if (animate) el.style.setProperty('--wbd', (Math.min(1.6, 0.5 + blockText(b).length / 220) / T.speed).toFixed(2) + 's');
-  el.innerHTML = blockHTML(b); col.appendChild(el);
+  el.innerHTML = blockHTML(b); col.appendChild(el); paintRich(el, b);
   if (animate && T.follow) twScrollTo(el);
 }
 function twScrollTo(el) {
@@ -1340,68 +1484,231 @@ function twCaption(text) {
   clearInterval(T.capTimer); const el = $('#twCap'); if (!el) return;
   el.title = text; let pos = 0;
   T.capTimer = setInterval(() => {
-    if (!T.playing && T.q == null) return;   // captions pause with the lesson
+    if (!T.playing && T.q == null && !T.chatBusy) return;
     pos += 2; el.textContent = text.slice(0, pos);
     if (pos >= text.length) clearInterval(T.capTimer);
   }, 26 / T.speed);
 }
 
-/* questions */
-function twShowQ(i) {
+/* questions and tutor chat */
+function choiceIndex(b) {
+  if (typeof b.answer === 'number' && b.answer >= 0) return b.answer;
+  return (b.options || []).findIndex(o => normAnswer(o) === normAnswer(b.correctAnswer));
+}
+function questionIntent(q) {
+  const s = String(q || '').toLowerCase();
+  const ask = /\b(ask me|give me|another question|next question|harder question|quiz me)\b/.test(s)
+    || (/မေးခွန်း/.test(q) && /ပိုခက်|ထပ်|အသစ်/.test(q));
+  if (!ask) return null;
+  return /hard|ပိုခက်/.test(s) || /ပိုခက်/.test(q) ? 'hard' : 'medium';
+}
+function twSyncAsk() {
+  const inp = $('#twAskInput'); if (!inp) return;
+  const on = !!inp.value.trim() && !T.chatBusy;
+  const send = $('#twSend');
+  if (send) { send.disabled = !on; send.classList.toggle('on', on); }
+  inp.disabled = !!T.chatBusy;
+}
+function twShowQ(i, opts) {
   const L = T.L, b = L.blocks[i], card = $('#twQ');
-  const qs = L.blocks.filter(x => x.t === 'q'), qn = qs.indexOf(b) + 1;
-  T.q = i; card.hidden = false;
-  card.innerHTML = `<p class="tw-qtext" id="twQText">${inl(b.question)}</p>
-    <div class="tw-opts">${b.options.map((o, j) => `<button class="tw-opt" data-o="${j}">${inl(o)}</button>`).join('')}</div>
+  if (!card || !b) return;
+  const extra = !!(opts && opts.extra);
+  const qs = L.blocks.filter(x => x.t === 'q');
+  const qn = Math.max(1, qs.indexOf(b) + 1);
+  T.q = i; card.hidden = false; card.dataset.extra = extra ? '1' : '';
+  const short = b.qtype === 'short-answer';
+  const choices = short
+    ? `<form id="twShortForm"><input class="tw-short" id="twShort" autocomplete="off" placeholder="${esc(t('tw.sa'))}" aria-label="${esc(t('tw.sa'))}"></form>`
+    : `<div class="tw-opts">${(b.options || []).map((o, j) => `<button class="tw-opt" type="button" data-o="${j}">${inl(o)}</button>`).join('')}</div>`;
+  card.innerHTML = `${b.difficulty ? `<span class="tw-diff">${esc(b.difficulty)}</span>` : ''}<p class="tw-qtext" id="twQText">${inl(b.question)}</p>${choices}
     <div class="tw-fb" id="twFb" hidden></div>
-    <div class="tw-qfoot"><span class="tw-qcount">${esc(t('tw.qof', { n: qn, total: qs.length }))}</span>
-      <button class="tw-skip" id="twSkip">${esc(t('tw.skip'))}</button>
-      <button class="btn-primary" id="twCont" hidden>${esc(t('tw.continue'))} ${icon('chevR', 16)}</button></div>`;
-  twCaption(t('tw.qcap'));
-  $$('.tw-opt', card).forEach(btn => btn.onclick = () => twAnswer(i, +btn.dataset.o));
-  $('#twSkip').onclick = () => { L.answers[i] = { skipped: true }; twCloseQ(i); };
-  $('#twCont').onclick = () => twCloseQ(i);
-  card.querySelector('.tw-opt').focus({ preventScroll: true });
+    <div class="tw-qfoot"><span class="tw-qcount">${esc(t('tw.qof', { n: qn, total: Math.max(qs.length, qn) }))}</span>
+      <button class="tw-skip" type="button" id="twReveal">${esc(t('tw.reveal'))}</button>
+      <button class="tw-skip" type="button" id="twSkip">${esc(t('tw.skip'))}</button>
+      ${short ? `<button class="btn-primary" type="button" id="twGrade">${esc(t('tw.submit'))}</button>` : ''}
+      <button class="btn-primary" type="button" id="twCont" hidden>${esc(t('tw.continue'))} ${icon('chevR', 16)}</button></div>`;
+  twCaption(short ? t('tw.qcapShort') : t('tw.qcap'));
+  if (!short) $$('.tw-opt', card).forEach(btn => btn.onclick = () => twAnswer(i, +btn.dataset.o));
+  else {
+    $('#twGrade').onclick = () => twGradeShort(i);
+    $('#twShortForm').onsubmit = e => { e.preventDefault(); twGradeShort(i); };
+    $('#twShort').focus({ preventScroll: true });
+  }
+  $('#twSkip').onclick = () => { if (L.answers[i] && L.answers[i].pending) return; L.answers[i] = { skipped: true }; twCloseQ(i, extra); };
+  $('#twReveal').onclick = () => twReveal(i);
+  $('#twCont').onclick = () => twCloseQ(i, extra);
+  const first = card.querySelector('.tw-opt'); if (first) first.focus({ preventScroll: true });
 }
 function twAnswer(i, j) {
-  const L = T.L, b = L.blocks[i]; if (L.answers[i]) return;
-  const ok = j === b.answer; L.answers[i] = { choice: j, ok };
+  const L = T.L, b = L.blocks[i]; if (!b || L.answers[i]) return;
+  const correct = choiceIndex(b);
+  const ok = correct >= 0 && j === correct; L.answers[i] = { choice: j, ok };
   $$('.tw-opt', $('#twQ')).forEach((btn, k) => {
     btn.disabled = true;
-    btn.classList.toggle('correct', k === b.answer); btn.classList.toggle('wrong', k === j && !ok);
-    btn.classList.toggle('dim', k !== b.answer && k !== j);
+    btn.classList.toggle('correct', correct >= 0 && k === correct);
+    btn.classList.toggle('wrong', k === j && !ok);
+    btn.classList.toggle('dim', k !== correct && k !== j);
   });
   const fb = $('#twFb'); fb.hidden = false; fb.className = 'tw-fb ' + (ok ? 'ok' : 'no');
-  fb.innerHTML = `<b>${esc(ok ? t('tw.correct') : t('tw.wrong'))}</b> ${inl(b.explain)}`;
-  $('#twSkip').hidden = true; const c = $('#twCont'); c.hidden = false; c.focus({ preventScroll: true });
-  twCaption((ok ? 'Nice — that’s right. ' : 'Not quite. ') + plain(b.explain));
+  fb.innerHTML = `<b>${esc(ok ? t('tw.correct') : t('tw.wrong'))}</b> ${inl(b.explain || '')}`;
+  $('#twSkip').hidden = true; $('#twReveal').hidden = true;
+  const c = $('#twCont'); c.hidden = false; c.focus({ preventScroll: true });
+  twCaption((ok ? t('tw.correct') : t('tw.wrong')) + ' ' + plain(b.explain || ''));
 }
-function twCloseQ(i) { $('#twQ').hidden = true; T.q = null; T.L.idx = i + 1; if (T.playing) twSchedule(450); }
-
-/* Q&A and circle-to-explain */
-function tutorReply(L, q) {
-  const stop = new Set(['what', 'why', 'how', 'the', 'does', 'this', 'that', 'with', 'and', 'for', 'are', 'can', 'you', 'about', 'explain', 'mean', 'means', 'there', 'when', 'which', 'where', 'who', 'whats', 'please', 'tell', 'more', 'happens', 'happen', 'its']);
-  const keys = (q.toLowerCase().match(/[a-z_က-႟][a-z0-9_က-႟]{2,}/g) || []).filter(w => !stop.has(w));
-  const scoreOf = txt => keys.reduce((n, k) => n + (txt.toLowerCase().includes(k) ? 1 : 0), 0);
-  let best = null, score = 0;
-  L.blocks.forEach((b, i) => {
-    if (i >= L.idx) return;                       // only what's already on the board
-    const s = scoreOf(blockText(b) + ' ' + (b.explain || ''));
-    if (s > score) { score = s; best = b; }
+function twReveal(i) {
+  const L = T.L, b = L.blocks[i];
+  if (!b || (L.answers[i] && !L.answers[i].pending)) return;
+  L.answers[i] = { revealed: true, skipped: true };
+  $$('.tw-opt', $('#twQ')).forEach(btn => { btn.disabled = true; });
+  const short = $('#twShort'); if (short) short.disabled = true;
+  const fb = $('#twFb'); fb.hidden = false; fb.className = 'tw-fb';
+  fb.innerHTML = `<b>${esc(t('tw.expected'))}</b> ${inl(b.correctAnswer || '')}${b.explain ? `<div>${inl(b.explain)}</div>` : ''}`;
+  $('#twSkip').hidden = true; $('#twReveal').hidden = true;
+  const grade = $('#twGrade'); if (grade) grade.hidden = true;
+  const c = $('#twCont'); c.hidden = false; c.focus({ preventScroll: true });
+}
+async function twGradeShort(i) {
+  const L = T.L, b = L.blocks[i], input = $('#twShort');
+  const value = input ? input.value.trim() : '';
+  if (!b || !value || (L.answers[i] && (L.answers[i].pending || L.answers[i].text))) return;
+  L.answers[i] = { pending: true, text: value };
+  if (input) input.disabled = true;
+  const grade = $('#twGrade'); if (grade) grade.disabled = true;
+  const fb = $('#twFb'); fb.hidden = false; fb.className = 'tw-fb'; fb.textContent = t('tw.checking');
+  try {
+    const data = await postJson('/api/whiteboard/grade', {
+      language: lessonLang(L),
+      question: b.question,
+      expectedAnswer: b.correctAnswer || '',
+      explanation: b.explain || '',
+      learnerAnswer: value
+    });
+    if (!T.L || T.q !== i) return;
+    L.answers[i] = { text: value, ok: !!data.correct };
+    fb.className = 'tw-fb ' + (data.correct ? 'ok' : 'no');
+    fb.innerHTML = `<b>${esc(data.correct ? t('tw.correct') : t('tw.wrong'))}</b> ${inl(data.feedback || b.explain || '')}`;
+    if (!data.correct && b.correctAnswer) fb.insertAdjacentHTML('beforeend', `<div><b>${esc(t('tw.expected'))}</b> ${inl(b.correctAnswer)}</div>`);
+    $('#twReveal').hidden = true; $('#twSkip').hidden = true; if (grade) grade.hidden = true;
+    const c = $('#twCont'); c.hidden = false; c.focus({ preventScroll: true });
+    twCaption((data.correct ? t('tw.correct') : t('tw.wrong')) + ' ' + (data.feedback || ''));
+  } catch (err) {
+    if (T.L === L) delete L.answers[i];
+    if (input) input.disabled = false;
+    if (grade) grade.disabled = false;
+    fb.className = 'tw-fb no';
+    fb.innerHTML = `${esc(friendlyError(err))} <button type="button" class="qa-retry" id="twGradeRetry">${esc(t('retry'))}</button>`;
+    const retry = $('#twGradeRetry'); if (retry) retry.onclick = () => twGradeShort(i);
+  }
+}
+function twCloseQ(i, extra) {
+  const card = $('#twQ'); if (card) card.hidden = true;
+  T.q = null;
+  const L = T.L; if (!L) return;
+  if (extra) {
+    if (L.finished || L.ended) twFinish(true);
+    else if (T.playing) twSchedule(450);
+    return;
+  }
+  L.idx = i + 1;
+  if (T.playing) twSchedule(450);
+}
+async function streamChat(L, message, signal, onDelta) {
+  const payload = {
+    message,
+    language: lessonLang(L),
+    lesson: L.apiLesson ? compactLesson(L.apiLesson) : { title: lessonTitle(L), topic: L.topic || '', language: lessonLang(L) },
+    history: L.qa.filter(x => x.a && !x.error && !x.pending).slice(-8).map(x => ({ q: clipText(x.q, 1500), a: clipText(x.a, 2000) })),
+    progress: progressPayload(L)
+  };
+  const fresh = L.sources.filter(s => s.file && !s.sent);
+  let res;
+  try {
+    if (fresh.length) {
+      const fd = new FormData();
+      fd.append('message', payload.message);
+      fd.append('language', payload.language);
+      fd.append('lesson', JSON.stringify(payload.lesson));
+      fd.append('history', JSON.stringify(payload.history));
+      fd.append('progress', JSON.stringify(payload.progress));
+      fresh.forEach(s => fd.append('files', s.file, s.file.name));
+      res = await fetch('/api/whiteboard/chat', { method: 'POST', body: fd, headers: { Accept: 'text/event-stream' }, signal });
+    } else {
+      res = await fetch('/api/whiteboard/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' }, body: JSON.stringify(payload), signal });
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') throw err;
+    throw Object.assign(new Error(''), { code: 'network' });
+  }
+  const type = res.headers.get('content-type') || '';
+  if (!res.ok || type.includes('application/json')) {
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw apiErr(res, data);
+  }
+  await readSSE(res, ev => {
+    if (ev.materials) applyMaterials(L, ev.materials);
+    if (ev.error) throw Object.assign(new Error(ev.error), { code: ev.code || 'upstream' });
+    if (ev.delta) onDelta(ev.delta);
   });
-  let src = null, srcScore = 0;                   // uploaded text files
-  sourceText(L).replace(/\s+/g, ' ').split(/(?<=[.!?])\s+/).forEach(s => { const n = scoreOf(s); if (n > srcScore) { srcScore = n; src = s; } });
-  if (src && srcScore >= score) return `From your materials: “${src.slice(0, 240)}”`;
-  if (best) return (best.explain ? plain(best.explain) : `Here’s what the board says: ${blockText(best)}`).slice(0, 360);
-  return 'In this prototype I can only point to what’s already on the board or in your uploaded text files. Try asking about a term you can see — or connect a tutor service for full answers.';
+  fresh.forEach(s => { s.sent = true; });
 }
-function twAddQA(q, a, circled) {
-  T.L.qa.push({ q, a, circled: !!circled }); twRenderQA();
-  const items = $$('.qa-item'); if (items.length) twScrollTo(items[items.length - 1]);
+async function twAsk(text, entry) {
+  const L = T.L;
+  if (!L || T.chatBusy) return;
+  T.chatBusy = true; twSyncAsk();
+  const item = entry || { q: text, a: '', error: '', pending: true };
+  item.a = ''; item.error = ''; item.pending = true;
+  if (!entry) L.qa.push(item);
+  twRenderQA();
+  const ac = new AbortController(); T.chatAbort = ac;
+  try {
+    await streamChat(L, text, ac.signal, delta => { item.a += delta; twPatchQA(item); if ($('#twCap')) twCaption(item.a); });
+    if (!item.a.trim()) throw Object.assign(new Error(''), { code: 'invalid_response' });
+    item.pending = false;
+  } catch (err) {
+    item.pending = false;
+    if (err.name === 'AbortError') { if (!item.a) item.a = t('tw.stopped'); }
+    else item.error = friendlyError(err);
+  } finally {
+    T.chatBusy = false;
+    if (T.chatAbort === ac) T.chatAbort = null;
+    twRenderQA(); twSyncAsk();
+  }
+}
+function twPatchQA(item) {
+  if (!T.L) return;
+  const node = $$('.qa-item')[T.L.qa.indexOf(item)];
+  const body = node && node.querySelector('.qa-body');
+  if (body) body.textContent = item.a || t('tw.thinking');
+  else twRenderQA();
+}
+async function twFetchQuestion(difficulty) {
+  const L = T.L; if (!L || T.qBusy) return;
+  if (T.q != null) { toast(t('tw.finishQ')); return; }
+  clearTimeout(T.timer);
+  T.qBusy = true; twCaption(t('tw.thinking'));
+  try {
+    const prog = progressPayload(L);
+    const data = await postJson('/api/whiteboard/question', {
+      language: lessonLang(L),
+      lesson: L.apiLesson ? compactLesson(L.apiLesson) : { title: lessonTitle(L), topic: L.topic || '', language: lessonLang(L) },
+      previousQuestions: L.blocks.filter(b => b.t === 'q').map(b => b.question).slice(-20),
+      recentAnswers: prog.recentAnswers,
+      section: prog.currentSection,
+      difficulty: difficulty || 'medium'
+    });
+    if (!data.question) throw Object.assign(new Error(''), { code: 'invalid_response' });
+    const i = L.blocks.length;
+    L.blocks.push(questionToBlock(data.question));
+    twShowQ(i, { extra: true });
+  } catch (err) {
+    toast(friendlyError(err));
+    if (T.playing && T.q == null) twSchedule(450);
+  } finally { T.qBusy = false; }
 }
 function twRenderQA() {
-  const box = $('#twQA'); if (!box) return;
-  box.innerHTML = T.L.qa.map(x => `<div class="qa-item"><p class="qa-q"><b>${esc(x.circled ? '✎' : t('tw.you'))}</b>${esc(x.q)}</p><p class="qa-a"><b>${esc(t('tw.tutor'))}</b>${esc(x.a)}<span class="qa-tag">prototype</span></p></div>`).join('');
+  const box = $('#twQA'); if (!box || !T.L) return;
+  box.innerHTML = T.L.qa.map((x, i) => `<div class="qa-item${x.pending ? ' pending' : ''}"><p class="qa-q"><b>${esc(x.circled ? '✎' : t('tw.you'))}</b><span>${esc(x.q)}</span></p><p class="qa-a"><b>${esc(t('tw.tutor'))}</b><span class="qa-body">${esc(x.a || (x.pending ? t('tw.thinking') : ''))}</span></p>${x.error ? `<p class="qa-err">${esc(x.error)} <button type="button" class="qa-retry" data-retry="${i}">${esc(t('retry'))}</button></p>` : ''}</div>`).join('');
+  const items = $$('.qa-item', box); if (items.length) twScrollTo(items[items.length - 1]);
 }
 function twInkSize() {
   const sc = $('#twScroll'), cv = $('#twInk'); if (!sc || !cv) return;
@@ -1425,10 +1732,12 @@ function twExplainStroke(st) {
   const hit = document.elementFromPoint(r.left + cx, r.top + cy);
   cv.style.pointerEvents = '';
   const el = hit && hit.closest('[data-b]');
-  if (!el) { twCaption('I couldn’t find board content there — circle a line of text or part of a diagram.'); return; }
+  if (!el) { twCaption(t('tw.miss')); return; }
   el.classList.remove('wb-flash'); void el.offsetWidth; el.classList.add('wb-flash');
-  const b = T.L.blocks[+el.dataset.b], ans = plain(b.explain || b.say || blockText(b));
-  const label = blockText(b); twAddQA(`Circled: “${label.length > 70 ? label.slice(0, 68) + '…' : label}”`, ans, true); twCaption(ans);
+  const b = T.L.blocks[+el.dataset.b];
+  const label = blockText(b);
+  const clipped = label.length > 500 ? label.slice(0, 500) : label;
+  twAsk((state.lang === 'my' ? 'ဤအပိုင်းကို ပိုရိုးရှင်းစွာ ရှင်းပြပါ: ' : 'Explain this part more simply: ') + clipped);
 }
 
 /* finish, end, export */
@@ -1438,30 +1747,34 @@ function twStats(L) {
     shown: L.blocks.filter((b, i) => i < L.idx && b.t !== 'q').length, total: L.blocks.filter(b => b.t !== 'q').length };
 }
 function twFinish(restore) {
-  const L = T.L; if (!L.ended) L.finished = true;
-  clearTimeout(T.timer); $('#twQ').hidden = true; T.q = null; $('#twFollow').hidden = true;
+  const L = T.L; if (!L) return;
+  if (!L.ended) L.finished = true;
+  clearTimeout(T.timer); const q = $('#twQ'); if (q) q.hidden = true; T.q = null; const follow = $('#twFollow'); if (follow) follow.hidden = true;
   const s = twStats(L);
-  $('#twEndBox').innerHTML = `<div class="wb-done"><h3>${L.ended ? 'Lesson ended' : 'Lesson complete'} ✓</h3>
-    <p>You answered ${s.correct} of ${s.qs} question${s.qs === 1 ? '' : 's'} correctly${L.qa.length ? ` and asked ${L.qa.length} question${L.qa.length === 1 ? '' : 's'}` : ''}.</p>
-    <div class="wb-done-actions"><button class="btn-o" id="twDoneDl">${icon('download', 15)} Download notes</button><a class="btn-o" href="#/study">${icon('bookplus', 15)} ${esc(t('nav.study'))}</a><a class="btn-primary" href="#/home">${icon('home', 15)} ${esc(t('nav.home'))}</a></div></div>`;
+  const asked = L.qa.length ? ' ' + t('tw.asked', { n: L.qa.length }) : '';
+  $('#twEndBox').innerHTML = `<div class="wb-done"><h3>${esc(L.ended ? t('tw.endedTitle') : t('tw.doneTitle'))}</h3>
+    <p>${esc(t('tw.summary', { shown: s.shown, total: s.total, correct: s.correct, qs: s.qs }))}${esc(asked)}</p>
+    <div class="wb-done-actions"><button class="btn-o" type="button" id="twAnother">${esc(t('tw.another'))}</button><button class="btn-o" type="button" id="twDoneDl">${icon('download', 15)} ${esc(t('tw.notes'))}</button><a class="btn-o" href="#/study">${icon('bookplus', 15)} ${esc(t('nav.study'))}</a><a class="btn-primary" href="#/home">${icon('home', 15)} ${esc(t('nav.home'))}</a></div></div>`;
   $('#twDoneDl').onclick = () => exportLesson(L);
+  $('#twAnother').onclick = () => twFetchQuestion('medium');
   twUpdatePlay();
-  if (!restore) { twCaption('That’s the whole lesson! Download your notes, review the board, or head back when you’re ready.'); twScrollTo($('#twEndBox')); }
+  if (!restore) { twCaption(t('tw.doneTitle')); twScrollTo($('#twEndBox')); }
 }
 function twEndConfirm() {
   const L = T.L, s = twStats(L);
-  openModal(`<h2 id="mTitle">${L.finished ? 'Leave this lesson?' : 'End this lesson?'}</h2>
-    <p class="sub">You've covered ${s.shown} of ${s.total} board steps and answered ${s.answered} of ${s.qs} questions (${s.correct} correct).</p>
-    <div class="modal-actions"><button class="btn-ghost" data-close>Keep learning</button><button class="btn-danger" id="twEndYes">${esc(t('tw.end'))}</button></div>`, box => {
+  openModal(`<h2 id="mTitle">${esc(L.finished ? t('tw.leave') : t('tw.endAsk'))}</h2>
+    <p class="sub">${esc(t('tw.summaryAsk', s))}</p>
+    <div class="modal-actions"><button class="btn-ghost" data-close>${esc(t('tw.keep'))}</button><button class="btn-danger" id="twEndYes">${esc(t('tw.end'))}</button></div>`, box => {
     box.setAttribute('aria-labelledby', 'mTitle');
     box.querySelector('[data-close]').onclick = closeModal;
     $('#twEndYes').onclick = () => {
+      if (T.chatAbort) { T.chatAbort.abort(); T.chatAbort = null; }
       if (!L.finished) L.ended = true;
       T.playing = false; clearTimeout(T.timer); clearInterval(T.capTimer);
-      twFinish(true); twCaption('Lesson ended. Your board stays here so you can review it.');
-      openModal(`<h2 id="mTitle">${L.ended ? 'Lesson ended' : 'Lesson complete'}</h2>
-        <p class="sub">${esc(lessonTitle(L))}: ${s.shown} of ${s.total} board steps · ${s.correct} of ${s.qs} questions correct.</p>
-        <div class="end-actions"><button class="btn-o" id="twEndDl">${icon('download', 15)} Download notes</button><button class="btn-ghost" data-close>Review board</button><a class="btn-o" href="#/study">${esc(t('nav.study'))}</a><a class="btn-primary" href="#/home">${esc(t('nav.home'))}</a></div>`, b2 => {
+      twFinish(true); twCaption(t('tw.endedTitle'));
+      openModal(`<h2 id="mTitle">${esc(L.ended ? t('tw.endedTitle') : t('tw.doneTitle'))}</h2>
+        <p class="sub">${esc(lessonTitle(L))}: ${esc(t('tw.summary', s))}</p>
+        <div class="end-actions"><button class="btn-o" id="twEndDl">${icon('download', 15)} ${esc(t('tw.notes'))}</button><button class="btn-ghost" data-close>${esc(t('tw.review'))}</button><a class="btn-o" href="#/study">${esc(t('nav.study'))}</a><a class="btn-primary" href="#/home">${esc(t('nav.home'))}</a></div>`, b2 => {
         b2.setAttribute('aria-labelledby', 'mTitle');
         b2.querySelector('[data-close]').onclick = closeModal;
         $('#twEndDl').onclick = () => exportLesson(L);
@@ -1470,38 +1783,68 @@ function twEndConfirm() {
     };
   });
 }
-function lessonMarkdown(L) {
-  const md = [`# ${plain(lessonTitle(L))}`, '', '> Lesson notes exported from the Solvely-style prototype. Content was assembled locally from templates — no AI tutor was connected.', ''];
-  if (L.topic) md.push(`**Instructions:** ${L.topic}`, '');
-  let qn = 0;
-  L.blocks.forEach((b, i) => {
-    switch (b.t) {
-      case 'h': md.push(`## ${plain(b.text)}`, ''); break;
-      case 'ul': b.items.forEach(x => md.push(`- ${plain(x)}`)); md.push(''); break;
-      case 'p': case 'callout': md.push(plain(b.text), ''); break;
-      case 'math': md.push('`' + plain(b.text) + '`', ''); break;
-      case 'code': md.push('```' + (b.lang || ''), b.text, '```', ''); break;
-      case 'diagram': md.push(`_[Diagram: ${plain(b.caption || b.kind)}]_`, ''); break;
-      case 'q': {
-        qn++; const a = L.answers[i];
-        md.push(`**Question ${qn}:** ${plain(b.question)}`, '');
-        b.options.forEach((o, j) => md.push(`- [${j === b.answer ? 'x' : ' '}] ${plain(o)}`));
-        md.push('', `_Explanation:_ ${plain(b.explain)}`, `_Your answer:_ ${!a ? 'not reached' : a.skipped ? 'skipped' : (a.ok ? 'correct' : 'incorrect') + ' — ' + plain(b.options[a.choice])}`, '');
-      }
-    }
-  });
-  if (L.qa.length) { md.push('## Your questions', ''); L.qa.forEach(x => md.push(`- **Q:** ${x.q}`, `  **Tutor (prototype):** ${x.a}`)); md.push(''); }
-  if (L.sampleSource) md.push('## Sample material', '', '```sql', L.sampleSource, '```', '');
-  return md.join('\n');
+function mathHtml(src) {
+  if (!window.katex) return '';
+  try { return window.katex.renderToString(String(src || ''), { throwOnError: false, trust: false, displayMode: true }); }
+  catch { return ''; }
 }
-function exportLesson(L) {
-  if (!L) return;
+async function diagramSvgFor(b, i) {
+  const live = document.querySelector(`.wb-block[data-b="${i}"] .wb-diagram svg`);
+  if (live) return live.outerHTML;
+  const src = cleanMermaid(b.mermaid);
+  if (!src) return '';
   try {
-    const url = URL.createObjectURL(new Blob([lessonMarkdown(L)], { type: 'text/markdown' }));
-    const a = document.createElement('a'); a.href = url; a.download = slug(lessonTitle(L)) + '.md';
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
-    toast('Lesson notes downloaded (.md)');
-  } catch (e) { toast('Download isn’t available in this browser.'); }
+    const mermaid = await ensureMermaid();
+    if (mermaid.parse) await mermaid.parse(src);
+    const out = await mermaid.render('pdf' + Math.random().toString(36).slice(2, 9), src);
+    const svg = safeSvg(out.svg);
+    return svg ? svg.outerHTML : '';
+  } catch { return ''; }
+}
+async function notesPayload(L) {
+  const blocks = [];
+  for (let i = 0; i < L.blocks.length; i++) {
+    const b = L.blocks[i];
+    if (b.t === 'ul') blocks.push({ t: 'ul', items: b.items || [] });
+    else if (b.t === 'code') blocks.push({ t: 'code', lang: b.lang || '', text: b.text || '' });
+    else if (b.t === 'math') blocks.push({ t: 'math', text: b.text || '', html: mathHtml(b.text) });
+    else if (b.t === 'table') blocks.push({ t: 'table', headers: b.headers || [], rows: b.rows || [] });
+    else if (b.t === 'diagram') blocks.push({ t: 'diagram', caption: b.caption || b.fallback || '', svg: await diagramSvgFor(b, i) });
+    else if (b.t === 'q') blocks.push({ t: 'q', question: b.question || '', options: b.options || [], correctAnswer: b.correctAnswer || '' });
+    else if (b.text) blocks.push({ t: b.t, text: b.text });
+  }
+  return { title: plain(lessonTitle(L)), language: lessonLang(L), blocks };
+}
+function pdfName(title) {
+  const name = String(title || 'lesson').replace(/[\\/:*?"<>|\u0000]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
+  return (name || 'lesson') + '.pdf';
+}
+async function exportLesson(L) {
+  if (!L || L.exporting) return;
+  L.exporting = true;
+  toast(t('tw.saving'));
+  try {
+    const res = await fetch('/api/whiteboard/pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/pdf' },
+      body: JSON.stringify(await notesPayload(L))
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw apiErr(res, data);
+    }
+    const url = URL.createObjectURL(await res.blob());
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = pdfName(plain(lessonTitle(L)));
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast(t('tw.saved'));
+  } catch (err) {
+    toast(friendlyError(err));
+  } finally {
+    L.exporting = false;
+  }
 }
 
 /* ---------- plan modal (design demonstration) ---------- */
