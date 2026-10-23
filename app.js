@@ -2060,21 +2060,76 @@ async function narrPlayIndex(index, opts) {
     if (Narr.abort === ac) Narr.abort = null;
   }
 }
+function narrQuestionAfterSection(sectionIndex) {
+  const L = T.L;
+  if (!L || !L.blocks || !Narr.sections.length) return -1;
+  const section = Narr.sections[sectionIndex];
+  const next = Narr.sections[sectionIndex + 1];
+  const from = section && section.blocks && section.blocks.length
+    ? Math.max(...section.blocks) + 1
+    : (L.idx || 0);
+  const until = next && next.blocks && next.blocks.length
+    ? Math.min(...next.blocks)
+    : L.blocks.length;
+  for (let i = Math.max(from, 0); i < until; i++) {
+    if (L.blocks[i] && L.blocks[i].t === 'q' && !L.answers[i]) return i;
+  }
+  if (L.idx < L.blocks.length && L.blocks[L.idx] && L.blocks[L.idx].t === 'q' && !L.answers[L.idx]) {
+    return L.idx;
+  }
+  return -1;
+}
+function narrContinueAfterGap() {
+  const L = T.L;
+  if (!L || !T.playing || T.q != null || L.finished || L.ended) return;
+  if (L.idx < L.blocks.length && L.blocks[L.idx].t === 'q') {
+    twShowQ(L.idx);
+    return;
+  }
+  const qIdx = narrQuestionAfterSection(Narr.index);
+  if (qIdx >= 0) {
+    L.idx = qIdx;
+    twShowQ(qIdx);
+    return;
+  }
+  if (Narr.index < Narr.sections.length - 1) {
+    Narr.driving = true;
+    narrPlayIndex(Narr.index + 1, { force: true });
+    return;
+  }
+  while (L.idx < L.blocks.length && L.blocks[L.idx].t !== 'q') L.idx++;
+  if (L.idx < L.blocks.length && L.blocks[L.idx].t === 'q') twShowQ(L.idx);
+  else if (L.idx >= L.blocks.length) twFinish(false);
+  else twSchedule(300);
+}
 function narrOnSectionEnd() {
   const section = Narr.sections[Narr.index];
   if (section && Narr.typePlan && Narr.typePlan.length) narrFinalizeTyping(section);
-  if (!Narr.autoContinue && !Narr.driving) { narrUpdateUi(); return; }
-  if (Narr.index < Narr.sections.length - 1) {
-    setTimeout(() => { if (T.L && Narr.state === 'done') narrPlayIndex(Narr.index + 1, { force: true }); }, 280);
-  } else {
-    Narr.state = 'done';
+  Narr.state = 'done';
+  narrHighlight(null);
+  narrClearWords();
+  narrUpdateUi();
+  if (!Narr.autoContinue && !Narr.driving) return;
+  const qIdx = narrQuestionAfterSection(Narr.index);
+  if (qIdx >= 0) {
     Narr.driving = false;
-    narrHighlight(null);
-    narrClearWords();
-    narrUpdateUi();
-    twCaption(t('narr.done'));
-    if (T.playing && T.L && !T.L.finished && !T.L.ended && T.q == null) twSchedule(450);
+    const L = T.L;
+    if (L) L.idx = qIdx;
+    setTimeout(() => {
+      if (!T.L || T.q != null || !T.playing) return;
+      twShowQ(qIdx);
+    }, 280);
+    return;
   }
+  if (Narr.index < Narr.sections.length - 1) {
+    setTimeout(() => {
+      if (T.L && Narr.state === 'done' && T.q == null) narrPlayIndex(Narr.index + 1, { force: true });
+    }, 280);
+    return;
+  }
+  Narr.driving = false;
+  twCaption(t('narr.done'));
+  if (T.playing && T.L && !T.L.finished && !T.L.ended && T.q == null) twSchedule(450);
 }
 function narrPause() {
   if (Narr.audio && !Narr.audio.paused) {
@@ -2148,13 +2203,16 @@ function narrBindControls() {
   }).catch(() => {});
 }
 function narrOnQuestionOpen() {
-  if (Narr.state === 'playing') narrPause();
+  if (Narr.state === 'playing' || Narr.state === 'loading') narrPause();
+  Narr.driving = false;
 }
 function narrOnQuestionClose() {
-  if (Narr.resumeAfterQ && Narr.state === 'paused' && (Narr.autoContinue || Narr.autoStart)) narrTogglePlay();
-  else if (T.playing && Narr.autoStart && Narr.index < Narr.sections.length - 1) {
-    setTimeout(() => { if (T.L && T.q == null) narrPlayIndex(Narr.index + 1, { force: true }); }, 300);
+  if (!(Narr.resumeAfterQ && (Narr.autoContinue || Narr.autoStart))) return;
+  if (Narr.state === 'paused' && Narr.audio && Narr.audio.currentTime > 0 && !Narr.audio.ended) {
+    narrTogglePlay();
+    return;
   }
+  setTimeout(() => { if (T.L && T.q == null) narrContinueAfterGap(); }, 280);
 }
 
 /* questions and tutor chat */
@@ -2272,14 +2330,13 @@ function twCloseQ(i, extra) {
   const card = $('#twQ'); if (card) card.hidden = true;
   T.q = null;
   const L = T.L; if (!L) return;
-  narrOnQuestionClose();
   if (extra) {
     if (L.finished || L.ended) twFinish(true);
     else if (T.playing) twSchedule(450);
     return;
   }
   L.idx = i + 1;
-  if (T.playing) twSchedule(450);
+  narrOnQuestionClose();
 }
 async function streamChat(L, message, signal, onDelta) {
   const payload = {
