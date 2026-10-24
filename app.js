@@ -104,7 +104,21 @@ const I18N = {
     demo: 'Demo response', demoNote: 'Mock output for this prototype — no AI model is connected.',
     'step.write': 'Write the equation', 'step.sub': 'Subtract {b} from both sides', 'step.add': 'Add {b} to both sides',
     'step.div': 'Divide both sides by {a}', 'step.check': 'Check the answer', finalAnswer: 'Final answer',
-    createLesson: 'Create lesson', 'wb.try': 'Try:', retry: 'Try again',
+    createLesson: 'Create lesson', createCards: 'Create cards', 'wb.try': 'Try:', retry: 'Try again',
+    'fc.prepTitle': 'Preparing your study set…', 'fc.prepWorking': 'Gemini is writing flashcards from your request.',
+    'fc.prepBack': 'Back to study sets', 'fc.prepErr': 'We couldn’t create this study set',
+    'fc.studyGuide': 'Study Guide', 'fc.reviewGuide': 'Review Guide', 'fc.practice': 'Practice cards',
+    'fc.overview': 'Overview', 'fc.all': 'All', 'fc.needReview': 'Need Review', 'fc.mastered': 'Mastered',
+    'fc.incomplete': 'Incomplete', 'fc.topics': 'Topics', 'fc.sources': 'Sources',
+    'fc.ask': 'Ask about these cards…', 'fc.flipHint': 'Press Space or click to flip and see the answer.',
+    'fc.needBtn': 'Need Review', 'fc.masterBtn': 'Mastered', 'fc.prev': 'Previous', 'fc.next': 'Next',
+    'fc.doneTitle': 'Session complete', 'fc.doneSub': 'You reviewed {n} cards. Mastered {m}, need review {r}.',
+    'fc.studyAgain': 'Study again', 'fc.openSet': 'Back to set', 'fc.rename': 'Rename', 'fc.delete': 'Delete',
+    'fc.countOpt': '{n} cards', 'fc.diff': 'Difficulty', 'fc.style': 'Style',
+    'fc.emptySets': 'No flashcard sets yet. Create cards from the Home Flashcards tab.',
+    'fc.chatTitle': 'Flashcard tutor', 'fc.loadingGuide': 'Writing guide…',
+    'fc.mastery': '{n}% mastered', 'fc.cardOf': 'Card {n} of {total}',
+    'fc.breadcrumb': 'Study Set', 'fc.flashcards': 'Flashcards',
     'prep.title': 'Creating your lesson…', 'prep.left': 'About {n} sec left', 'prep.ready': 'Ready — opening your lesson',
     'prep.s1': 'Understanding “{topic}”…', 'prep.s2': 'Planning your lesson flow…', 'prep.s3': 'Sketching visual explanations…',
     'prep.s4': 'Preparing tutor voice audio…', 'prep.s5': 'Starting your interactive lesson…',
@@ -196,7 +210,21 @@ const I18N = {
     demo: 'နမူနာအဖြေ', demoNote: 'ဤရှေ့ပြေးပုံစံအတွက် နမူနာသာ ဖြစ်သည် — AI မော်ဒယ် ချိတ်ဆက်ထားခြင်း မရှိပါ။',
     'step.write': 'ညီမျှခြင်းကို ရေးပါ', 'step.sub': 'နှစ်ဖက်စလုံးမှ {b} ကို နုတ်ပါ', 'step.add': 'နှစ်ဖက်စလုံးသို့ {b} ကို ပေါင်းပါ',
     'step.div': 'နှစ်ဖက်စလုံးကို {a} ဖြင့် စားပါ', 'step.check': 'အဖြေကို စစ်ဆေးပါ', finalAnswer: 'အဖြေ',
-    createLesson: 'သင်ခန်းစာ ဖန်တီးရန်', 'wb.try': 'စမ်းကြည့်ရန်:', retry: 'ထပ်စမ်းရန်',
+    createLesson: 'သင်ခန်းစာ ဖန်တီးရန်', createCards: 'ကတ်ပြား ဖန်တီးရန်', 'wb.try': 'စမ်းကြည့်ရန်:', retry: 'ထပ်စမ်းရန်',
+    'fc.prepTitle': 'လေ့လာရေးအစု ပြင်ဆင်နေသည်…', 'fc.prepWorking': 'Gemini က သင့်တောင်းဆိုချက်မှ ကတ်ပြားများ ရေးနေသည်။',
+    'fc.prepBack': 'လေ့လာရေးအစုများသို့', 'fc.prepErr': 'ဤလေ့လာရေးအစုကို ဖန်တီးမရပါ',
+    'fc.studyGuide': 'လေ့လာရေးလမ်းညွှန်', 'fc.reviewGuide': 'ပြန်လည်သုံးသပ်လမ်းညွှန်', 'fc.practice': 'လေ့ကျင့်ကတ်များ',
+    'fc.overview': 'အနှစ်ချုပ်', 'fc.all': 'အားလုံး', 'fc.needReview': 'ပြန်ကြည့်ရန်', 'fc.mastered': 'ကျွမ်းကျင်ပြီး',
+    'fc.incomplete': 'မပြီးသေး', 'fc.topics': 'ခေါင်းစဉ်များ', 'fc.sources': 'ရင်းမြစ်များ',
+    'fc.ask': 'ဤကတ်များအကြောင်း မေးပါ…', 'fc.flipHint': 'Space သို့မဟုတ် နှိပ်၍ လှန်ပြီး အဖြေကြည့်ပါ။',
+    'fc.needBtn': 'ပြန်ကြည့်ရန်', 'fc.masterBtn': 'ကျွမ်းကျင်ပြီး', 'fc.prev': 'ယခင်', 'fc.next': 'ရှေ့',
+    'fc.doneTitle': 'လေ့ကျင့်မှု ပြီးပါပြီ', 'fc.doneSub': 'ကတ် {n} ခု ကြည့်ပြီး။ ကျွမ်းကျင် {m}၊ ပြန်ကြည့်ရန် {r}။',
+    'fc.studyAgain': 'ထပ်လေ့ကျင့်ရန်', 'fc.openSet': 'အစုသို့ ပြန်ရန်', 'fc.rename': 'အမည်ပြောင်း', 'fc.delete': 'ဖျက်ရန်',
+    'fc.countOpt': 'ကတ် {n} ခု', 'fc.diff': 'အဆင့်', 'fc.style': 'ပုံစံ',
+    'fc.emptySets': 'ကတ်ပြားအစု မရှိသေးပါ။ Home Flashcards မှ ဖန်တီးပါ။',
+    'fc.chatTitle': 'ကတ်ပြား ဆရာ', 'fc.loadingGuide': 'လမ်းညွှန် ရေးနေသည်…',
+    'fc.mastery': 'ကျွမ်းကျင်မှု {n}%', 'fc.cardOf': 'ကတ် {n} / {total}',
+    'fc.breadcrumb': 'လေ့လာရေးအစု', 'fc.flashcards': 'ကတ်ပြားများ',
     'prep.title': 'သင်ခန်းစာ ဖန်တီးနေသည်…', 'prep.left': 'ခန့်မှန်း {n} စက္ကန့် ကျန်', 'prep.ready': 'အဆင်သင့် — သင်ခန်းစာ ဖွင့်နေသည်',
     'prep.s1': '“{topic}” ကို နားလည်အောင် ဖတ်နေသည်…', 'prep.s2': 'သင်ခန်းစာ အစီအစဉ် ရေးဆွဲနေသည်…', 'prep.s3': 'ပုံဖြင့် ရှင်းလင်းချက်များ ဆွဲနေသည်…',
     'prep.s4': 'ဆရာ့အသံ ဖိုင်များ ပြင်ဆင်နေသည်…', 'prep.s5': 'အပြန်အလှန် သင်ခန်းစာ စတင်နေသည်…',
@@ -369,19 +397,23 @@ function route() {
   document.body.classList.toggle('tutor-mode', isLesson);
   $$('.view').forEach(v => { v.hidden = true; });
   $('#app').classList.remove('sb-open');
-  const navTop = top === 'tutor' ? 'home' : top;   // the tutor belongs to Home
+  const navTop = (top === 'tutor' || top === 'flashcards') ? 'home' : top;
   $$('.nav-item').forEach(a => {
     const on = a.dataset.route === navTop;
     a.classList.toggle('active', on);
     on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
   });
   const main = $('#main');
-  main.classList.toggle('gray', top === 'study');
+  main.classList.toggle('gray', top === 'study' || top === 'flashcards');
 
   if (top === 'home') { $('#view-home').hidden = false; }
   else if (top === 'tutor' && parts[1]) {
     if (isLesson) { tutorView(parts[1]); return; }
     $('#view-prep').hidden = false; renderPrep(parts[1]);
+  }
+  else if (top === 'flashcards') {
+    $('#view-fc').hidden = false;
+    renderFlashRoute(parts);
   }
   else if (top === 'study') {
     if (!parts[1]) { $('#view-study').hidden = false; renderRecent(); }
@@ -440,8 +472,9 @@ function updatePill() {
   pill.textContent = t('tab.' + state.tab);
   q.placeholder = t('ph.' + state.tab);
   requestAnimationFrame(() => { q.style.textIndent = (pill.offsetWidth + 8) + 'px'; });
-  $('#solveBtn span').textContent = state.tab === 'whiteboard' ? t('createLesson') : t('solve');
+  $('#solveBtn span').textContent = state.tab === 'whiteboard' ? t('createLesson') : state.tab === 'flashcards' ? t('createCards') : t('solve');
   $('#wbHint').hidden = state.tab !== 'whiteboard';
+  const fcOpts = $('#fcOpts'); if (fcOpts) fcOpts.hidden = state.tab !== 'flashcards';
 }
 function updateSolve() {
   $('#solveBtn').disabled = !($('#question').value.trim() || state.files.length);
@@ -527,6 +560,20 @@ function doSolve() {
     }
     return;
   }
+  if (state.tab === 'flashcards') {
+    if (state.creatingFlash) return;
+    state.creatingFlash = true;
+    try {
+      const setId = createFlashJob(q, state.files.map(f => f.file).filter(Boolean));
+      if (setId) {
+        state.history.unshift({ q, tab: 'flashcards', model: state.model, files: state.files.map(f => f.name), time: new Date(), flashId: setId });
+        renderHistory();
+      }
+    } finally {
+      setTimeout(() => { state.creatingFlash = false; }, 800);
+    }
+    return;
+  }
   const entry = { q, tab: state.tab, model: state.model, files: state.files.map(f => f.name), time: new Date() };
   state.history.unshift(entry);
   renderAnswer(entry);
@@ -606,6 +653,15 @@ function initHome() {
     const b = e.target.closest('[data-h]'); if (!b) return;
     const h = state.history[+b.dataset.h];
     if (h.lessonId) { openDrawer(false); location.hash = `#/tutor/${h.lessonId}/` + (lessons[h.lessonId] && lessons[h.lessonId].status === 'ready' ? 'lesson' : 'prep'); return; }
+    if (h.flashId) {
+      openDrawer(false);
+      const job = fcJobs[h.flashId];
+      const saved = fcGet(h.flashId);
+      if (saved) location.hash = `#/flashcards/set/${h.flashId}`;
+      else if (job) location.hash = `#/flashcards/prep/${h.flashId}`;
+      else location.hash = '#/home';
+      return;
+    }
     openDrawer(false); location.hash = '#/home';
     q.value = h.q; updateSolve(); renderAnswer(h);
   });
@@ -2572,6 +2628,440 @@ async function exportLesson(L) {
   } finally {
     L.exporting = false;
   }
+}
+
+/* ---------- Flashcards (Gemini + localStorage) ---------- */
+const FC_STORE_KEY = 'solvely.flashcards.v1';
+const fcJobs = {};
+const FC = { chatAbort: null, chatBusy: false, flipped: false, filter: 'all', topicId: null, tab: 'study', guide: null, review: null };
+
+function fcLoadAll() {
+  try {
+    const raw = localStorage.getItem(FC_STORE_KEY);
+    if (!raw) return { version: 1, sets: {} };
+    const data = JSON.parse(raw);
+    if (!data || typeof data !== 'object' || !data.sets || typeof data.sets !== 'object') return { version: 1, sets: {} };
+    return data;
+  } catch {
+    return { version: 1, sets: {} };
+  }
+}
+function fcSaveAll(data) {
+  try {
+    localStorage.setItem(FC_STORE_KEY, JSON.stringify(data));
+    return true;
+  } catch (err) {
+    toast(err && err.name === 'QuotaExceededError' ? 'Browser storage is full. Delete an old study set and try again.' : 'Could not save study progress in this browser.');
+    return false;
+  }
+}
+function fcList() {
+  const data = fcLoadAll();
+  return Object.values(data.sets).sort((a, b) => (b.updated || 0) - (a.updated || 0));
+}
+function fcGet(id) {
+  const data = fcLoadAll();
+  return data.sets[id] || null;
+}
+function fcPut(set) {
+  const data = fcLoadAll();
+  data.sets[set.id] = set;
+  fcSaveAll(data);
+}
+function fcRemove(id) {
+  const data = fcLoadAll();
+  delete data.sets[id];
+  fcSaveAll(data);
+}
+function fcCounts(set) {
+  const cards = (set && set.cards) || [];
+  const st = (set && set.statuses) || {};
+  let mastered = 0, review = 0, incomplete = 0;
+  cards.forEach(c => {
+    const s = st[c.id] || 'new';
+    if (s === 'mastered') mastered++;
+    else if (s === 'review') review++;
+    else incomplete++;
+  });
+  const total = cards.length;
+  const mastery = total ? Math.round((mastered / total) * 100) : 0;
+  return { total, mastered, review, incomplete, mastery };
+}
+function fcFilteredCards(set, filter, topicId) {
+  const st = set.statuses || {};
+  return (set.cards || []).filter(c => {
+    if (topicId && c.topicId !== topicId) return false;
+    const s = st[c.id] || 'new';
+    if (filter === 'mastered') return s === 'mastered';
+    if (filter === 'review') return s === 'review';
+    if (filter === 'incomplete') return s !== 'mastered' && s !== 'review';
+    return true;
+  }).sort((a, b) => (a.order || 0) - (b.order || 0));
+}
+function createFlashJob(topic, files) {
+  const text = (topic || '').trim();
+  if (!text && !(files && files.length)) { toast(t('prep.errEmpty')); return null; }
+  const id = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  fcJobs[id] = {
+    id,
+    topic: text,
+    language: wantsBurmese(text) ? 'my' : (state.lang === 'my' ? 'my' : 'en'),
+    files: (files || []).map(f => f),
+    count: +(($('#fcCount') && $('#fcCount').value) || 12),
+    difficulty: ($('#fcDiff') && $('#fcDiff').value) || 'medium',
+    style: ($('#fcStyle') && $('#fcStyle').value) || 'basic',
+    status: 'preparing',
+    error: null,
+    abort: null,
+    running: false
+  };
+  location.hash = `#/flashcards/prep/${id}`;
+  return id;
+}
+function renderFlashRoute(parts) {
+  const view = $('#view-fc'); if (!view) return;
+  const mode = parts[1];
+  const id = parts[2];
+  if (mode === 'prep' && id) return renderFcPrep(id);
+  if (mode === 'set' && id) return renderFcSet(id);
+  if (mode === 'study' && id) return renderFcStudy(id);
+  if (mode === 'sets') return renderFcSetsList();
+  location.replace('#/home');
+}
+function renderFcSetsList() {
+  const view = $('#view-fc');
+  const sets = fcList();
+  view.innerHTML = `<div class="fc-page"><div class="fc-top"><a class="btn-o" href="#/home">${icon('back', 15)} ${esc(t('back'))}</a><h1>${esc(t('allSets'))}</h1></div>
+    ${sets.length ? `<div class="fc-set-grid">${sets.map(s => {
+      const c = fcCounts(s);
+      return `<a class="fc-set-card" href="#/flashcards/set/${encodeURIComponent(s.id)}"><b>${esc(s.title)}</b><span>${c.total} ${esc(t('flashcards'))} · ${esc(t('fc.mastery', { n: c.mastery }))}</span></a>`;
+    }).join('')}</div>` : `<div class="empty">${esc(t('fc.emptySets'))}</div>`}</div>`;
+}
+async function runFcPrep(job) {
+  if (!job || job.running) return;
+  if (job.abort) job.abort.abort();
+  const ac = new AbortController();
+  job.abort = ac; job.running = true; job.status = 'preparing'; job.error = null;
+  drawFcPrep(job);
+  try {
+    const fd = new FormData();
+    fd.append('topic', job.topic || '');
+    fd.append('language', job.language || 'en');
+    fd.append('count', String(job.count || 12));
+    fd.append('difficulty', job.difficulty || 'medium');
+    fd.append('style', job.style || 'basic');
+    (job.files || []).forEach(f => fd.append('files', f));
+    const res = await fetch('/api/flashcards/generate', { method: 'POST', body: fd, signal: ac.signal });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw apiErr(res, data);
+    if (!data.studySet || !Array.isArray(data.studySet.cards)) throw Object.assign(new Error(''), { code: 'invalid_response' });
+    const now = Date.now();
+    const set = {
+      id: job.id,
+      title: data.studySet.title || job.topic || 'Study set',
+      request: job.topic,
+      language: data.studySet.language || job.language || 'en',
+      summary: data.studySet.summary || '',
+      topics: data.studySet.topics || [],
+      cards: data.studySet.cards || [],
+      studyGuide: data.studySet.studyGuide || null,
+      materials: data.materials || [],
+      statuses: {},
+      chat: [],
+      studyIndex: 0,
+      created: now,
+      updated: now
+    };
+    fcPut(set);
+    job.status = 'ready'; job.running = false; job.abort = null;
+    if (location.hash === `#/flashcards/prep/${job.id}`) location.replace(`#/flashcards/set/${job.id}`);
+  } catch (err) {
+    if (err.name === 'AbortError' || ac.signal.aborted) {
+      job.running = false; if (job.abort === ac) job.abort = null; return;
+    }
+    job.status = 'error'; job.error = friendlyError(err); job.running = false; job.abort = null;
+    drawFcPrep(job);
+  }
+}
+function drawFcPrep(job) {
+  const view = $('#view-fc'); if (!view || !job) return;
+  if (job.status === 'error') {
+    view.innerHTML = `<div class="fc-prep"><div class="fc-prep-card"><h2>${esc(t('fc.prepErr'))}</h2><p class="prep-err">${icon('alert', 18)}<span>${esc(job.error)}</span></p>
+      <div class="row-end" style="justify-content:flex-start;gap:10px;margin-top:16px"><button class="btn-primary" id="fcRetry">${icon('flip', 15)} ${esc(t('retry'))}</button><a class="btn-o" href="#/flashcards/sets">${esc(t('fc.prepBack'))}</a></div></div></div>`;
+    $('#fcRetry').onclick = () => { job.status = 'preparing'; job.running = false; runFcPrep(job); };
+    return;
+  }
+  view.innerHTML = `<div class="fc-prep"><div class="fc-prep-card">
+    <div class="fc-spin" aria-hidden="true"></div>
+    <h2>${esc(t('fc.prepTitle'))}</h2>
+    <p class="fc-prep-req">${esc(job.topic || (job.files && job.files[0] && job.files[0].name) || '')}</p>
+    <p class="muted">${esc(t('fc.prepWorking'))}</p>
+    <a class="btn-o" href="#/flashcards/sets" id="fcPrepBack">${esc(t('fc.prepBack'))}</a>
+  </div></div>`;
+  $('#fcPrepBack').onclick = e => {
+    if (job.abort) job.abort.abort();
+    job.running = false;
+  };
+}
+function renderFcPrep(id) {
+  const job = fcJobs[id];
+  const saved = fcGet(id);
+  if (saved) { location.replace(`#/flashcards/set/${id}`); return; }
+  if (!job) {
+    $('#view-fc').innerHTML = `<div class="fc-prep"><div class="fc-prep-card"><h2>${esc(t('fc.prepErr'))}</h2><p>${esc(t('fc.emptySets'))}</p><a class="btn-o" href="#/home">${esc(t('back'))}</a></div></div>`;
+    return;
+  }
+  drawFcPrep(job);
+  if (job.status === 'preparing' && !job.running) runFcPrep(job);
+}
+function renderFcSet(id) {
+  const set = fcGet(id);
+  if (!set) { location.replace('#/flashcards/sets'); return; }
+  const view = $('#view-fc');
+  const counts = fcCounts(set);
+  FC.filter = FC.filter || 'all';
+  FC.topicId = FC.topicId && set.topics.some(t => t.id === FC.topicId) ? FC.topicId : (set.topics[0] && set.topics[0].id) || null;
+  FC.tab = FC.tab === 'review' ? 'review' : 'study';
+  const topic = set.topics.find(t => t.id === FC.topicId) || set.topics[0];
+  const cards = fcFilteredCards(set, FC.filter, null);
+  const topicCards = fcFilteredCards(set, 'all', FC.topicId);
+  const guide = set.studyGuide || FC.guide;
+  view.innerHTML = `<div class="fc-desk">
+    <aside class="fc-side">
+      <a class="btn-o fc-back" href="#/flashcards/sets">${icon('back', 14)} ${esc(t('back'))}</a>
+      <h2 class="fc-side-title">${esc(set.title)}</h2>
+      <div class="fc-filters">
+        ${[['all', 'fc.all', counts.total], ['review', 'fc.needReview', counts.review], ['mastered', 'fc.mastered', counts.mastered], ['incomplete', 'fc.incomplete', counts.incomplete]].map(([k, label, n]) =>
+          `<button type="button" class="fc-filter${FC.filter === k ? ' on' : ''}" data-filter="${k}">${esc(t(label))} <b>${n}</b></button>`).join('')}
+      </div>
+      <div class="fc-side-sec"><span>${esc(t('fc.overview'))}</span><p>${esc(set.summary || '')}</p></div>
+      <div class="fc-side-sec"><span>${esc(t('fc.topics'))}</span>
+        <ul class="fc-topics">${set.topics.map(tp => {
+          const tc = fcCounts({ cards: set.cards.filter(c => c.topicId === tp.id), statuses: set.statuses });
+          return `<li><button type="button" class="fc-topic${FC.topicId === tp.id ? ' on' : ''}" data-topic="${esc(tp.id)}"><b>${esc(tp.title)}</b><small>${tc.mastery}%</small></button></li>`;
+        }).join('')}</ul>
+      </div>
+      <div class="fc-side-actions"><button type="button" class="btn-o" id="fcRename">${esc(t('fc.rename'))}</button><button type="button" class="btn-o danger" id="fcDelete">${esc(t('fc.delete'))}</button></div>
+    </aside>
+    <main class="fc-main">
+      <div class="fc-main-head">
+        <div><h1>${esc(topic ? topic.title : set.title)}</h1><p class="muted">${esc(t('fc.mastery', { n: counts.mastery }))}</p></div>
+        <a class="btn-primary" href="#/flashcards/study/${encodeURIComponent(set.id)}">${icon('cards', 16)} ${esc(t('fc.flashcards'))}</a>
+      </div>
+      <div class="fc-tabs" role="tablist">
+        <button type="button" class="fc-tab${FC.tab === 'study' ? ' on' : ''}" data-tab="study">${esc(t('fc.studyGuide'))}</button>
+        <button type="button" class="fc-tab${FC.tab === 'review' ? ' on' : ''}" data-tab="review">${esc(t('fc.reviewGuide'))}</button>
+      </div>
+      <div class="fc-panel" id="fcPanel"></div>
+      <section class="fc-practice"><h3>${esc(t('fc.practice'))} <small>${topicCards.length}</small></h3>
+        <div class="fc-mini-grid">${topicCards.slice(0, 8).map(c => `<button type="button" class="fc-mini" data-card="${esc(c.id)}"><b>${esc(c.front)}</b><span>${esc(c.back)}</span></button>`).join('') || `<p class="muted">${esc(t('fc.emptySets'))}</p>`}</div>
+      </section>
+    </main>
+    <aside class="fc-chat">
+      <h3>${esc(t('fc.chatTitle'))}</h3>
+      <div class="fc-chat-log" id="fcChatLog">${(set.chat || []).map(m => `<div class="fc-msg ${m.role}"><p>${esc(m.text)}</p></div>`).join('')}</div>
+      <form class="fc-chat-form" id="fcChatForm"><input id="fcChatInput" placeholder="${esc(t('fc.ask'))}" autocomplete="off"><button class="btn-primary" type="submit">${icon('send', 16)}</button></form>
+    </aside>
+  </div>`;
+  const panel = $('#fcPanel');
+  const paintGuide = () => {
+    if (FC.tab === 'review') {
+      const rev = FC.review;
+      panel.innerHTML = rev
+        ? `<p>${esc(rev.summary || '')}</p><ul>${(rev.suggestions || []).map(s => `<li>${esc(s)}</li>`).join('')}</ul>
+           <p class="muted">${esc(t('fc.mastery', { n: rev.masteryPct != null ? rev.masteryPct : counts.mastery }))} · ${esc(t('fc.needReview'))}: ${(rev.counts && rev.counts.needReview) || counts.review}</p>`
+        : `<button class="btn-primary" id="fcLoadReview">${esc(t('fc.reviewGuide'))}</button>`;
+      const btn = $('#fcLoadReview');
+      if (btn) btn.onclick = () => loadFcReview(set);
+      return;
+    }
+    const g = guide;
+    panel.innerHTML = g
+      ? `<p>${esc(g.overview || topic && topic.overview || '')}</p>
+         ${g.keyConcepts && g.keyConcepts.length ? `<h4>${esc(t('fc.overview'))}</h4><ul>${g.keyConcepts.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+         ${g.definitions && g.definitions.length ? `<h4>Definitions</h4><ul>${g.definitions.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+         ${g.examples && g.examples.length ? `<h4>Examples</h4><ul>${g.examples.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}`
+      : `<p>${esc(topic && topic.overview || set.summary || '')}</p><button class="btn-o" id="fcLoadGuide">${esc(t('fc.studyGuide'))}</button>`;
+    const bg = $('#fcLoadGuide'); if (bg) bg.onclick = () => loadFcStudyGuide(set);
+  };
+  paintGuide();
+  $$('.fc-filter', view).forEach(b => b.onclick = () => { FC.filter = b.dataset.filter; renderFcSet(id); });
+  $$('.fc-topic', view).forEach(b => b.onclick = () => { FC.topicId = b.dataset.topic; renderFcSet(id); });
+  $$('.fc-tab', view).forEach(b => b.onclick = () => { FC.tab = b.dataset.tab; renderFcSet(id); });
+  $('#fcRename').onclick = () => {
+    const name = prompt(t('fc.rename'), set.title);
+    if (!name || !name.trim()) return;
+    set.title = name.trim().slice(0, 120); set.updated = Date.now(); fcPut(set); renderFcSet(id);
+  };
+  $('#fcDelete').onclick = () => {
+    if (!confirm(t('fc.delete') + '?')) return;
+    fcRemove(id); location.hash = '#/flashcards/sets';
+  };
+  $$('.fc-mini', view).forEach(b => b.onclick = () => {
+    const idx = set.cards.findIndex(c => c.id === b.dataset.card);
+    if (idx >= 0) { set.studyIndex = idx; fcPut(set); location.hash = `#/flashcards/study/${set.id}`; }
+  });
+  $('#fcChatForm').onsubmit = e => { e.preventDefault(); sendFcChat(set); };
+}
+async function loadFcStudyGuide(set) {
+  const panel = $('#fcPanel'); if (panel) panel.innerHTML = `<p class="muted">${esc(t('fc.loadingGuide'))}</p>`;
+  try {
+    const data = await postJson('/api/flashcards/study-guide', {
+      language: set.language || 'en',
+      topicId: FC.topicId || '',
+      studySet: { title: set.title, language: set.language, topics: set.topics, cards: set.cards, summary: set.summary }
+    });
+    set.studyGuide = data.guide; set.updated = Date.now(); fcPut(set); FC.guide = data.guide; renderFcSet(set.id);
+  } catch (err) { toast(friendlyError(err)); renderFcSet(set.id); }
+}
+async function loadFcReview(set) {
+  const panel = $('#fcPanel'); if (panel) panel.innerHTML = `<p class="muted">${esc(t('fc.loadingGuide'))}</p>`;
+  try {
+    const data = await postJson('/api/flashcards/review-guide', {
+      language: set.language || 'en',
+      studySet: { title: set.title, language: set.language, topics: set.topics, cards: set.cards },
+      progress: { statuses: set.statuses || {} }
+    });
+    FC.review = data.guide; renderFcSet(set.id);
+  } catch (err) { toast(friendlyError(err)); renderFcSet(set.id); }
+}
+async function sendFcChat(set) {
+  const input = $('#fcChatInput'); if (!input || FC.chatBusy) return;
+  const message = input.value.trim(); if (!message) return;
+  input.value = '';
+  set.chat = set.chat || [];
+  set.chat.push({ role: 'user', text: message });
+  const log = $('#fcChatLog');
+  if (log) log.insertAdjacentHTML('beforeend', `<div class="fc-msg user"><p>${esc(message)}</p></div><div class="fc-msg bot" id="fcChatBot"><p>…</p></div>`);
+  FC.chatBusy = true;
+  if (FC.chatAbort) FC.chatAbort.abort();
+  const ac = new AbortController(); FC.chatAbort = ac;
+  let reply = '';
+  try {
+    const res = await fetch('/api/flashcards/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+      body: JSON.stringify({
+        message,
+        language: set.language || 'en',
+        studySet: { title: set.title, language: set.language, summary: set.summary, topics: set.topics, cards: set.cards.slice(0, 24) },
+        history: set.chat.filter(m => m.role === 'user' || m.role === 'bot').slice(-8).reduce((acc, m, i, arr) => {
+          if (m.role === 'user') acc.push({ q: m.text, a: (arr[i + 1] && arr[i + 1].role === 'bot') ? arr[i + 1].text : '' });
+          return acc;
+        }, [])
+      }),
+      signal: ac.signal
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw apiErr(res, data);
+    }
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const chunks = buf.split('\n\n'); buf = chunks.pop() || '';
+      for (const chunk of chunks) {
+        const line = chunk.split('\n').find(l => l.startsWith('data: '));
+        if (!line) continue;
+        let obj; try { obj = JSON.parse(line.slice(6)); } catch { continue; }
+        if (obj.error) throw Object.assign(new Error(obj.error), { code: obj.code });
+        if (obj.delta) {
+          reply += obj.delta;
+          const bot = $('#fcChatBot'); if (bot) bot.innerHTML = `<p>${esc(reply)}</p>`;
+        }
+      }
+    }
+    set.chat.push({ role: 'bot', text: reply || '…' });
+    set.updated = Date.now(); fcPut(set);
+  } catch (err) {
+    if (err.name !== 'AbortError') toast(friendlyError(err));
+    const bot = $('#fcChatBot'); if (bot) bot.remove();
+  } finally {
+    FC.chatBusy = false;
+    if (FC.chatAbort === ac) FC.chatAbort = null;
+  }
+}
+function renderFcStudy(id) {
+  const set = fcGet(id);
+  if (!set) { location.replace('#/flashcards/sets'); return; }
+  const view = $('#view-fc');
+  const cards = fcFilteredCards(set, FC.filter === 'all' ? 'all' : FC.filter, null);
+  const list = cards.length ? cards : set.cards;
+  let idx = Math.max(0, Math.min(list.length - 1, set.studyIndex || 0));
+  if (list[idx] && set.cards[set.studyIndex] && list[idx].id !== set.cards[set.studyIndex].id) {
+    const found = list.findIndex(c => c.id === set.cards[set.studyIndex].id);
+    if (found >= 0) idx = found;
+  }
+  FC.flipped = false;
+  const counts = fcCounts(set);
+  const card = list[idx];
+  if (!card) {
+    view.innerHTML = `<div class="fc-study"><p>${esc(t('fc.emptySets'))}</p><a class="btn-o" href="#/flashcards/set/${id}">${esc(t('fc.openSet'))}</a></div>`;
+    return;
+  }
+  const paint = () => {
+    const c = list[idx];
+    const pct = list.length ? Math.round(((idx + 1) / list.length) * 100) : 0;
+    view.innerHTML = `<div class="fc-study">
+      <div class="fc-study-top">
+        <nav class="fc-crumb"><a href="#/flashcards/set/${encodeURIComponent(id)}">${esc(t('fc.breadcrumb'))}</a> / <span>${esc(t('fc.flashcards'))}</span></nav>
+        <div class="fc-study-meta"><b>${esc(c.topic || set.title)}</b><span>${esc(t('fc.cardOf', { n: idx + 1, total: list.length }))}</span></div>
+        <div class="fc-study-stats"><span>${esc(t('fc.needReview'))}: ${counts.review}</span><span>${esc(t('fc.mastered'))}: ${counts.mastered}</span></div>
+        <div class="fc-progress" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><span style="width:${pct}%"></span></div>
+      </div>
+      <div class="fc-wrap">
+        <div class="fc ${FC.flipped ? 'flipped' : ''}" id="fcCard" tabindex="0" role="button" aria-label="${esc(t('fc.flipHint'))}">
+          <div class="fc-inner">
+            <div class="fc-face fc-front"><span class="fc-tag">${esc(c.difficulty || '')}</span><p>${esc(c.front)}</p><small>${esc(t('fc.flipHint'))}</small></div>
+            <div class="fc-face fc-back"><span class="fc-tag">${esc(c.topic || '')}</span><p>${esc(c.back)}</p>${c.explanation ? `<small>${esc(c.explanation)}</small>` : ''}</div>
+          </div>
+        </div>
+        <div class="fc-assess">
+          <button type="button" class="btn-o" id="fcNeed">${esc(t('fc.needBtn'))}</button>
+          <button type="button" class="btn-primary" id="fcMaster">${esc(t('fc.masterBtn'))}</button>
+        </div>
+        <div class="fc-ctrl">
+          <button type="button" class="btn-o" id="fcPrev" ${idx <= 0 ? 'disabled' : ''}>${esc(t('fc.prev'))}</button>
+          <span class="fc-count">${idx + 1} / ${list.length}</span>
+          <button type="button" class="btn-o" id="fcNext">${idx >= list.length - 1 ? esc(t('fc.doneTitle')) : esc(t('fc.next'))}</button>
+        </div>
+      </div>
+    </div>`;
+    const flip = () => { FC.flipped = !FC.flipped; $('#fcCard').classList.toggle('flipped', FC.flipped); };
+    $('#fcCard').onclick = flip;
+    $('#fcCard').onkeydown = e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flip(); } };
+    const mark = status => {
+      set.statuses = set.statuses || {};
+      set.statuses[c.id] = status;
+      set.studyIndex = set.cards.findIndex(x => x.id === c.id);
+      set.updated = Date.now();
+      fcPut(set);
+      if (idx < list.length - 1) { idx++; FC.flipped = false; set.studyIndex = set.cards.findIndex(x => x.id === list[idx].id); fcPut(set); paint(); }
+      else showFcDone(set, list);
+    };
+    $('#fcNeed').onclick = () => mark('review');
+    $('#fcMaster').onclick = () => mark('mastered');
+    $('#fcPrev').onclick = () => { if (idx > 0) { idx--; FC.flipped = false; set.studyIndex = set.cards.findIndex(x => x.id === list[idx].id); fcPut(set); paint(); } };
+    $('#fcNext').onclick = () => {
+      if (idx >= list.length - 1) showFcDone(set, list);
+      else { idx++; FC.flipped = false; set.studyIndex = set.cards.findIndex(x => x.id === list[idx].id); fcPut(set); paint(); }
+    };
+  };
+  paint();
+}
+function showFcDone(set, list) {
+  const counts = fcCounts(set);
+  $('#view-fc').innerHTML = `<div class="fc-study fc-done"><h2>${esc(t('fc.doneTitle'))}</h2>
+    <p>${esc(t('fc.doneSub', { n: list.length, m: counts.mastered, r: counts.review }))}</p>
+    <div class="row-end" style="justify-content:center;gap:10px">
+      <a class="btn-o" href="#/flashcards/set/${encodeURIComponent(set.id)}">${esc(t('fc.openSet'))}</a>
+      <a class="btn-primary" href="#/flashcards/study/${encodeURIComponent(set.id)}" id="fcAgain">${esc(t('fc.studyAgain'))}</a>
+    </div></div>`;
+  set.studyIndex = 0; fcPut(set);
 }
 
 /* ---------- plan modal (design demonstration) ---------- */

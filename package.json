@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "check": "node --check app.js && node --check server.js && node --check lib/app.js && node --check lib/gemini.js && node --check lib/lesson.js && node --check lib/files.js && node --check lib/narration.js",
+    "check": "node --check app.js && node --check server.js && node --check lib/app.js && node --check lib/gemini.js && node --check lib/lesson.js && node --check lib/files.js && node --check lib/narration.js && node --check lib/flashcards.js",
     "test": "node --test"
   },
   "dependencies": {

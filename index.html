@@ -102,6 +102,30 @@
             <button type="button" data-wb="Solve 2x + 10 = 25">Solve 2x + 10 = 25</button>
             <button type="button" data-wb="Photosynthesis">Photosynthesis</button>
           </div>
+          <div class="fc-opts" id="fcOpts" hidden>
+            <label>Cards
+              <select id="fcCount" aria-label="Number of cards">
+                <option value="8">8</option>
+                <option value="12" selected>12</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+              </select>
+            </label>
+            <label>Difficulty
+              <select id="fcDiff" aria-label="Difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </label>
+            <label>Style
+              <select id="fcStyle" aria-label="Card style">
+                <option value="basic" selected>Basic</option>
+                <option value="detailed">Detailed</option>
+                <option value="exam">Exam</option>
+              </select>
+            </label>
+          </div>
           <div class="file-chips" id="fileChips"></div>
         </div>
         <div class="panel-bottom">
@@ -299,6 +323,9 @@
     <!-- ---------- WHITEBOARD TUTOR (internal views of Home) ---------- -->
     <section id="view-prep" class="view prep" hidden></section>
     <section id="view-tutor" class="view tutor" hidden></section>
+
+    <!-- ---------- FLASHCARDS ---------- -->
+    <section id="view-fc" class="view fc-view" hidden></section>
   </main>
 </div>
 

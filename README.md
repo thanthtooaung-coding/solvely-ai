@@ -58,6 +58,8 @@ A healthy server responds with `ok: true` and `configured: true` after the key i
 
 Lesson generation: on the Home page, choose **Whiteboard Tutor**, enter a topic such as `Photosynthesis`, and press **Create lesson**. Switch the language button to **မြန်မာ** before creating a lesson when the whole lesson should be in Burmese. Code, SQL, and formulas stay in their usual notation. The preparation screen stays on the current step until Gemini returns a lesson, then the whiteboard opens.
 
+Flashcards: on the Home page, choose **Flashcards**, enter a topic such as `I want to know about microservices`, optionally set card count / difficulty / style, and press **Create cards**. Gemini generates a study set; progress (Need Review / Mastered) is saved in this browser only under `localStorage` key `solvely.flashcards.v1`. There is no flashcard database or login. Open `#/flashcards/sets` to return to saved sets after a refresh.
+
 Download: the download button on the whiteboard saves a two-column PDF of the lesson notes. It needs Chrome or Edge on the same computer as the server.
 
 Tutor chat: after the lesson opens, type a follow-up such as `Explain this part more simply` and send it. The reply streams onto the board.
