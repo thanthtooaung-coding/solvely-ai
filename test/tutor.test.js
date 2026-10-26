@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 import { createApp } from '../lib/app.js';
 import { extractPptx } from '../lib/files.js';
 import { lessonUsesBurmese, normalizeLesson, parseModelJson } from '../lib/lesson.js';
-import { alignWordTimings, prepareNarrationText, speakableMath } from '../lib/narration.js';
+import { alignWordTimings, charsToWords, prepareNarrationText, speakableMath } from '../lib/narration.js';
 import { renderNotesHtml } from '../lib/notes.js';
 import { findBrowser } from '../lib/printpdf.js';
 
@@ -129,6 +129,20 @@ test('word timings align through the last word', () => {
   assert.equal(words[0].text.toLowerCase(), 'the');
   assert.equal(words[words.length - 1].text.toLowerCase(), 'opposite');
   assert.ok(words[words.length - 1].end >= words[words.length - 1].start);
+});
+
+test('ElevenLabs character timings become word timings', () => {
+  const text = 'Hi there.';
+  const words = charsToWords({
+    characters: [...text],
+    character_start_times_seconds: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+    character_end_times_seconds: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+  });
+  assert.deepEqual(words.map(w => w.text), ['Hi', 'there.']);
+  assert.equal(words[0].start, 0);
+  assert.equal(words[1].start, 0.3);
+  assert.equal(words[1].end, 0.9);
+  assert.deepEqual(charsToWords(null), []);
 });
 
 test('narration meta and empty text validation', async () => {

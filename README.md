@@ -36,6 +36,18 @@ Put the key only in `.env`. Do not paste it into HTML, CSS, JavaScript, or this 
 
 `GEMINI_TTS_MODEL` is a separate Gemini text-to-speech model used only for whiteboard narration (default `gemini-3.8-flash-lite-tts`). `GEMINI_TRANSCRIBE_MODEL` (default `gemini-3.5-transcribe`) is used after TTS to recover word timings for karaoke-style highlighting. The lesson text model does not produce audio. The same `GEMINI_API_KEY` is used for all three. If narration fails with a model error, set the matching env var to a model your key supports and restart.
 
+### ElevenLabs voice (optional)
+
+Add `ELEVENLABS_API_KEY` to `.env` to narrate the whiteboard with ElevenLabs instead of Gemini TTS. ElevenLabs returns character timings with the audio, so word sync and typing need no separate Transcribe call.
+
+- `ELEVENLABS_VOICE_ID`: voice to use. If empty, the first voice in your ElevenLabs account is used. The voice menu on the whiteboard lists your account's voices.
+- `ELEVENLABS_MODEL` (default `eleven_multilingual_v2`) for English lessons, `ELEVENLABS_MODEL_MY` (default `eleven_v3`) for Burmese lessons.
+- `ELEVENLABS_LANGUAGES` (default `en,my`): set to `en` to keep Burmese lessons on Gemini TTS.
+
+If an ElevenLabs request fails, the server falls back to Gemini TTS when `GEMINI_API_KEY` is set. ElevenLabs bills by characters.
+
+**Live streaming.** For lesson languages listed in `ELEVENLABS_STREAM_LANGUAGES` (default `en`), voices are not preloaded. The whiteboard opens as soon as the lesson text is ready. Each section streams from ElevenLabs (`POST /api/whiteboard/narration/stream`, PCM audio plus word timings) and starts playing in under a second. The next section downloads while the current one plays. Tutor chat replies are spoken live through the ElevenLabs WebSocket while Gemini is still writing them, and lesson narration pauses during the spoken reply. `ELEVENLABS_STREAM_MODEL` (default `eleven_flash_v2_5`) sets the low-latency model. Streamed speech supports speeds from 0.7× to 1.2×. Languages not in the list, such as Burmese by default, keep the preload behaviour. If a stream fails before audio starts, that section falls back to the non-streaming route.
+
 ## Run
 
 From this folder:
