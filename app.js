@@ -165,6 +165,7 @@ const I18N = {
     'narr.playing': 'Playing narration', 'narr.paused': 'Narration paused', 'narr.done': 'Narration complete', 'narr.failed': 'Narration failed',
     'narr.section': 'Section {n} of {total}', 'narr.browser': 'Using browser speech for this section.', 'narr.off': 'Turn narration on with Play.',
     'narr.tap': 'Tap Play once to start the tutor voice (browser audio lock).',
+    'narr.quota': 'ElevenLabs credits are used up, so the tutor is using the Gemini voice. Add ElevenLabs credits to get live voice back.',
     'err.audio': 'The narration could not be created. Try again.', 'err.unsupported_voice': 'That voice is not available.',
     'tw.skip': 'Skip', 'tw.continue': 'Continue', 'tw.correct': 'Correct!', 'tw.wrong': 'Not quite.', 'tw.you': 'You', 'tw.tutor': 'Tutor',
     'tw.clearInk': 'Clear ink', 'tw.qcap': 'Quick check — pick an answer, or skip to keep going.', 'tw.qof': 'Question {n} of {total}',
@@ -271,6 +272,7 @@ const I18N = {
     'narr.playing': 'အသံ ဖွင့်နေသည်', 'narr.paused': 'အသံ ခဏရပ်ထားသည်', 'narr.done': 'အသံ ပြီးပါပြီ', 'narr.failed': 'အသံ မရနိုင်ပါ',
     'narr.section': 'အပိုင်း {n} / {total}', 'narr.browser': 'ဤအပိုင်းအတွက် ဘရောက်ဇာ အသံကို သုံးနေသည်။', 'narr.off': 'Play နှိပ်ပြီး အသံဖွင့်ပါ။',
     'narr.tap': 'ဘရောက်ဇာ အသံပိတ်ထားသည်။ Play ကို တစ်ချက် နှိပ်ပါ။',
+    'narr.quota': 'ElevenLabs ခရက်ဒစ် ကုန်သွားသဖြင့် Gemini အသံကို သုံးနေသည်။ တိုက်ရိုက်အသံ ပြန်ရရန် ElevenLabs ခရက်ဒစ် ထည့်ပါ။',
     'err.audio': 'အသံဖန်တီးမရပါ။ ထပ်စမ်းပါ။', 'err.unsupported_voice': 'ဤအသံကို မရနိုင်ပါ။',
     'tw.skip': 'ကျော်ရန်', 'tw.continue': 'ဆက်ရန်', 'tw.correct': 'မှန်ပါသည်!', 'tw.wrong': 'မမှန်သေးပါ။', 'tw.you': 'သင်', 'tw.tutor': 'ဆရာ',
     'tw.clearInk': 'မင်ရေး ဖျက်ရန်', 'tw.qcap': 'အမြန်စစ်ဆေးချက် — အဖြေရွေးပါ သို့မဟုတ် ကျော်ပါ။', 'tw.qof': 'မေးခွန်း {n} / {total}',
@@ -2357,6 +2359,11 @@ async function narrPlayIndex(index, opts) {
       } catch (err) {
         if (err.name === 'AbortError' || token !== Narr.token) return;
         console.warn('Live voice stream failed; using buffered audio instead.', err && err.message);
+        if (err && err.code === 'quota' && Narr.meta && Narr.meta.stream) {
+          Narr.meta.stream.enabled = false;
+          narrCancelStreams();
+          toast(t('narr.quota'));
+        }
       }
     }
     let entry;
