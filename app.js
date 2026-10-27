@@ -165,6 +165,7 @@ const I18N = {
     'narr.playing': 'Playing narration', 'narr.paused': 'Narration paused', 'narr.done': 'Narration complete', 'narr.failed': 'Narration failed',
     'narr.section': 'Section {n} of {total}', 'narr.browser': 'Using browser speech for this section.', 'narr.off': 'Turn narration on with Play.',
     'narr.tap': 'Tap Play once to start the tutor voice (browser audio lock).',
+    'narr.quota': 'ElevenLabs credits are used up, so the tutor is using the Gemini voice. Add ElevenLabs credits to get live voice back.',
     'err.audio': 'The narration could not be created. Try again.', 'err.unsupported_voice': 'That voice is not available.',
     'tw.skip': 'Skip', 'tw.continue': 'Continue', 'tw.correct': 'Correct!', 'tw.wrong': 'Not quite.', 'tw.you': 'You', 'tw.tutor': 'Tutor',
     'tw.clearInk': 'Clear ink', 'tw.qcap': 'Quick check — pick an answer, or skip to keep going.', 'tw.qof': 'Question {n} of {total}',
@@ -271,6 +272,7 @@ const I18N = {
     'narr.playing': 'အသံ ဖွင့်နေသည်', 'narr.paused': 'အသံ ခဏရပ်ထားသည်', 'narr.done': 'အသံ ပြီးပါပြီ', 'narr.failed': 'အသံ မရနိုင်ပါ',
     'narr.section': 'အပိုင်း {n} / {total}', 'narr.browser': 'ဤအပိုင်းအတွက် ဘရောက်ဇာ အသံကို သုံးနေသည်။', 'narr.off': 'Play နှိပ်ပြီး အသံဖွင့်ပါ။',
     'narr.tap': 'ဘရောက်ဇာ အသံပိတ်ထားသည်။ Play ကို တစ်ချက် နှိပ်ပါ။',
+    'narr.quota': 'ElevenLabs ခရက်ဒစ် ကုန်သွားသဖြင့် Gemini အသံကို သုံးနေသည်။ တိုက်ရိုက်အသံ ပြန်ရရန် ElevenLabs ခရက်ဒစ် ထည့်ပါ။',
     'err.audio': 'အသံဖန်တီးမရပါ။ ထပ်စမ်းပါ။', 'err.unsupported_voice': 'ဤအသံကို မရနိုင်ပါ။',
     'tw.skip': 'ကျော်ရန်', 'tw.continue': 'ဆက်ရန်', 'tw.correct': 'မှန်ပါသည်!', 'tw.wrong': 'မမှန်သေးပါ။', 'tw.you': 'သင်', 'tw.tutor': 'ဆရာ',
     'tw.clearInk': 'မင်ရေး ဖျက်ရန်', 'tw.qcap': 'အမြန်စစ်ဆေးချက် — အဖြေရွေးပါ သို့မဟုတ် ကျော်ပါ။', 'tw.qof': 'မေးခွန်း {n} / {total}',
@@ -393,6 +395,7 @@ function route() {
   const prepId = top === 'tutor' && parts[1] && !isLesson ? parts[1] : null;
   abortOtherLessons(prepId);
   if (!isLesson && T.id) tutorTeardown();
+  if (top !== 'tutor') narrCancelStreams();
   if (!(top === 'tutor' && !isLesson)) stopPrepSlides();
   document.body.classList.toggle('tutor-mode', isLesson);
   $$('.view').forEach(v => { v.hidden = true; });
@@ -947,7 +950,8 @@ const NARR_VOICES = [
 const Narr = {
   state: 'ready', sections: [], index: 0, audio: null, url: null, ownsUrl: false, abort: null, token: 0,
   voice: 'Kore', muted: false, autoStart: true, autoContinue: true, resumeAfterQ: true, driving: false,
-  provider: 'gemini-tts', progress: 0, words: [], wordIndex: -1, typePlan: [], cache: new Map(), metaLoaded: false
+  provider: 'gemini-tts', progress: 0, words: [], wordIndex: -1, typePlan: [], cache: new Map(), metaLoaded: false,
+  player: null, stream: null, streams: new Map()
 };
 const SRC_ACCEPT = '.pdf,.png,.jpg,.jpeg,.webp,.docx,.pptx,.txt,.md,.csv,.sql,.json';
 const FILE_MAX_BYTES = 8 * 1024 * 1024;
@@ -1258,7 +1262,16 @@ async function runPrep(L) {
     L.sources.forEach(s => { s.sent = true; });
     L.step = 3; drawPrep(L);
     L.step = 4; L.waiting = true; drawPrep(L);
-    await prepLoadNarrationPack(L, ac.signal);
+    await narrLoadMeta();
+    if (narrCanStream(L)) {
+      L.narrSections = narrSections(L);
+      L.narrPack = null;
+      L.narrLive = true;
+      if (location.hash === `#/tutor/${L.id}/prep` && L.narrSections.length) narrGetStream(L, 0);
+    } else {
+      L.narrLive = false;
+      await prepLoadNarrationPack(L, ac.signal);
+    }
     if (ac.signal.aborted) return;
     L.waiting = false; L.voiceProgress = null;
     L.step = 5; drawPrep(L);
@@ -1283,6 +1296,8 @@ async function prepLoadNarrationPack(L, signal) {
   }
   L.narrPack = [];
   if (!sections.length) return;
+  await narrLoadMeta();
+  const voice = Narr.voice || 'Kore';
   for (let i = 0; i < sections.length; i++) {
     if (signal.aborted) throw Object.assign(new Error('aborted'), { name: 'AbortError' });
     L.voiceProgress = { n: i + 1, total: sections.length };
@@ -1291,7 +1306,7 @@ async function prepLoadNarrationPack(L, signal) {
       const data = await postJson('/api/whiteboard/narration', {
         text: sections[i].text,
         language: lessonLang(L),
-        voice: Narr.voice || 'Kore',
+        voice,
         sectionId: String(i),
         lessonId: L.id || ''
       }, signal);
@@ -1299,6 +1314,8 @@ async function prepLoadNarrationPack(L, signal) {
       const url = URL.createObjectURL(blob);
       const entry = {
         preloaded: true,
+        voice,
+        provider: data.provider || '',
         mimeType: data.mimeType || 'audio/wav',
         url,
         words: Array.isArray(data.words) ? data.words : [],
@@ -1306,7 +1323,7 @@ async function prepLoadNarrationPack(L, signal) {
         duration: data.duration || 0
       };
       L.narrPack[i] = entry;
-      const key = narrCacheKey(sections[i].text, lessonLang(L), Narr.voice || 'Kore');
+      const key = narrCacheKey(sections[i].text, lessonLang(L), voice);
       Narr.cache.set(key, entry);
     } catch (err) {
       if (err.name === 'AbortError') throw err;
@@ -1501,16 +1518,18 @@ async function twAddFiles(list) {
 
 function tutorTeardown() {
   if (T.chatAbort) { T.chatAbort.abort(); T.chatAbort = null; }
+  if (T.chatVoiceAbort) { T.chatVoiceAbort.abort(); T.chatVoiceAbort = null; }
+  chatVoiceStop();
   narrTeardown();
   clearTimeout(T.timer); clearTimeout(T.startTimer); clearInterval(T.capTimer);
   if (T.ro) T.ro.disconnect();
-  Object.assign(T, { id: null, L: null, q: null, ro: null, timer: null, startTimer: null, capTimer: null, pen: false, chatBusy: false, qBusy: false });
+  Object.assign(T, { id: null, L: null, q: null, ro: null, timer: null, startTimer: null, capTimer: null, pen: false, chatBusy: false, qBusy: false, chatPlayer: null, chatVoiceAbort: null, chatResumeNarr: false });
   const v = $('#view-tutor'); if (v) v.innerHTML = '';
 }
 function tutorView(id) {
   const v = $('#view-tutor'), L = lessons[id];
   if (!L || L.status !== 'ready') { location.replace(`#/tutor/${id}/prep`); return; }
-  if (L.narrSections && L.narrSections.length) {
+  if (L.narrSections && L.narrSections.length && !L.narrLive) {
     const packOk = Array.isArray(L.narrPack) && L.narrPack.length === L.narrSections.length && L.narrPack.every(Boolean);
     if (!packOk) {
       L.status = 'preparing'; L.running = false;
@@ -1720,12 +1739,300 @@ function narrStopAudio() {
   if (Narr.url && Narr.ownsUrl) { try { URL.revokeObjectURL(Narr.url); } catch { /* ignore */ } }
   Narr.url = null;
   Narr.ownsUrl = false;
+  if (Narr.player) { Narr.player.stop(); Narr.player = null; }
+  if (Narr.stream) {
+    if (!Narr.stream.done) { Narr.stream.cancel(); Narr.streams.delete(Narr.stream.key); }
+    Narr.stream = null;
+  }
   if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
   Narr.progress = 0;
   Narr.words = [];
   Narr.wordIndex = -1;
   narrClearWords();
 }
+/* ---------- live voice streaming (ElevenLabs PCM via Web Audio) ---------- */
+class PcmStreamPlayer {
+  constructor(sampleRate) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    this.rate = sampleRate || 24000;
+    this.ctx = new AC();
+    this.gain = this.ctx.createGain();
+    this.gain.connect(this.ctx.destination);
+    this.segs = [];
+    this.scheduled = 0;
+    this.next = 0;
+    this.live = 0;
+    this.inputDone = false;
+    this.fired = false;
+    this.stopped = false;
+    this.onended = null;
+  }
+  push(b64) {
+    if (this.stopped || !b64) return;
+    const bin = atob(b64);
+    const n = bin.length >> 1;
+    if (!n) return;
+    const buf = this.ctx.createBuffer(1, n, this.rate);
+    const ch = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) {
+      let v = bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8);
+      if (v >= 32768) v -= 65536;
+      ch[i] = v / 32768;
+    }
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(this.gain);
+    const at = Math.max(this.next, this.ctx.currentTime + 0.05);
+    src.start(at);
+    // Each segment maps audio-timeline seconds to context time, so network gaps don't break word sync.
+    this.segs.push({ at, from: this.scheduled, dur: buf.duration });
+    this.scheduled += buf.duration;
+    this.next = at + buf.duration;
+    this.live++;
+    src.onended = () => { this.live--; this.check(); };
+  }
+  get time() {
+    const now = this.ctx.currentTime;
+    for (let i = this.segs.length - 1; i >= 0; i--) {
+      const s = this.segs[i];
+      if (now >= s.at) return s.from + Math.min(s.dur, now - s.at);
+    }
+    return 0;
+  }
+  get blocked() { return this.ctx.state === 'suspended'; }
+  finish() { this.inputDone = true; this.check(); }
+  check() {
+    if (this.inputDone && this.live <= 0 && !this.fired && !this.stopped) {
+      this.fired = true;
+      if (this.onended) this.onended();
+    }
+  }
+  pause() { if (this.ctx.state === 'running') this.ctx.suspend().catch(() => {}); }
+  resume() { return this.ctx.resume().catch(() => {}); }
+  setMuted(m) { this.gain.gain.value = m ? 0 : 1; }
+  stop() {
+    this.stopped = true;
+    try { this.ctx.close(); } catch { /* ignore */ }
+  }
+}
+class NarrStream {
+  constructor(key, body) {
+    this.key = key;
+    this.events = [];
+    this.subs = new Set();
+    this.done = false;
+    this.error = null;
+    this.ac = new AbortController();
+    this.run(body);
+  }
+  emit(ev) {
+    if (ev.done) this.done = true;
+    this.events.push(ev);
+    this.subs.forEach(fn => fn(ev));
+  }
+  subscribe(fn) {
+    this.events.slice().forEach(fn);
+    this.subs.add(fn);
+    return () => this.subs.delete(fn);
+  }
+  cancel() { this.ac.abort(); }
+  async run(body) {
+    try {
+      const res = await fetch('/api/whiteboard/narration/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: this.ac.signal
+      });
+      if (!res.ok || !res.body) {
+        const data = await res.json().catch(() => ({}));
+        throw apiErr(res, data);
+      }
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+      const line = s => {
+        if (!s.trim()) return;
+        let ev; try { ev = JSON.parse(s); } catch { return; }
+        if (ev.error) throw Object.assign(new Error(ev.error), { code: ev.code || 'audio' });
+        this.emit(ev);
+      };
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        let nl;
+        while ((nl = buf.indexOf('\n')) >= 0) { line(buf.slice(0, nl)); buf = buf.slice(nl + 1); }
+      }
+      buf += dec.decode();
+      line(buf);
+      if (!this.done) this.emit({ done: true });
+    } catch (err) {
+      if (this.done) return;
+      this.error = err;
+      this.emit({ error: err });
+    }
+  }
+}
+function narrStreamSpeed() { return Math.min(1.2, Math.max(0.7, T.speed || 1)); }
+function narrCanStream(L) {
+  const m = Narr.meta && Narr.meta.stream;
+  return !!(L && m && m.enabled && (m.languages || []).includes(lessonLang(L)) && (window.AudioContext || window.webkitAudioContext));
+}
+function narrGetStream(L, index) {
+  const sections = (L.narrSections && L.narrSections.length) ? L.narrSections : narrSections(L);
+  const section = sections[index];
+  if (!section) return null;
+  const key = [lessonLang(L), Narr.voice, narrStreamSpeed(), section.text].join('\n');
+  const have = Narr.streams.get(key);
+  if (have && !have.error) return have;
+  const s = new NarrStream(key, { text: section.text, language: lessonLang(L), voice: Narr.voice, speed: narrStreamSpeed() });
+  Narr.streams.set(key, s);
+  while (Narr.streams.size > 10) {
+    const [k, old] = Narr.streams.entries().next().value;
+    if (old === Narr.stream) break;
+    if (!old.done) old.cancel();
+    Narr.streams.delete(k);
+  }
+  return s;
+}
+function narrCancelStreams() {
+  Narr.streams.forEach(s => { if (!s.done) s.cancel(); });
+  Narr.streams.clear();
+}
+function narrPrefetchNext() {
+  const L = T.L;
+  if (L && narrCanStream(L) && Narr.index + 1 < Narr.sections.length) narrGetStream(L, Narr.index + 1);
+}
+function narrAppendWords(words) {
+  const base = Narr.words.length;
+  Narr.words.push(...words);
+  const box = $('#twNarrWords'); if (!box) return;
+  box.hidden = false;
+  box.insertAdjacentHTML('beforeend', words.map((w, k) => `<span class="nw" data-i="${base + k}">${esc(w.text || '')}</span> `).join(''));
+}
+function narrStreamTick(token, player) {
+  if (token !== Narr.token || Narr.player !== player || player.stopped) return;
+  const time = player.time;
+  if (player.scheduled > 0) {
+    Narr.progress = Math.min(1, time / player.scheduled);
+    const bar = $('#twNarrBar'); if (bar) bar.style.width = Math.round(Narr.progress * 100) + '%';
+  }
+  narrSyncWords(time);
+  requestAnimationFrame(() => narrStreamTick(token, player));
+}
+function narrStreamEnded(section, token) {
+  if (token !== Narr.token) return;
+  Narr.progress = 1;
+  if (Narr.words.length) narrSyncWords(Narr.words[Narr.words.length - 1].end + 1);
+  narrFinalizeTyping(section);
+  if (Narr.player) { Narr.player.stop(); Narr.player = null; }
+  Narr.stream = null;
+  Narr.state = 'done';
+  narrUpdateUi();
+  narrOnSectionEnd();
+}
+/** Resolves once audio starts; rejects only if the stream fails before any audio. */
+function narrPlayStream(section, token) {
+  const stream = narrGetStream(T.L, Narr.index);
+  if (!stream) return Promise.reject(Object.assign(new Error(''), { code: 'audio' }));
+  Narr.stream = stream;
+  return new Promise((resolve, reject) => {
+    let player = null;
+    let started = false;
+    let listening = true;
+    let unsub = null;
+    const stopListening = () => { listening = false; if (unsub) unsub(); };
+    const onEvent = ev => {
+      if (!listening) return;
+      if (token !== Narr.token) { stopListening(); return; }
+      if (ev.meta) {
+        Narr.words = []; Narr.wordIndex = -1;
+        narrAssignWordRanges(new Array(Math.max(1, ev.meta.totalWords || 1)));
+        const plan = Narr.typePlan;
+        if (plan && plan.length) plan[plan.length - 1].wordEnd = 1e9;
+        narrApplyBoardTyping(-1);
+        const box = $('#twNarrWords'); if (box) { box.innerHTML = ''; box.hidden = false; }
+        const cap = $('#twCap'); if (cap) cap.textContent = '';
+        player = new PcmStreamPlayer(ev.meta.sampleRate);
+        player.setMuted(Narr.muted);
+        player.onended = () => { stopListening(); narrStreamEnded(section, token); };
+        Narr.player = player;
+        return;
+      }
+      if (ev.error) {
+        stopListening();
+        if (!started) {
+          if (player) player.stop();
+          if (Narr.player === player) Narr.player = null;
+          Narr.streams.delete(stream.key);
+          if (Narr.stream === stream) Narr.stream = null;
+          reject(ev.error);
+        } else if (player) player.finish();
+        return;
+      }
+      if (ev.done) {
+        if (player) player.finish();
+        narrPrefetchNext();
+        if (!started) { started = true; resolve(); }
+        return;
+      }
+      if (ev.words && ev.words.length) narrAppendWords(ev.words);
+      if (ev.audio && player) {
+        player.push(ev.audio);
+        if (!started) {
+          started = true;
+          Narr.state = 'playing';
+          narrUpdateUi();
+          narrStreamTick(token, player);
+          resolve();
+          if (player.blocked) {
+            player.resume();
+            setTimeout(() => {
+              if (token === Narr.token && Narr.player === player && player.blocked && Narr.state === 'playing') {
+                Narr.state = 'paused'; narrUpdateUi(); toast(t('narr.tap'));
+              }
+            }, 400);
+          }
+        }
+      }
+    };
+    unsub = stream.subscribe(onEvent);
+    if (!listening) unsub();
+  });
+}
+function chatVoiceOptions(L) {
+  const m = Narr.meta && Narr.meta.stream;
+  return { enabled: !!(m && m.chat && narrCanStream(L) && !Narr.muted), id: Narr.voice, speed: narrStreamSpeed() };
+}
+function chatVoiceStop() {
+  if (T.chatPlayer) { T.chatPlayer.stop(); T.chatPlayer = null; }
+}
+function chatVoiceStart(rate) {
+  chatVoiceStop();
+  T.chatPlayer = new PcmStreamPlayer(rate);
+  T.chatPlayer.setMuted(Narr.muted);
+  T.chatResumeNarr = false;
+}
+function chatVoicePush(b64) {
+  const p = T.chatPlayer; if (!p) return;
+  if (!p.segs.length && Narr.state === 'playing') { narrPause(); T.chatResumeNarr = true; }
+  p.push(b64);
+  if (p.blocked) p.resume();
+}
+function chatVoiceFinish() {
+  const p = T.chatPlayer; if (!p) return;
+  p.onended = () => {
+    if (T.chatPlayer === p) T.chatPlayer = null;
+    p.stop();
+    if (T.chatResumeNarr && Narr.state === 'paused' && T.L && T.q == null) {
+      T.chatResumeNarr = false;
+      narrTogglePlay();
+    }
+  };
+  p.finish();
+}
+
 function narrTeardown() {
   narrStopAudio();
   Narr.state = 'ready'; Narr.sections = []; Narr.index = 0; Narr.token++; Narr.driving = false; Narr.typePlan = [];
@@ -1958,7 +2265,7 @@ async function narrFetchAudio(section) {
   const L = T.L;
   const lang = lessonLang(L);
   const pack = L.narrPack && L.narrPack[Narr.index];
-  if (pack && (pack.url || pack.audioBase64)) return pack;
+  if (pack && (pack.url || pack.audioBase64) && (!pack.voice || pack.voice === Narr.voice)) return pack;
   const key = narrCacheKey(section.text, lang, Narr.voice);
   if (Narr.cache.has(key)) return Narr.cache.get(key);
   const data = await postJson('/api/whiteboard/narration', {
@@ -2017,6 +2324,12 @@ async function narrPlayIndex(index, opts) {
   const i = Math.max(0, Math.min(Narr.sections.length - 1, index));
   const force = !!(opts && opts.force);
   if (!force && Narr.state === 'playing' && Narr.index === i && Narr.audio && !Narr.audio.paused) return;
+  if (!force && Narr.state === 'paused' && Narr.index === i && Narr.player) {
+    Narr.player.resume();
+    Narr.state = 'playing';
+    narrUpdateUi();
+    return;
+  }
   if (!force && Narr.state === 'paused' && Narr.index === i && Narr.audio) {
     try {
       await Narr.audio.play();
@@ -2039,6 +2352,20 @@ async function narrPlayIndex(index, opts) {
   narrUpdateUi();
   const ac = new AbortController(); Narr.abort = ac;
   try {
+    if (narrCanStream(L)) {
+      try {
+        await narrPlayStream(section, token);
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError' || token !== Narr.token) return;
+        console.warn('Live voice stream failed; using buffered audio instead.', err && err.message);
+        if (err && err.code === 'quota' && Narr.meta && Narr.meta.stream) {
+          Narr.meta.stream.enabled = false;
+          narrCancelStreams();
+          toast(t('narr.quota'));
+        }
+      }
+    }
     let entry;
     try {
       entry = await narrFetchAudio(section);
@@ -2188,6 +2515,12 @@ function narrOnSectionEnd() {
   if (T.playing && T.L && !T.L.finished && !T.L.ended && T.q == null) twSchedule(450);
 }
 function narrPause() {
+  if (Narr.player && (Narr.state === 'playing' || Narr.state === 'loading')) {
+    Narr.player.pause();
+    Narr.state = 'paused';
+    narrUpdateUi();
+    return;
+  }
   if (Narr.audio && !Narr.audio.paused) {
     Narr.audio.pause();
     Narr.state = 'paused';
@@ -2207,7 +2540,7 @@ function narrTogglePlay() {
   }
   if (!Narr.sections.length) { toast(t('narr.off')); return; }
   if (Narr.state === 'playing') narrPause();
-  else if (Narr.state === 'paused' && Narr.audio) narrPlayIndex(Narr.index);
+  else if (Narr.state === 'paused' && (Narr.audio || Narr.player)) narrPlayIndex(Narr.index);
   else if (Narr.state === 'paused' && typeof speechSynthesis !== 'undefined' && speechSynthesis.paused) {
     speechSynthesis.resume(); Narr.state = 'playing'; narrUpdateUi();
   } else narrPlayIndex(Narr.index, { force: true });
@@ -2235,6 +2568,8 @@ function narrBindControls() {
   $('#twVol').onclick = () => {
     Narr.muted = !Narr.muted;
     if (Narr.audio) Narr.audio.muted = Narr.muted;
+    if (Narr.player) Narr.player.setMuted(Narr.muted);
+    if (T.chatPlayer) T.chatPlayer.setMuted(Narr.muted);
     narrUpdateUi();
   };
   $('#twNarrAuto').onchange = e => {
@@ -2248,15 +2583,27 @@ function narrBindControls() {
     Narr.voice = e.target.value || 'Kore';
     if (Narr.state === 'playing' || Narr.state === 'paused') narrPlayIndex(Narr.index, { force: true });
   };
-  fetch('/api/whiteboard/narration').then(r => r.json()).then(meta => {
+  narrLoadMeta().then(meta => {
     if (!meta || !Array.isArray(meta.voices) || !meta.voices.length) return;
-    Narr.metaLoaded = true;
     const sel = $('#twNarrVoice'); if (!sel) return;
-    const cur = Narr.voice;
     sel.innerHTML = meta.voices.map(v => `<option value="${esc(v.id)}">${esc(v.label || v.id)}</option>`).join('');
-    sel.value = meta.voices.some(v => v.id === cur) ? cur : meta.voices[0].id;
-    Narr.voice = sel.value;
-  }).catch(() => {});
+    sel.value = Narr.voice;
+  });
+}
+async function narrLoadMeta() {
+  if (Narr.meta) return Narr.meta;
+  try {
+    const res = await fetch('/api/whiteboard/narration');
+    const meta = await res.json();
+    if (!meta || !Array.isArray(meta.voices) || !meta.voices.length) return null;
+    Narr.meta = meta;
+    Narr.metaLoaded = true;
+    Narr.provider = meta.provider || Narr.provider;
+    if (!meta.voices.some(v => v.id === Narr.voice)) Narr.voice = meta.defaultVoice || meta.voices[0].id;
+    return meta;
+  } catch {
+    return null;
+  }
 }
 function narrOnQuestionOpen() {
   if (Narr.state === 'playing' || Narr.state === 'loading') narrPause();
@@ -2264,6 +2611,10 @@ function narrOnQuestionOpen() {
 }
 function narrOnQuestionClose() {
   if (!(Narr.resumeAfterQ && (Narr.autoContinue || Narr.autoStart))) return;
+  if (Narr.state === 'paused' && Narr.player && !Narr.player.fired) {
+    narrTogglePlay();
+    return;
+  }
   if (Narr.state === 'paused' && Narr.audio && Narr.audio.currentTime > 0 && !Narr.audio.ended) {
     narrTogglePlay();
     return;
@@ -2394,13 +2745,14 @@ function twCloseQ(i, extra) {
   L.idx = i + 1;
   narrOnQuestionClose();
 }
-async function streamChat(L, message, signal, onDelta) {
+async function streamChat(L, message, signal, onDelta, onTextDone) {
   const payload = {
     message,
     language: lessonLang(L),
     lesson: L.apiLesson ? compactLesson(L.apiLesson) : { title: lessonTitle(L), topic: L.topic || '', language: lessonLang(L) },
     history: L.qa.filter(x => x.a && !x.error && !x.pending).slice(-8).map(x => ({ q: clipText(x.q, 1500), a: clipText(x.a, 2000) })),
-    progress: progressPayload(L)
+    progress: progressPayload(L),
+    voice: chatVoiceOptions(L)
   };
   const fresh = L.sources.filter(s => s.file && !s.sent);
   let res;
@@ -2412,6 +2764,7 @@ async function streamChat(L, message, signal, onDelta) {
       fd.append('lesson', JSON.stringify(payload.lesson));
       fd.append('history', JSON.stringify(payload.history));
       fd.append('progress', JSON.stringify(payload.progress));
+      fd.append('voice', JSON.stringify(payload.voice));
       fresh.forEach(s => fd.append('files', s.file, s.file.name));
       res = await fetch('/api/whiteboard/chat', { method: 'POST', body: fd, headers: { Accept: 'text/event-stream' }, signal });
     } else {
@@ -2426,11 +2779,22 @@ async function streamChat(L, message, signal, onDelta) {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw apiErr(res, data);
   }
-  await readSSE(res, ev => {
-    if (ev.materials) applyMaterials(L, ev.materials);
-    if (ev.error) throw Object.assign(new Error(ev.error), { code: ev.code || 'upstream' });
-    if (ev.delta) onDelta(ev.delta);
-  });
+  try {
+    await readSSE(res, ev => {
+      if (ev.materials) applyMaterials(L, ev.materials);
+      if (ev.error) throw Object.assign(new Error(ev.error), { code: ev.code || 'upstream' });
+      if (ev.voice) chatVoiceStart(ev.voice.sampleRate);
+      if (ev.delta) onDelta(ev.delta);
+      if (ev.audio) chatVoicePush(ev.audio);
+      if (ev.textDone && onTextDone) onTextDone();
+      if (ev.done) chatVoiceFinish();
+    });
+  } catch (err) {
+    // Whoever aborted already stopped the voice; a newer reply may own the player now.
+    if (!signal.aborted) chatVoiceStop();
+    throw err;
+  }
+  chatVoiceFinish();
   fresh.forEach(s => { s.sent = true; });
 }
 async function twAsk(text, entry) {
@@ -2441,9 +2805,15 @@ async function twAsk(text, entry) {
   item.a = ''; item.error = ''; item.pending = true;
   if (!entry) L.qa.push(item);
   twRenderQA();
-  const ac = new AbortController(); T.chatAbort = ac;
+  if (T.chatVoiceAbort) T.chatVoiceAbort.abort();
+  chatVoiceStop();
+  const ac = new AbortController(); T.chatAbort = ac; T.chatVoiceAbort = ac;
   try {
-    await streamChat(L, text, ac.signal, delta => { item.a += delta; twPatchQA(item); if ($('#twCap')) twCaption(item.a); });
+    await streamChat(L, text, ac.signal, delta => { item.a += delta; twPatchQA(item); if ($('#twCap')) twCaption(item.a); }, () => {
+      item.pending = false;
+      T.chatBusy = false;
+      twRenderQA(); twSyncAsk();
+    });
     if (!item.a.trim()) throw Object.assign(new Error(''), { code: 'invalid_response' });
     item.pending = false;
   } catch (err) {
@@ -2551,6 +2921,7 @@ function twEndConfirm() {
     box.querySelector('[data-close]').onclick = closeModal;
     $('#twEndYes').onclick = () => {
       if (T.chatAbort) { T.chatAbort.abort(); T.chatAbort = null; }
+      chatVoiceStop();
       narrStop();
       if (!L.finished) L.ended = true;
       T.playing = false; clearTimeout(T.timer); clearInterval(T.capTimer);
