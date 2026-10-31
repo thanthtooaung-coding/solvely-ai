@@ -54,6 +54,52 @@ test('AiVOOV reads the transcribe_data audio', async () => {
   }
 });
 
+test('FreeTTS follows audio_url when the reply also has a file id', async () => {
+  const previous = process.env.FREETTS_API_KEY;
+  process.env.FREETTS_API_KEY = 'test-key';
+  const mp3 = Buffer.concat([Buffer.from('ID3'), Buffer.alloc(120, 1)]);
+  const seen = [];
+  try {
+    const result = await generateHttpNarration({
+      text: 'Hello class',
+      language: 'en',
+      provider: 'freetts',
+      fetchImpl: async url => {
+        seen.push(String(url));
+        return String(url).includes('/audio/') ? audioResponse(mp3) : jsonResponse({ file_id: 'abc', audio_url: 'https://freetts.org/api/audio/abc', chars_used: 11 });
+      }
+    });
+    assert.equal(seen[1], 'https://freetts.org/api/audio/abc');
+    assert.equal(Buffer.from(result.audioBase64, 'base64').length, mp3.length);
+  } finally {
+    if (previous == null) delete process.env.FREETTS_API_KEY;
+    else process.env.FREETTS_API_KEY = previous;
+  }
+});
+
+test('FreeTTS keeps audio when the reply is already an MP3', async () => {
+  const previous = process.env.FREETTS_API_KEY;
+  process.env.FREETTS_API_KEY = 'test-key';
+  const mp3 = Buffer.concat([Buffer.from('ID3'), Buffer.alloc(120, 1)]);
+  let calls = 0;
+  try {
+    const result = await generateHttpNarration({
+      text: 'Hello class',
+      language: 'en',
+      provider: 'freetts',
+      fetchImpl: async () => {
+        calls += 1;
+        return audioResponse(mp3);
+      }
+    });
+    assert.equal(calls, 1);
+    assert.equal(Buffer.from(result.audioBase64, 'base64').length, mp3.length);
+  } finally {
+    if (previous == null) delete process.env.FREETTS_API_KEY;
+    else process.env.FREETTS_API_KEY = previous;
+  }
+});
+
 test('FreeTTS downloads the file returned for a section', async () => {
   const previous = process.env.FREETTS_API_KEY;
   process.env.FREETTS_API_KEY = 'test-key';
