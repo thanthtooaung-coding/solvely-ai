@@ -71,7 +71,7 @@ test('a Burmese request stays in Burmese', () => {
   }), true);
 });
 
-test('notes html escapes markup and keeps the Solvely footer', () => {
+test('notes html escapes markup and keeps the minionsolve footer', () => {
   const html = renderNotesHtml({
     title: '<script>alert(1)</script>',
     language: 'my',
@@ -79,7 +79,7 @@ test('notes html escapes markup and keeps the Solvely footer', () => {
   });
   assert.match(html, /&lt;script&gt;alert/);
   assert.doesNotMatch(html, /<script>bad/);
-  assert.match(html, /Solvely\.ai/);
+  assert.match(html, /minionsolve\.ai/);
   assert.match(html, /Whiteboard Study|ဘုတ်ပြား/);
   assert.match(html, /lang="my"/);
   assert.match(html, /radial-gradient/);
@@ -196,7 +196,7 @@ test('health, static files, and secret paths', async () => {
 
     const home = await fetch(`${base}/`);
     assert.equal(home.status, 200);
-    assert.match(await home.text(), /Solvely Study/);
+    assert.match(await home.text(), /minionsolve\.ai/);
 
     const hidden = await fetch(`${base}/.env`);
     assert.equal(hidden.status, 404);

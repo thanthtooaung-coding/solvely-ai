@@ -1,6 +1,5 @@
-/* Solvely-style Home + AI Study.
-   Whiteboard Tutor calls Gemini through the local server.
-   Solver, flashcards, quizzes, and the other study tools on this page are still local demos. */
+/* minionsolve.ai Whiteboard Tutor & Flashcards.
+   Whiteboard Tutor and Flashcards call Gemini through the local server. */
 (() => {
 'use strict';
 
@@ -78,32 +77,12 @@ function setIcon(el, name) {
 /* ---------------- Localization ---------------- */
 const I18N = {
   en: {
-    'nav.home': 'Home', 'nav.study': 'AI Study',
-    upgrade: 'Upgrade', chrome: 'Get the Chrome Extension', history: 'History',
-    'home.title': 'Solvely: Your AI Study Companion',
-    'mode.study': 'Study', 'mode.exam': 'Exam Prep', 'mode.writing': 'Writing',
-    'tab.solver': 'Solver', 'tab.whiteboard': 'Whiteboard Tutor', 'tab.flashcards': 'Flashcards', 'tab.quiz': 'Quiz', 'tab.guide': 'Study Guide',
-    'ph.solver': 'Enter a problem, or upload a document or image for a step-by-step solution',
+    'nav.home': 'Home', 'nav.flashcards': 'My Flashcards', history: 'History',
+    'home.title': 'minionsolve.ai: Your AI Study Companion',
+    'tab.whiteboard': 'Whiteboard Tutor', 'tab.flashcards': 'Flashcards',
     'ph.whiteboard': 'Enter a topic or paste a problem, or upload materials to start an interactive whiteboard lesson',
     'ph.flashcards': 'Enter a topic, or upload notes to generate flashcards',
-    'ph.quiz': 'Enter a topic, or upload notes to generate a practice quiz',
-    'ph.guide': 'Paste notes, or upload a document to create a study guide',
-    solve: 'Solve', 'ex.title': 'Solver examples', 'ex.badge': 'Cross-check across AI models for highest accuracy',
-    'ex.1': 'Step-by-step solution', 'ex.2': 'Interactive graph', 'ex.3': 'Structure visualization', 'ex.4': 'Financial analysis',
-    'cat.geo': 'geometry', 'cat.alg': 'algebra', 'cat.chem': 'chemistry', 'cat.acc': 'accounting',
-    'banner.title': 'Ace your exams in less time', 'banner.sub': 'Turn your study materials into an exam prep bundle',
-    create: 'Create new', quick: 'Quick tools',
-    'tool.flashcard': 'Flashcard', 'tool.flashcard.sub': 'Flip to memorize',
-    'tool.quiz': 'Quiz', 'tool.quiz.sub': 'Practice makes perfect',
-    'tool.solver': 'AI Solver', 'tool.solver.sub': 'Step-by-step explanation',
-    'tool.guide': 'Study guide', 'tool.guide.sub': 'Summarize with clarity',
-    'tool.predictor': 'Exam predictor', 'tool.predictor.sub': 'Study what matters',
-    'tool.cheatsheet': 'Cheat sheet', 'tool.cheatsheet.sub': 'Crack the exam',
-    recent: 'Recent study sets', viewall: 'View all', newset: 'New study set', flashcards: 'flashcards',
-    back: 'Back', cancel: 'Cancel', createBtn: 'Create', allSets: 'All study sets',
-    demo: 'Demo response', demoNote: 'Mock output for this prototype — no AI model is connected.',
-    'step.write': 'Write the equation', 'step.sub': 'Subtract {b} from both sides', 'step.add': 'Add {b} to both sides',
-    'step.div': 'Divide both sides by {a}', 'step.check': 'Check the answer', finalAnswer: 'Final answer',
+    back: 'Back', cancel: 'Cancel',
     createLesson: 'Create lesson', createCards: 'Create cards', 'wb.try': 'Try:', retry: 'Try again',
     'fc.prepTitle': 'Preparing your study set…', 'fc.prepWorking': 'Gemini is writing flashcards from your request.',
     'fc.prepBack': 'Back to study sets', 'fc.prepErr': 'We couldn’t create this study set',
@@ -185,32 +164,12 @@ const I18N = {
     'src.read': 'Text extracted', 'src.pending': 'Reading…'
   },
   my: {
-    'nav.home': 'ပင်မ', 'nav.study': 'AI လေ့လာရေး',
-    upgrade: 'အဆင့်မြှင့်ရန်', chrome: 'Chrome Extension ရယူရန်', history: 'မှတ်တမ်း',
-    'home.title': 'Solvely: သင်၏ AI လေ့လာရေးအဖော်',
-    'mode.study': 'လေ့လာ', 'mode.exam': 'စာမေးပွဲ', 'mode.writing': 'စာရေး',
-    'tab.solver': 'ဖြေရှင်းရန်', 'tab.whiteboard': 'ဘုတ်ပြားဆရာ', 'tab.flashcards': 'ကတ်ပြားများ', 'tab.quiz': 'စာမေးပွဲငယ်', 'tab.guide': 'လေ့လာရေးလမ်းညွှန်',
-    'ph.solver': 'ပုစ္ဆာတစ်ခု ရိုက်ထည့်ပါ၊ သို့မဟုတ် စာရွက်စာတမ်း/ပုံ တင်ပြီး အဆင့်ဆင့်ဖြေရှင်းချက် ရယူပါ',
+    'nav.home': 'ပင်မ', 'nav.flashcards': 'ကျွန်ုပ်၏ ကတ်ပြားများ', history: 'မှတ်တမ်း',
+    'home.title': 'minionsolve.ai: သင်၏ AI လေ့လာရေးအဖော်',
+    'tab.whiteboard': 'ဘုတ်ပြားဆရာ', 'tab.flashcards': 'ကတ်ပြားများ',
     'ph.whiteboard': 'ခေါင်းစဉ် သို့မဟုတ် ပုစ္ဆာ ရိုက်ထည့်ပါ၊ သို့မဟုတ် စာရွက်စာတမ်းတင်ပြီး အပြန်အလှန် သင်ခန်းစာ စတင်ပါ',
     'ph.flashcards': 'ကတ်ပြားများ ဖန်တီးရန် ခေါင်းစဉ် ရိုက်ထည့်ပါ သို့မဟုတ် မှတ်စုတင်ပါ',
-    'ph.quiz': 'လေ့ကျင့်ခန်းမေးခွန်းများအတွက် ခေါင်းစဉ် ရိုက်ထည့်ပါ',
-    'ph.guide': 'လေ့လာရေးလမ်းညွှန် ဖန်တီးရန် မှတ်စုထည့်ပါ သို့မဟုတ် စာရွက်စာတမ်းတင်ပါ',
-    solve: 'ဖြေရှင်းရန်', 'ex.title': 'ဖြေရှင်းနည်း နမူနာများ', 'ex.badge': 'AI မော်ဒယ်များဖြင့် တိုက်စစ်၍ တိကျမှုအမြင့်ဆုံး',
-    'ex.1': 'အဆင့်ဆင့် ဖြေရှင်းချက်', 'ex.2': 'အပြန်အလှန် ဂရပ်', 'ex.3': 'ဖွဲ့စည်းပုံ မြင်ကွင်း', 'ex.4': 'ဘဏ္ဍာရေး ခွဲခြမ်းစိတ်ဖြာမှု',
-    'cat.geo': 'ဂျီဩမေတြီ', 'cat.alg': 'အက္ခရာသင်္ချာ', 'cat.chem': 'ဓာတုဗေဒ', 'cat.acc': 'စာရင်းကိုင်',
-    'banner.title': 'အချိန်နည်းနည်းနဲ့ စာမေးပွဲ အောင်မြင်ပါစေ', 'banner.sub': 'သင့်လေ့လာရေးပစ္စည်းများကို စာမေးပွဲပြင်ဆင်ရေး အစုံအလင်အဖြစ် ပြောင်းပါ',
-    create: 'အသစ်ဖန်တီးရန်', quick: 'အမြန်ကိရိယာများ',
-    'tool.flashcard': 'ကတ်ပြား', 'tool.flashcard.sub': 'လှန်ပြီး မှတ်သားပါ',
-    'tool.quiz': 'စာမေးပွဲငယ်', 'tool.quiz.sub': 'လေ့ကျင့်လေ ကျွမ်းကျင်လေ',
-    'tool.solver': 'AI ဖြေရှင်းသူ', 'tool.solver.sub': 'အဆင့်ဆင့် ရှင်းလင်းချက်',
-    'tool.guide': 'လေ့လာရေးလမ်းညွှန်', 'tool.guide.sub': 'ရှင်းရှင်းလင်းလင်း အနှစ်ချုပ်',
-    'tool.predictor': 'စာမေးပွဲ ခန့်မှန်းချက်', 'tool.predictor.sub': 'အရေးကြီးတာကို လေ့လာပါ',
-    'tool.cheatsheet': 'အကျဉ်းချုပ်စာရွက်', 'tool.cheatsheet.sub': 'စာမေးပွဲကို ကျော်လွှားပါ',
-    recent: 'မကြာသေးမီက လေ့လာရေးအစုများ', viewall: 'အားလုံးကြည့်ရန်', newset: 'လေ့လာရေးအစု အသစ်', flashcards: 'ကတ်ပြား',
-    back: 'နောက်သို့', cancel: 'မလုပ်တော့ပါ', createBtn: 'ဖန်တီးရန်', allSets: 'လေ့လာရေးအစု အားလုံး',
-    demo: 'နမူနာအဖြေ', demoNote: 'ဤရှေ့ပြေးပုံစံအတွက် နမူနာသာ ဖြစ်သည် — AI မော်ဒယ် ချိတ်ဆက်ထားခြင်း မရှိပါ။',
-    'step.write': 'ညီမျှခြင်းကို ရေးပါ', 'step.sub': 'နှစ်ဖက်စလုံးမှ {b} ကို နုတ်ပါ', 'step.add': 'နှစ်ဖက်စလုံးသို့ {b} ကို ပေါင်းပါ',
-    'step.div': 'နှစ်ဖက်စလုံးကို {a} ဖြင့် စားပါ', 'step.check': 'အဖြေကို စစ်ဆေးပါ', finalAnswer: 'အဖြေ',
+    back: 'နောက်သို့', cancel: 'မလုပ်တော့ပါ',
     createLesson: 'သင်ခန်းစာ ဖန်တီးရန်', createCards: 'ကတ်ပြား ဖန်တီးရန်', 'wb.try': 'စမ်းကြည့်ရန်:', retry: 'ထပ်စမ်းရန်',
     'fc.prepTitle': 'လေ့လာရေးအစု ပြင်ဆင်နေသည်…', 'fc.prepWorking': 'Gemini က သင့်တောင်းဆိုချက်မှ ကတ်ပြားများ ရေးနေသည်။',
     'fc.prepBack': 'လေ့လာရေးအစုများသို့', 'fc.prepErr': 'ဤလေ့လာရေးအစုကို ဖန်တီးမရပါ',
@@ -294,83 +253,10 @@ const I18N = {
 };
 
 /* ---------------- State ---------------- */
-const ACE_CARDS = [
-  ['Spaced repetition', 'Reviewing material at increasing intervals to move it into long-term memory.'],
-  ['Active recall', 'Testing yourself instead of re-reading — retrieving information strengthens memory.'],
-  ['Day 1 goal', 'List every syllabus topic and rate your confidence from 1 to 5.'],
-  ['Day 2 goal', 'Tackle your weakest topics first, while your energy is highest.'],
-  ['Pomodoro technique', '25 minutes of focused study followed by a 5-minute break.'],
-  ['Interleaving', 'Mixing different problem types in one session to improve transfer.'],
-  ['Feynman technique', 'Explain a concept in simple words, as if teaching a beginner.'],
-  ['Day 3 goal', 'Turn your notes into flashcards and a one-page cheat sheet.'],
-  ['Past papers', 'Practise under timed conditions to learn the exam’s format.'],
-  ['Day 4 goal', 'Complete one full past paper and mark it honestly.'],
-  ['Error log', 'Record every mistake, why it happened and the correct method.'],
-  ['Day 5 goal', 'Re-attempt every question in your error log.'],
-  ['Elaboration', 'Ask “why” and “how” to connect new facts to what you already know.'],
-  ['Sleep', 'Memory consolidates during sleep — aim for 7–9 hours.'],
-  ['Day 6 goal', 'Light review of cheat sheets and flashcards only.'],
-  ['Dual coding', 'Combining words with diagrams to create two memory paths.'],
-  ['Mind map', 'A diagram linking a central topic to related ideas.'],
-  ['Day 7 goal', 'Rest, do a short morning recap and prepare your exam-day kit.'],
-  ['Reading the paper', 'Read all questions first and start with the ones you are sure of.'],
-  ['Time per mark', 'Divide total minutes by total marks to pace each question.']
-].map(([q, a]) => ({ q, a }));
-
-const FLASH_DECK = [
-  ['Mitochondria', 'The organelle that releases energy (ATP) for the cell through respiration.'],
-  ['Photosynthesis', 'Plants use light, water and CO₂ to make glucose and release oxygen.'],
-  ['ဆဲလ် (Cell)', 'သက်ရှိအားလုံး၏ အခြေခံ ဖွဲ့စည်းတည်ဆောက်မှု ယူနစ်ဖြစ်သည်။'],
-  ['Osmosis', 'Movement of water across a partially permeable membrane toward the more concentrated solution.'],
-  ['DNA', 'A double-helix molecule carrying genetic instructions.'],
-  ['Enzyme', 'A protein that speeds up a chemical reaction without being used up.'],
-  ['Ribosome', 'The site of protein synthesis in the cell.'],
-  ['Diffusion', 'Net movement of particles from high to low concentration.'],
-  ['Chlorophyll', 'The green pigment that absorbs light for photosynthesis.']
-].map(([q, a]) => ({ q, a }));
-
-const QUIZ = [
-  { q: 'What is 15% of 200?', o: ['20', '25', '30', '35'], a: 2, why: '0.15 × 200 = 30.' },
-  { q: 'Which gas do plants absorb during photosynthesis?', o: ['Oxygen', 'Carbon dioxide', 'Nitrogen', 'Hydrogen'], a: 1, why: 'Plants take in CO₂ and release O₂.' },
-  { q: 'Solve: 2x + 10 = 25', o: ['5', '7.5', '10', '17.5'], a: 1, why: '2x = 15, so x = 7.5.' },
-  { q: 'What is the capital of Myanmar?', o: ['Yangon', 'Mandalay', 'Naypyidaw', 'Bago'], a: 2, why: 'Naypyidaw has been the capital since 2005–2006.' },
-  { q: '၃ × ၄ = ?', o: ['၇', '၁၂', '၁၀', '၁၄'], a: 1, why: '၃ × ၄ = ၁၂ (3 × 4 = 12).' }
-];
-
-const DOCS = [
-  { id: 'bio', name: 'Biology – Cell Structure.pdf', meta: '12 pages · uploaded sample',
-    overview: 'Cells are the basic unit of life. This chapter compares plant and animal cells, explains the job of each organelle and shows how substances move in and out of cells.',
-    points: ['Animal and plant cells share a nucleus, cytoplasm, cell membrane, mitochondria and ribosomes.', 'Plant cells also have a cell wall, chloroplasts and a permanent vacuole.', 'Substances move by diffusion, osmosis and active transport.', 'Specialised cells (nerve, root-hair, red blood cells) are adapted to their function.'],
-    terms: [['Nucleus', 'Controls the cell and contains genetic material'], ['Cell wall', 'Cellulose layer that supports plant cells'], ['Chloroplast', 'Site of photosynthesis'], ['Active transport', 'Movement against a gradient, using energy']],
-    qs: ['Compare a plant cell with an animal cell.', 'Explain why root-hair cells need many mitochondria.'] },
-  { id: 'phy', name: 'Grade 10 Physics – Motion notes.docx', meta: '6 pages · uploaded sample',
-    overview: 'Motion is described using distance, displacement, speed, velocity and acceleration. The notes cover graphs of motion and the equations of uniformly accelerated motion.',
-    points: ['Speed = distance ÷ time; velocity also includes direction.', 'Acceleration = change in velocity ÷ time.', 'The gradient of a distance–time graph is speed; the area under a velocity–time graph is distance.', 'v = u + at and s = ut + ½at² apply when acceleration is constant.'],
-    terms: [['Displacement', 'Distance in a stated direction'], ['Velocity', 'Speed in a stated direction'], ['Acceleration', 'Rate of change of velocity'], ['Uniform motion', 'Constant velocity, zero acceleration']],
-    qs: ['A car accelerates from 0 to 20 m/s in 5 s. Find its acceleration.', 'Sketch a velocity–time graph for a car braking to a stop.'] },
-  { id: 'his', name: 'Myanmar History – Konbaung Era.pdf', meta: '9 pages · uploaded sample',
-    overview: 'The Konbaung dynasty (1752–1885) was the last ruling dynasty of Myanmar. The notes outline its founding, expansion, the Anglo-Burmese wars and the end of the monarchy.',
-    points: ['Founded by King Alaungpaya in 1752.', 'Capitals moved between Shwebo, Ava (Inwa), Amarapura and Mandalay.', 'Three Anglo-Burmese wars (1824–26, 1852, 1885) led to British annexation.', 'King Thibaw was the last king, exiled in 1885.'],
-    terms: [['Alaungpaya', 'Founder of the Konbaung dynasty'], ['Mandalay', 'Royal capital founded by King Mindon'], ['Yandabo Treaty', 'Ended the First Anglo-Burmese War (1826)'], ['Thibaw', 'Last Konbaung king']],
-    qs: ['Describe the causes of the First Anglo-Burmese War.', 'Why did the capital move several times during the Konbaung era?'] }
-];
-
-const PREDICT = {
-  Mathematics: [['Quadratic equations', 92], ['Trigonometry', 84], ['Geometry – circles', 71], ['Probability', 63], ['Matrices', 48], ['Sets & functions', 35]],
-  Physics: [['Motion & forces', 90], ['Electricity', 82], ['Waves & sound', 66], ['Heat', 55], ['Light', 47], ['Magnetism', 32]],
-  Chemistry: [['Chemical bonding', 88], ['Acids, bases & salts', 80], ['Stoichiometry', 69], ['Periodic table', 58], ['Organic chemistry', 44], ['Electrolysis', 36]]
-};
-
 const state = {
-  lang: 'en', dark: false, mode: 'study', tab: 'solver', model: 'Solvely AI',
-  files: [], history: [],
-  sets: [{ id: 'ace7', title: 'How to Ace Your Exam in 7 Days', subject: 'Study skills', emoji: '🍪', creator: 'Solvi', cards: ACE_CARDS, created: 0 }]
+  lang: 'en', dark: false, tab: 'whiteboard',
+  files: [], history: []
 };
-const MODELS = [
-  { name: 'Solvely AI', desc: 'Balanced default (mock)' },
-  { name: 'Solvely AI Pro', desc: 'Longer reasoning (mock)' },
-  { name: 'Cross-check', desc: 'Compare several models (mock)' }
-];
 const t = (k, vars) => {
   let s = (I18N[state.lang] && I18N[state.lang][k]) ?? I18N.en[k] ?? k;
   if (vars) Object.keys(vars).forEach(v => { s = s.replace(`{${v}}`, vars[v]); });
@@ -385,8 +271,8 @@ function toast(msg) {
 }
 
 /* ---------------- Routing ----------------
-   Two main pages: #/home and #/study. AI Study sub-views live under #/study/…
-   Any other route redirects to #/home. */
+   Two main pages: #/home and #/flashcards.
+   Whiteboard lessons live under #/tutor/… */
 
 function route() {
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/');
@@ -400,14 +286,14 @@ function route() {
   document.body.classList.toggle('tutor-mode', isLesson);
   $$('.view').forEach(v => { v.hidden = true; });
   $('#app').classList.remove('sb-open');
-  const navTop = (top === 'tutor' || top === 'flashcards') ? 'home' : top;
+  const navTop = top === 'flashcards' ? 'flashcards' : 'home';
   $$('.nav-item').forEach(a => {
     const on = a.dataset.route === navTop;
     a.classList.toggle('active', on);
     on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
   });
   const main = $('#main');
-  main.classList.toggle('gray', top === 'study' || top === 'flashcards');
+  main.classList.toggle('gray', top === 'flashcards');
 
   if (top === 'home') { $('#view-home').hidden = false; }
   else if (top === 'tutor' && parts[1]) {
@@ -417,16 +303,6 @@ function route() {
   else if (top === 'flashcards') {
     $('#view-fc').hidden = false;
     renderFlashRoute(parts);
-  }
-  else if (top === 'study') {
-    if (!parts[1]) { $('#view-study').hidden = false; renderRecent(); }
-    else {
-      const sub = $('#view-sub'); sub.hidden = false;
-      if (parts[1] === 'tool') renderTool(parts[2]);
-      else if (parts[1] === 'sets') renderSets();
-      else if (parts[1] === 'set') renderSet(parts[2]);
-      else { location.replace('#/study'); return; }
-    }
   } else { location.replace('#/home'); return; }
   window.scrollTo(0, 0);
 }
@@ -449,12 +325,9 @@ function initSidebar() {
     setIcon($('#themeBtn'), state.dark ? 'sun' : 'moon');
   });
   $('#langBtn').addEventListener('click', () => { state.lang = state.lang === 'en' ? 'my' : 'en'; applyI18n(); });
-  $('#upgradeBtn').addEventListener('click', () => openPlans(false));
   document.addEventListener('click', e => {
     const el = e.target.closest('[data-toast]');
     if (el) { e.preventDefault(); toast(el.dataset.toast); }
-    const c = e.target.closest('[data-action="create-set"]');
-    if (c) { e.preventDefault(); openCreateSet(); }
   });
 }
 
@@ -469,13 +342,13 @@ function applyI18n() {
   route();
 }
 
-/* ---------------- Home: solver ---------------- */
+/* ---------------- Home ---------------- */
 function updatePill() {
   const pill = $('#inputPill'), q = $('#question');
   pill.textContent = t('tab.' + state.tab);
   q.placeholder = t('ph.' + state.tab);
   requestAnimationFrame(() => { q.style.textIndent = (pill.offsetWidth + 8) + 'px'; });
-  $('#solveBtn span').textContent = state.tab === 'whiteboard' ? t('createLesson') : state.tab === 'flashcards' ? t('createCards') : t('solve');
+  $('#solveBtn span').textContent = state.tab === 'whiteboard' ? t('createLesson') : t('createCards');
   $('#wbHint').hidden = state.tab !== 'whiteboard';
   const fcOpts = $('#fcOpts'); if (fcOpts) fcOpts.hidden = state.tab !== 'flashcards';
 }
@@ -493,62 +366,7 @@ function addFiles(list, isImg) {
 }
 
 const BURMESE = /[\u1000-\u109F]/;
-function toAscii(s) { return s.replace(/[\u1040-\u1049]/g, d => String(d.charCodeAt(0) - 0x1040)); }
-const fmt = n => Number.isInteger(n) ? String(n) : String(+n.toFixed(4));
-function parseLinear(s) {
-  const n = toAscii(s).replace(/[−–]/g, '-').replace(/×/g, '*').replace(/\s+/g, '');
-  const m = n.match(/(-?\d*\.?\d*)\*?x([+-]\d+\.?\d*)?=(-?\d+\.?\d*)/i);
-  if (!m) return null;
-  const a = m[1] === '' ? 1 : m[1] === '-' ? -1 : parseFloat(m[1]);
-  const b = m[2] ? parseFloat(m[2]) : 0, c = parseFloat(m[3]);
-  if (!a || isNaN(a) || isNaN(c)) return null;
-  return { a, b, c, x: (c - b) / a };
-}
-function solverHTML(q) {
-  const my = BURMESE.test(q) || state.lang === 'my';
-  const L = k => my ? I18N.my[k] : I18N.en[k];
-  const eq = parseLinear(q);
-  if (eq) {
-    const { a, b, c, x } = eq;
-    const lhs = `${a === 1 ? '' : a === -1 ? '−' : fmt(a)}x${b ? (b > 0 ? ' + ' : ' − ') + fmt(Math.abs(b)) : ''}`;
-    const steps = [`<li><b>${L('step.write')}</b><div class="math">${lhs} = ${fmt(c)}</div></li>`];
-    if (b) steps.push(`<li><b>${(b > 0 ? L('step.sub') : L('step.add')).replace('{b}', fmt(Math.abs(b)))}</b><div class="math">${a === 1 ? '' : fmt(a)}x = ${fmt(c)} ${b > 0 ? '−' : '+'} ${fmt(Math.abs(b))} = ${fmt(c - b)}</div></li>`);
-    if (a !== 1) steps.push(`<li><b>${L('step.div').replace('{a}', fmt(a))}</b><div class="math">x = ${fmt(c - b)} ÷ ${fmt(a)} = ${fmt(x)}</div></li>`);
-    steps.push(`<li><b>${L('step.check')}</b><div class="math">${a === 1 ? '' : fmt(a)}(${fmt(x)})${b ? (b > 0 ? ' + ' : ' − ') + fmt(Math.abs(b)) : ''} = ${fmt(c)} ✓</div></li>`);
-    return `<ol class="steps">${steps.join('')}</ol><div class="final-ans">${icon('check', 16, 2.4)} ${L('finalAnswer')}: x = ${fmt(x)}</div>`;
-  }
-  return `<ol class="steps">
-    <li><b>Understand the question</b><div>Identify what is given and what you need to find.</div></li>
-    <li><b>Choose a method</b><div>Pick the formula or concept that links the given information to the unknown.</div></li>
-    <li><b>Work it through</b><div>A connected AI model would show the full worked solution here.</div></li>
-  </ol><div class="mock-note">${icon('info', 14)} Tip: try a linear equation such as <b>&nbsp;2x + 10 = 25&nbsp;</b> to see a complete worked example.</div>`;
-}
-function homeMockHTML(tab, q) {
-  const topic = q || 'your uploaded file';
-  if (tab === 'flashcards') {
-    return `<ol class="steps"><li><b>${esc(topic)} — key term</b><div>Definition generated from your input would appear here.</div></li><li><b>Example card 2</b><div>Front / back pairs are created for review.</div></li><li><b>Example card 3</b><div>Open AI Study → Flashcard to try the interactive viewer.</div></li></ol>`;
-  }
-  if (tab === 'quiz') {
-    return `<ol class="steps"><li><b>Sample question about “${esc(topic)}”</b><div>A) Option one &nbsp; B) Option two &nbsp; C) Option three &nbsp; D) Option four</div></li><li><b>Next step</b><div>Open AI Study → Quiz to answer and get feedback.</div></li></ol>`;
-  }
-  if (tab === 'guide') {
-    return `<ol class="steps"><li><b>Overview</b><div>A short summary of “${esc(topic)}”.</div></li><li><b>Key concepts</b><div>The main ideas, listed for revision.</div></li><li><b>Practice questions</b><div>Open AI Study → Study guide for a full sample.</div></li></ol>`;
-  }
-  return solverHTML(q);
-}
-function renderAnswer(entry) {
-  const box = $('#answer');
-  box.hidden = false;
-  box.innerHTML = `<div class="answer-card">
-    <div class="ans-head"><span class="ans-badge">${esc(t('demo'))}</span><span class="ans-meta">${esc(t('tab.' + entry.tab))} · ${esc(entry.model)}</span><button class="icon-btn" id="ansClose" aria-label="Close response">${icon('x', 16)}</button></div>
-    ${entry.q ? `<div class="ans-q">${esc(entry.q)}</div>` : ''}
-    ${entry.files.length ? `<div class="ans-files">${icon('clip', 13).replace('<svg', '<svg style="display:inline;vertical-align:-2px"')} ${entry.files.map(esc).join(', ')}</div>` : ''}
-    ${homeMockHTML(entry.tab, entry.q)}
-    <div class="mock-note">${icon('info', 14)} ${esc(t('demoNote'))}</div>
-  </div>`;
-  $('#ansClose').onclick = () => { box.hidden = true; };
-  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
+
 function doSolve() {
   const q = $('#question').value.trim();
   if (!q && !state.files.length) return;
@@ -557,7 +375,7 @@ function doSolve() {
     state.creatingLesson = true;
     try {
       const lessonId = createLesson(q, state.files.map(f => f.file).filter(Boolean));
-      if (lessonId) { state.history.unshift({ q, tab: 'whiteboard', model: state.model, files: state.files.map(f => f.name), time: new Date(), lessonId }); renderHistory(); }
+      if (lessonId) { state.history.unshift({ q, tab: 'whiteboard', files: state.files.map(f => f.name), time: new Date(), lessonId }); renderHistory(); }
     } finally {
       setTimeout(() => { state.creatingLesson = false; }, 800);
     }
@@ -569,7 +387,7 @@ function doSolve() {
     try {
       const setId = createFlashJob(q, state.files.map(f => f.file).filter(Boolean));
       if (setId) {
-        state.history.unshift({ q, tab: 'flashcards', model: state.model, files: state.files.map(f => f.name), time: new Date(), flashId: setId });
+        state.history.unshift({ q, tab: 'flashcards', files: state.files.map(f => f.name), time: new Date(), flashId: setId });
         renderHistory();
       }
     } finally {
@@ -577,10 +395,6 @@ function doSolve() {
     }
     return;
   }
-  const entry = { q, tab: state.tab, model: state.model, files: state.files.map(f => f.name), time: new Date() };
-  state.history.unshift(entry);
-  renderAnswer(entry);
-  renderHistory();
 }
 
 function renderHistory() {
@@ -595,18 +409,7 @@ function openDrawer(open) {
   if (open) { renderHistory(); $('#drawerClose').focus(); }
 }
 
-const EXAMPLES = [
-  { tab: 'solver', q: 'In the figure, angle O = 2t + 10 and angle P = 3t − 15 are equal. Find t, then the measure of angle O.' },
-  { tab: 'solver', q: 'Graph y = −x² + 6 and y = x + 6. Where do they intersect?' },
-  { tab: 'solver', q: 'Draw and explain the structure of ethyl 2-(dimethylamino)benzoate.' },
-  { tab: 'solver', q: 'Compare the cost structure of Company V and Company C using common-size analysis.' }
-];
-
 function initHome() {
-  $$('.seg').forEach(b => b.addEventListener('click', () => {
-    $$('.seg').forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-selected', String(x === b)); });
-    state.mode = b.dataset.mode;
-  }));
   $$('.ttab').forEach(b => b.addEventListener('click', () => {
     $$('.ttab').forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-selected', String(x === b)); });
     state.tab = b.dataset.tab; updatePill(); $('#question').focus();
@@ -627,27 +430,6 @@ function initHome() {
     q.value = b.dataset.wb; updateSolve(); q.focus();
   });
 
-  // model dropdown
-  const mb = $('#modelBtn'), menu = $('#modelMenu');
-  const drawMenu = () => {
-    menu.innerHTML = MODELS.map(m => `<li><button role="option" aria-selected="${m.name === state.model}" data-model="${esc(m.name)}"><span class="mini-logo"></span><span><b>${esc(m.name)}</b><small>${esc(m.desc)}</small></span></button></li>`).join('');
-  };
-  const closeMenu = () => { menu.hidden = true; mb.setAttribute('aria-expanded', 'false'); };
-  mb.addEventListener('click', e => { e.stopPropagation(); drawMenu(); menu.hidden = !menu.hidden; mb.setAttribute('aria-expanded', String(!menu.hidden)); });
-  menu.addEventListener('click', e => {
-    const b = e.target.closest('[data-model]'); if (!b) return;
-    state.model = b.dataset.model; $('#modelName').textContent = state.model; closeMenu(); mb.focus();
-  });
-  document.addEventListener('click', e => { if (!e.target.closest('.model-wrap')) closeMenu(); });
-
-  // examples
-  $$('.ex-card').forEach(c => c.addEventListener('click', () => {
-    const ex = EXAMPLES[+c.dataset.example];
-    $$('.ttab').forEach(x => { const on = x.dataset.tab === ex.tab; x.classList.toggle('active', on); x.setAttribute('aria-selected', String(on)); });
-    state.tab = ex.tab; updatePill();
-    q.value = ex.q; updateSolve(); doSolve();
-  }));
-
   // history
   $('#historyBtn').addEventListener('click', () => openDrawer(true));
   $('#drawerClose').addEventListener('click', () => openDrawer(false));
@@ -665,27 +447,9 @@ function initHome() {
       else location.hash = '#/home';
       return;
     }
-    openDrawer(false); location.hash = '#/home';
-    q.value = h.q; updateSolve(); renderAnswer(h);
   });
 }
 
-/* ---------------- Study: recent sets ---------------- */
-const avatarSVG = `<svg width="9" height="9" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="10" r="5"/><path d="M3 22a9 9 0 0 1 18 0z"/></svg>`;
-const decoSVG = `<svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><rect x="2" y="4" width="20" height="24" rx="4" transform="rotate(-8 12 16)" fill="#dbe8fb"/><rect x="11" y="2" width="20" height="26" rx="4" fill="#e7f0fd"/></svg>`;
-function setCardHTML(s) {
-  return `<a class="set-card" href="#/study/set/${s.id}">
-    <div class="set-title"><span class="set-emoji" aria-hidden="true">${s.emoji}</span><span>${esc(s.title)}</span></div>
-    <div class="set-creator"><span class="c-av">${avatarSVG}</span>${esc(s.creator)}</div>
-    <div class="set-foot"><span>${s.cards.length} ${esc(t('flashcards'))}</span></div>
-    <span class="set-deco">${decoSVG}</span>
-  </a>`;
-}
-const newSetHTML = () => `<button class="new-set" data-action="create-set"><span class="ns-ico">${icon('plus', 22, 2)}</span><span>${esc(t('newset'))}</span></button>`;
-function sortedSets() { return [...state.sets].sort((a, b) => b.created - a.created); }
-function renderRecent() {
-  $('#recentGrid').innerHTML = newSetHTML() + sortedSets().slice(0, 3).map(setCardHTML).join('');
-}
 
 /* ---------------- Modal ---------------- */
 let lastFocus = null;
@@ -698,227 +462,7 @@ function openModal(html, onMount, cls) {
   const f = box.querySelector('input, select, button'); if (f) f.focus();
 }
 function closeModal() { $('#modal').hidden = true; if (lastFocus) lastFocus.focus(); }
-function openCreateSet() {
-  const subjects = ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'English', 'Myanmar', 'History', 'Other'];
-  openModal(`<form id="setForm">
-    <h2 id="mTitle">${esc(t('newset'))}</h2>
-    <p class="sub">Create a study set to hold flashcards and notes.</p>
-    <label class="field"><span>Study set title</span><input class="input" name="title" required maxlength="80" placeholder="e.g. Grade 11 Chemistry – Bonding"></label>
-    <label class="field"><span>Subject</span><select class="select" name="subject">${subjects.map(s => `<option>${s}</option>`).join('')}</select></label>
-    <div class="modal-actions"><button type="button" class="btn-ghost" data-close>${esc(t('cancel'))}</button><button type="submit" class="btn-primary">${esc(t('createBtn'))}</button></div>
-  </form>`, box => {
-    box.setAttribute('aria-labelledby', 'mTitle');
-    box.querySelector('[data-close]').onclick = closeModal;
-    box.querySelector('#setForm').onsubmit = e => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const title = String(fd.get('title')).trim(); if (!title) return;
-      const subject = String(fd.get('subject'));
-      const emoji = { Mathematics: '📐', Physics: '⚡', Chemistry: '🧪', Biology: '🧬', English: '📖', Myanmar: '📜', History: '🏛️' }[subject] || '📘';
-      const s = { id: 's' + Date.now(), title, subject, emoji, creator: 'thant htoo', cards: [], created: Date.now() };
-      state.sets.push(s);
-      closeModal(); toast(`“${title}” created`);
-      if (location.hash === '#/study') renderRecent(); else location.hash = '#/study';
-    };
-  });
-}
 
-/* ---------------- Study sub-pages ---------------- */
-const TOOLS = {
-  flashcard: { key: 'tool.flashcard', color: '#6098f8', icon: 'cards' },
-  quiz: { key: 'tool.quiz', color: '#c078f0', icon: 'list' },
-  solver: { key: 'tool.solver', color: '#4db1eb', icon: 'scan' },
-  guide: { key: 'tool.guide', color: '#ffa33f', icon: 'book' },
-  predictor: { key: 'tool.predictor', color: '#ff7979', icon: 'trend' },
-  cheatsheet: { key: 'tool.cheatsheet', color: '#7b80ff', icon: 'note' }
-};
-function subHead(title, subtitle, color, ic, backHref = '#/study') {
-  return `<div class="sub-head"><a class="back" href="${backHref}">${icon('back', 16)} ${esc(t('back'))}</a>
-    <div class="sub-title">${ic ? `<span class="sub-ico" style="background:${color}">${icon(ic, 22, 2)}</span>` : ''}<div><h1>${esc(title)}</h1>${subtitle ? `<p>${esc(subtitle)}</p>` : ''}</div></div></div>`;
-}
-function renderTool(id) {
-  const tool = TOOLS[id];
-  if (!tool) { location.hash = '#/study'; return; }
-  const v = $('#view-sub');
-  v.innerHTML = `<div class="study-wrap" style="padding-top:48px">${subHead(t(tool.key), t(tool.key + '.sub'), tool.color, tool.icon)}<div id="toolBody"></div></div>`;
-  const body = $('#toolBody');
-  ({ flashcard: toolFlash, quiz: toolQuiz, solver: toolSolver, guide: toolGuide, predictor: toolPredict, cheatsheet: toolCheat })[id](body);
-}
-
-function mountFlashcards(el, cards) {
-  let i = 0, flipped = false;
-  const draw = () => {
-    const c = cards[i];
-    el.innerHTML = `<div class="fc-wrap">
-      <div class="fc ${flipped ? 'flipped' : ''}" tabindex="0" role="button" aria-label="Flashcard ${i + 1} of ${cards.length}. Press Enter to flip.">
-        <div class="fc-inner">
-          <div class="fc-face fc-front"><span class="fc-tag">Term</span><p>${esc(c.q)}</p><small>${icon('flip', 13)} Click or press Space to flip</small></div>
-          <div class="fc-face fc-back"><span class="fc-tag">Definition</span><p>${esc(c.a)}</p></div>
-        </div>
-      </div>
-      <div class="fc-progress"><span style="width:${((i + 1) / cards.length) * 100}%"></span></div>
-      <div class="fc-ctrl">
-        <button class="btn-o" data-a="prev" ${i === 0 ? 'disabled' : ''}>${icon('chevL', 16)} Previous</button>
-        <span class="fc-count">${i + 1} / ${cards.length}</span>
-        <button class="btn-o" data-a="next" ${i === cards.length - 1 ? 'disabled' : ''}>Next ${icon('chevR', 16)}</button>
-      </div></div>`;
-    const card = el.querySelector('.fc');
-    const flip = () => { flipped = !flipped; card.classList.toggle('flipped', flipped); };
-    card.onclick = flip;
-    card.onkeydown = e => {
-      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flip(); }
-      if (e.key === 'ArrowRight' && i < cards.length - 1) { i++; flipped = false; draw(); el.querySelector('.fc').focus(); }
-      if (e.key === 'ArrowLeft' && i > 0) { i--; flipped = false; draw(); el.querySelector('.fc').focus(); }
-    };
-    el.querySelector('[data-a="prev"]').onclick = () => { if (i > 0) { i--; flipped = false; draw(); } };
-    el.querySelector('[data-a="next"]').onclick = () => { if (i < cards.length - 1) { i++; flipped = false; draw(); } };
-  };
-  draw();
-}
-function toolFlash(el) {
-  el.innerHTML = `<div class="panel-card"><div class="demo-flag">${icon('info', 14)} Sample deck: Biology basics (${FLASH_DECK.length} cards)</div><div id="fcMount"></div></div>`;
-  mountFlashcards($('#fcMount'), FLASH_DECK);
-}
-
-function toolQuiz(el) {
-  const answers = {}; let submitted = false;
-  el.innerHTML = `<div class="panel-card" id="quizBox"></div>`;
-  const box = $('#quizBox');
-  const draw = () => {
-    const done = Object.keys(answers).length;
-    const score = QUIZ.reduce((s, q, i) => s + (answers[i] === q.a ? 1 : 0), 0);
-    box.innerHTML = QUIZ.map((q, i) => `<fieldset class="q"><legend><span class="qn">${i + 1}</span><span>${esc(q.q)}</span></legend>
-      <div class="opts">${q.o.map((o, j) => {
-        let cls = answers[i] === j ? 'sel' : '';
-        if (submitted) cls = j === q.a ? 'correct' : (answers[i] === j ? 'wrong' : '');
-        return `<label class="opt ${cls}"><input type="radio" name="q${i}" value="${j}" ${answers[i] === j ? 'checked' : ''} ${submitted ? 'disabled' : ''}><span>${esc(o)}</span></label>`;
-      }).join('')}</div>
-      ${submitted ? `<p class="fb ${answers[i] === q.a ? 'ok' : 'no'}">${answers[i] === q.a ? 'Correct! ' : 'Not quite. '}${esc(q.why)}</p>` : ''}
-    </fieldset>`).join('') +
-      `<div class="quiz-foot">${submitted
-        ? `<span class="score">Score: ${score} / ${QUIZ.length}</span><button class="btn-primary" data-a="retry">${icon('flip', 15)} Try again</button>`
-        : `<span class="muted">${done} / ${QUIZ.length} answered</span><button class="btn-primary" data-a="submit" ${done < QUIZ.length ? 'disabled' : ''}>Submit answers</button>`}</div>`;
-    $$('input[type=radio]', box).forEach(r => r.onchange = () => { answers[+r.name.slice(1)] = +r.value; draw(); box.querySelector(`input[name="${r.name}"]:checked`).focus(); });
-    const s = box.querySelector('[data-a="submit"]'); if (s) s.onclick = () => { submitted = true; draw(); box.querySelector('.quiz-foot').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
-    const r = box.querySelector('[data-a="retry"]'); if (r) r.onclick = () => { Object.keys(answers).forEach(k => delete answers[k]); submitted = false; draw(); };
-  };
-  draw();
-}
-
-function toolSolver(el) {
-  const samples = ['အောက်ပါ သင်္ချာပုစ္ဆာကို အဆင့်ဆင့် ရှင်းပြပေးပါ။ 2x + 10 = 25', 'Solve 3x − 7 = 11', 'Solve 5x + 4 = 29'];
-  el.innerHTML = `<div class="panel-card">
-    <label for="tsInput" class="field" style="margin:0"><span>Your question</span></label>
-    <textarea id="tsInput" class="solver-input" placeholder="Type a problem, e.g. 2x + 10 = 25">${esc(samples[0])}</textarea>
-    <div class="sample-row"><span class="muted" style="font-size:13px">Try:</span>${samples.map((s, i) => `<button class="sample ${BURMESE.test(s) ? 'my' : ''}" data-s="${i}">${esc(s)}</button>`).join('')}</div>
-    <div class="row-end"><button class="btn-primary" id="tsSolve">${icon('sparkle', 16)} Solve step by step</button></div>
-  </div><div id="tsOut"></div>`;
-  const inp = $('#tsInput');
-  $$('.sample', el).forEach(b => b.onclick = () => { inp.value = samples[+b.dataset.s]; inp.focus(); });
-  inp.addEventListener('input', () => { $('#tsSolve').disabled = !inp.value.trim(); });
-  $('#tsSolve').onclick = () => {
-    const q = inp.value.trim(); if (!q) return;
-    $('#tsOut').innerHTML = `<div class="panel-card"><div class="demo-flag">${icon('info', 14)} ${esc(t('demoNote'))}</div><div class="ans-q" style="${BURMESE.test(q) ? 'font-family:var(--font-my);line-height:1.8' : ''}">${esc(q)}</div>${solverHTML(q)}</div>`;
-  };
-}
-
-function toolGuide(el) {
-  let sel = DOCS[0].id;
-  el.innerHTML = `<div class="panel-card">
-    <h3 class="sec-title" style="font-size:16px;margin-bottom:12px">Choose a document</h3>
-    <div class="doc-list" role="radiogroup" aria-label="Documents">${DOCS.map(d => `<label class="doc-opt ${d.id === sel ? 'sel' : ''}"><input type="radio" name="doc" value="${d.id}" ${d.id === sel ? 'checked' : ''}><span class="doc-ico">${icon('file', 18)}</span><span><b>${esc(d.name)}</b><small>${esc(d.meta)}</small></span></label>`).join('')}</div>
-    <div class="row-end"><label class="btn-o" style="cursor:pointer">${icon('clip', 15)} Upload your own<input type="file" class="vh" id="guideUp" accept=".pdf,.doc,.docx,.txt"></label><button class="btn-primary" id="genGuide">${icon('sparkle', 16)} Generate guide</button></div>
-  </div><div id="guideOut"></div>`;
-  $$('input[name=doc]', el).forEach(r => r.onchange = () => { sel = r.value; $$('.doc-opt', el).forEach(l => l.classList.toggle('sel', l.querySelector('input').checked)); });
-  $('#guideUp').onchange = e => { if (e.target.files[0]) toast(`“${e.target.files[0].name}” selected — file processing isn’t connected, showing a sample guide`); };
-  $('#genGuide').onclick = () => {
-    const d = DOCS.find(x => x.id === sel);
-    $('#guideOut').innerHTML = `<div class="panel-card guide"><div class="demo-flag">${icon('info', 14)} Sample summary — no document processing is connected.</div>
-      <h3>Overview</h3><p>${esc(d.overview)}</p>
-      <h3>Key points</h3><ul>${d.points.map(p => `<li>${esc(p)}</li>`).join('')}</ul>
-      <h3>Key terms</h3><div class="terms">${d.terms.map(([a, b]) => `<div class="term"><b>${esc(a)}</b>${esc(b)}</div>`).join('')}</div>
-      <h3>Practice questions</h3><ul>${d.qs.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>`;
-  };
-}
-
-function toolPredict(el) {
-  el.innerHTML = `<div class="panel-card">
-    <div class="demo-flag">${icon('info', 14)} Illustrative only — these priorities are sample data, not a real prediction or analysis of past exams.</div>
-    <div class="pred-top"><label for="predSub" class="muted">Subject</label><select id="predSub" class="select">${Object.keys(PREDICT).map(s => `<option>${s}</option>`).join('')}</select></div>
-    <div class="bars" id="bars"></div></div>`;
-  const draw = () => {
-    const rows = PREDICT[$('#predSub').value];
-    $('#bars').innerHTML = rows.map(([n, v]) => {
-      const p = v >= 75 ? ['high', 'High'] : v >= 50 ? ['med', 'Medium'] : ['low', 'Low'];
-      return `<div class="bar-row"><span>${esc(n)}</span><div class="bar" role="img" aria-label="${esc(n)}: ${v}% illustrative priority"><span style="width:0" data-w="${v}"></span></div><span class="prio ${p[0]}">${p[1]} · ${v}%</span></div>`;
-    }).join('');
-    requestAnimationFrame(() => $$('#bars .bar span').forEach(s => { s.style.width = s.dataset.w + '%'; }));
-  };
-  $('#predSub').onchange = draw; draw();
-}
-
-function toolCheat(el) {
-  const notes = [
-    ['Linear equations', 'Isolate x: move constants, then divide.<br><span class="f">ax + b = c ⇒ x = (c − b) / a</span>'],
-    ['Quadratic formula', '<span class="f">x = (−b ± √(b² − 4ac)) / 2a</span><br>Discriminant <mark>b² − 4ac</mark> tells the number of roots.'],
-    ['Pythagoras', 'Right triangles only: <span class="f">a² + b² = c²</span>, where <mark>c is the hypotenuse</mark>.'],
-    ['Circle', 'Area <span class="f">πr²</span> · Circumference <span class="f">2πr</span><br>Angle at centre = <mark>2 × angle at circumference</mark>.'],
-    ['Percent change', '<span class="f">(new − old) / old × 100%</span><br>Use the <mark>original</mark> value as the base.'],
-    ['Index laws', '<span class="f">aᵐ·aⁿ = aᵐ⁺ⁿ</span> · <span class="f">(aᵐ)ⁿ = aᵐⁿ</span> · <span class="f">a⁰ = 1</span>'],
-    ['Trig ratios', '<mark>SOH CAH TOA</mark> — sin = opp/hyp, cos = adj/hyp, tan = opp/adj.'],
-    ['Probability', '<span class="f">P(A) = favourable / total</span><br>P(not A) = <mark>1 − P(A)</mark>.'],
-    ['မှတ်ရန် (Remember)', 'ယူနစ်များကို <mark>အမြဲ ရေးပါ</mark> — units always earn marks.']
-  ];
-  el.innerHTML = `<div class="panel-card"><div class="demo-flag">${icon('info', 14)} Example revision notes: Grade 10 Mathematics</div>
-    <div class="cheat-grid">${notes.map(([h, p]) => `<div class="cheat"><h4>${h}</h4><p>${p}</p></div>`).join('')}</div>
-    <div class="row-end"><button class="btn-o" id="printCheat">${icon('file', 15)} Print</button></div></div>`;
-  $('#printCheat').onclick = () => window.print();
-}
-
-function renderSets() {
-  const v = $('#view-sub');
-  v.innerHTML = `<div class="study-wrap" style="padding-top:48px">${subHead(t('allSets'), `${state.sets.length} set${state.sets.length === 1 ? '' : 's'}`, '#2479f2', 'cards')}
-    <div class="sets-grid">${newSetHTML()}${sortedSets().map(setCardHTML).join('')}</div></div>`;
-}
-
-function renderSet(id) {
-  const s = state.sets.find(x => x.id === id);
-  const v = $('#view-sub');
-  if (!s) { v.innerHTML = `<div class="study-wrap" style="padding-top:48px">${subHead('Study set not found', '', '', null)}<p class="muted">This set only existed in a previous session.</p></div>`; return; }
-  v.innerHTML = `<div class="study-wrap" style="padding-top:48px">
-    ${subHead(s.title, '', '', null)}
-    <div class="panel-card">
-      <div class="set-meta"><span style="font-size:22px">${s.emoji}</span><span>${esc(s.subject)}</span><span>·</span><span class="set-creator" style="margin:0"><span class="c-av">${avatarSVG}</span>${esc(s.creator)}</span><span>·</span><span id="cardCount">${s.cards.length} ${esc(t('flashcards'))}</span>
-        <span style="flex:1"></span><button class="btn-primary" id="studyBtn" ${s.cards.length ? '' : 'disabled'}>${icon('cards', 16)} Study flashcards</button></div>
-    </div>
-    <div class="panel-card" id="studyArea" hidden></div>
-    <div class="panel-card">
-      <h3 class="sec-title" style="font-size:16px;margin-bottom:12px">Cards</h3>
-      <div class="card-list" id="cardList"></div>
-      <form class="add-card" id="addCard"><input class="input" name="q" placeholder="Term" required aria-label="Term"><input class="input" name="a" placeholder="Definition" required aria-label="Definition"><button class="btn-o" type="submit">${icon('plus', 15)} Add card</button></form>
-    </div></div>`;
-  const drawList = () => {
-    $('#cardList').innerHTML = s.cards.length
-      ? s.cards.map((c, i) => `<div class="card-row"><span class="n">${i + 1}</span><b>${esc(c.q)}</b><span>${esc(c.a)}</span></div>`).join('')
-      : `<div class="empty">No flashcards yet — add your first card below.</div>`;
-    $('#cardCount').textContent = `${s.cards.length} ${t('flashcards')}`;
-    $('#studyBtn').disabled = !s.cards.length;
-  };
-  drawList();
-  $('#studyBtn').onclick = () => {
-    const area = $('#studyArea'); area.hidden = false;
-    mountFlashcards(area, s.cards); area.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    area.querySelector('.fc').focus({ preventScroll: true });
-  };
-  $('#addCard').onsubmit = e => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    s.cards = s.cards === ACE_CARDS ? [...ACE_CARDS] : s.cards;
-    s.cards.push({ q: String(fd.get('q')).trim(), a: String(fd.get('a')).trim() });
-    e.target.reset(); e.target.q.focus(); drawList();
-    $('#studyArea').hidden = true;
-  };
-}
 
 /* ================================================================
    Whiteboard Tutor — Gemini lesson, board, questions, and chat.
@@ -934,9 +478,7 @@ function abortOtherLessons(keepId) {
     L.waiting = false;
   });
 }
-const TUTOR_DAILY_LIMIT = null; // e.g. 3 → the plan modal appears after 3 lessons in a session. null = no limit.
 const lessons = {};             // id → lesson (kept only while the page is open)
-let lessonsCreated = 0;
 const SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2];
 const fmtSpeed = s => (Number.isInteger(s * 10) ? s.toFixed(1) : String(s)) + 'x';
 const NARR_VOICES = [
@@ -1009,12 +551,10 @@ function lessonLang(L) {
   return state.lang === 'my' ? 'my' : 'en';
 }
 function createLesson(topic, files) {
-  if (TUTOR_DAILY_LIMIT != null && lessonsCreated >= TUTOR_DAILY_LIMIT) { openPlans(true); return null; }
   const id = 'l' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
   const text = (topic || '').trim();
   lessons[id] = { id, topic: text, language: wantsBurmese(text) ? 'my' : 'en', sources: files.map(makeSource), status: 'preparing', step: 0,
     blocks: [], idx: 0, answers: {}, qa: [], strokes: [], created: Date.now() };
-  lessonsCreated++;
   location.hash = `#/tutor/${id}/prep`;
   return id;
 }
@@ -1171,7 +711,7 @@ async function requestLesson(L, signal) {
 /* ---------- preparation screen ---------- */
 const PREP_STEPS = ['prep.s1', 'prep.s2', 'prep.s3', 'prep.s4', 'prep.s5'];
 const PREP_SLIDES = [
-  { t: 'slide1.t', s: 'slide1.s', art: `<div class="pa-card"><p class="pa-hand">Which side is the hypotenuse?</p><svg viewBox="0 0 160 80" width="160" height="80"><path d="M30 12v56h104z" fill="none" stroke="#2b2f36" stroke-width="1.6"/><path d="M30 60h8v8" fill="none" stroke="#2b2f36"/><ellipse cx="88" cy="38" rx="30" ry="13" transform="rotate(24 88 38)" fill="none" stroke="#2479f2" stroke-width="1.6"/><text x="20" y="44" font-size="9">a</text><text x="92" y="36" font-size="9" fill="#2479f2">c</text></svg><div class="pa-row"><span class="pa-btn on">+ Explain</span><span class="pa-btn">+ Add to question</span></div><p class="pa-sub">c is opposite the right angle.</p></div>` },
+  { t: 'slide1.t', s: 'slide1.s', art: `<div class="pa-card"><p class="pa-hand">Which side is the hypotenuse?</p><svg viewBox="0 0 160 80" width="160" height="80"><path d="M30 12v56h104z" fill="none" stroke="#2b2f36" stroke-width="1.6"/><path d="M30 60h8v8" fill="none" stroke="#2b2f36"/><ellipse cx="88" cy="38" rx="30" ry="13" transform="rotate(24 88 38)" fill="none" stroke="#1f4e9a" stroke-width="1.6"/><text x="20" y="44" font-size="9">a</text><text x="92" y="36" font-size="9" fill="#1f4e9a">c</text></svg><div class="pa-row"><span class="pa-btn on">+ Explain</span><span class="pa-btn">+ Add to question</span></div><p class="pa-sub">c is opposite the right angle.</p></div>` },
   { t: 'slide2.t', s: 'slide2.s', art: `<div class="pa-card"><p class="pa-hand">Solve 2x + 10 = 25</p><div class="pa-opt">x = 5</div><div class="pa-opt ok">x = 7.5 ✓</div><div class="pa-opt">x = 17.5</div><p class="pa-sub">Subtract 10, then divide by 2.</p></div>` },
   { t: 'slide3.t', s: 'slide3.s', art: `<div class="pa-card"><div class="pa-chat you">Why does a LEFT JOIN keep the row?</div><div class="pa-chat">It keeps every left-side row and fills missing matches with NULL.</div><p class="pa-sub">Ask in your own words.</p></div>` }
 ];
@@ -1335,7 +875,7 @@ async function prepLoadNarrationPack(L, signal) {
 }
 
 /* ---------- lesson workspace ---------- */
-const AVATAR = `<svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true"><defs><linearGradient id="twAvRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".5" stop-color="#ff5fa2"/><stop offset="1" stop-color="#4f8cff"/></linearGradient><clipPath id="twAvClip"><circle cx="32" cy="32" r="27.5"/></clipPath></defs><circle cx="32" cy="32" r="30.5" fill="#fff" stroke="url(#twAvRing)" stroke-width="2.5"/><g clip-path="url(#twAvClip)"><rect width="64" height="64" fill="#fbeee4"/><path d="M13 42c-2-17 6-28 19-28s21 11 19 28c-2 9-6 15-6 15H19s-4-6-6-15z" fill="#7a4a2b"/><ellipse cx="32" cy="35" rx="12" ry="13.5" fill="#f6cfb2"/><path d="M19 31c2-9 8-13 14-13 7 0 12 5 13 12-5-1-11-4-14-8-3 5-8 8-13 9z" fill="#8a5432"/><circle cx="27.5" cy="35.5" r="1.8" fill="#2b1a10"/><circle cx="36.5" cy="35.5" r="1.8" fill="#2b1a10"/><path d="M28.5 41.5c2 1.8 5 1.8 7 0" stroke="#c2563f" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="24.5" cy="39.5" r="2" fill="#f5a9a0" opacity=".6"/><circle cx="39.5" cy="39.5" r="2" fill="#f5a9a0" opacity=".6"/><path d="M16 64c2-9 8-13 16-13s14 4 16 13z" fill="#5f8fe0"/></g></svg>`;
+const AVATAR = `<svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true"><defs><linearGradient id="twAvRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd43b"/><stop offset="1" stop-color="#f2b705"/></linearGradient><clipPath id="twAvClip"><circle cx="32" cy="32" r="27.5"/></clipPath></defs><circle cx="32" cy="32" r="30.5" fill="#fff" stroke="url(#twAvRing)" stroke-width="2.5"/><g clip-path="url(#twAvClip)"><rect width="64" height="64" fill="#fff9db"/><path d="M18 30c0-9 6-16 14-16s14 7 14 16v22c0 2-2 4-4 4H22c-2 0-4-2-4-4z" fill="#ffd43b"/><path d="M30 14c-2-5-5-6-7-7m9 7v-7m2 7c2-5 5-6 7-7" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round" fill="none"/><rect x="18" y="27" width="28" height="5" fill="#1a1a1a"/><circle cx="32" cy="29.5" r="9" fill="#8c96a3" stroke="#6b7280" stroke-width="1"/><circle cx="32" cy="29.5" r="6.2" fill="#fff"/><circle cx="32" cy="29.5" r="3.2" fill="#6d4c41"/><circle cx="32" cy="29.5" r="1.6" fill="#1a1a1a"/><circle cx="30.8" cy="28.3" r="1" fill="#fff"/><path d="M28 42c2 2.5 6 2.5 8 0" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" fill="none"/><circle cx="23.5" cy="40.5" r="2" fill="#f59e0b" opacity=".4"/><circle cx="40.5" cy="40.5" r="2" fill="#f59e0b" opacity=".4"/><path d="M18 52c0-2 2-4 4-4h20c2 0 4 2 4 4v12H18z" fill="#1f4e9a"/><path d="M24 46h16v18H24z" fill="#1f4e9a"/><path d="M19 54l6-8m20 8l-6-8" stroke="#173d7a" stroke-width="3" stroke-linecap="round"/><circle cx="25.5" cy="48" r="1.2" fill="#1a1a1a"/><circle cx="38.5" cy="48" r="1.2" fill="#1a1a1a"/><rect x="29" y="52" width="6" height="5" rx="1" fill="#173d7a"/></g></svg>`;
 
 function blockHTML(b) {
   switch (b.t) {
@@ -1476,7 +1016,6 @@ function twShellHTML() {
             <input id="twAskInput" placeholder="${esc(t('tw.ask'))}" aria-label="${esc(t('tw.ask'))}">
             <button class="tw-send" id="twSend" type="submit" aria-label="Send" disabled>${icon('send', 17, 2.2)}</button>
           </form>
-          <button class="tw-mic" id="twMic" aria-disabled="true" aria-label="Voice input isn't available in this prototype" title="Voice input isn't available in this prototype">${icon('micoff', 22)}</button>
         </div>
       </div>
     </section>
@@ -1614,7 +1153,6 @@ function twBind() {
     }
   };
   narrBindControls();
-  $('#twMic').onclick = () => toast('Voice input isn’t connected in this prototype — type your question instead.');
   // pen / circle-to-explain
   $('#twPen').onclick = () => {
     T.pen = !T.pen; tw.classList.toggle('pen', T.pen);
@@ -2906,7 +2444,7 @@ function twFinish(restore) {
   const asked = L.qa.length ? ' ' + t('tw.asked', { n: L.qa.length }) : '';
   $('#twEndBox').innerHTML = `<div class="wb-done"><h3>${esc(L.ended ? t('tw.endedTitle') : t('tw.doneTitle'))}</h3>
     <p>${esc(t('tw.summary', { shown: s.shown, total: s.total, correct: s.correct, qs: s.qs }))}${esc(asked)}</p>
-    <div class="wb-done-actions"><button class="btn-o" type="button" id="twAnother">${esc(t('tw.another'))}</button><button class="btn-o" type="button" id="twDoneDl">${icon('download', 15)} ${esc(t('tw.notes'))}</button><a class="btn-o" href="#/study">${icon('bookplus', 15)} ${esc(t('nav.study'))}</a><a class="btn-primary" href="#/home">${icon('home', 15)} ${esc(t('nav.home'))}</a></div></div>`;
+    <div class="wb-done-actions"><button class="btn-o" type="button" id="twAnother">${esc(t('tw.another'))}</button><button class="btn-o" type="button" id="twDoneDl">${icon('download', 15)} ${esc(t('tw.notes'))}</button><a class="btn-primary" href="#/home">${icon('home', 15)} ${esc(t('nav.home'))}</a></div></div>`;
   $('#twDoneDl').onclick = () => exportLesson(L);
   $('#twAnother').onclick = () => twFetchQuestion('medium');
   twUpdatePlay();
@@ -2928,7 +2466,7 @@ function twEndConfirm() {
       twFinish(true); twCaption(t('tw.endedTitle'));
       openModal(`<h2 id="mTitle">${esc(L.ended ? t('tw.endedTitle') : t('tw.doneTitle'))}</h2>
         <p class="sub">${esc(lessonTitle(L))}: ${esc(t('tw.summary', s))}</p>
-        <div class="end-actions"><button class="btn-o" id="twEndDl">${icon('download', 15)} ${esc(t('tw.notes'))}</button><button class="btn-ghost" data-close>${esc(t('tw.review'))}</button><a class="btn-o" href="#/study">${esc(t('nav.study'))}</a><a class="btn-primary" href="#/home">${esc(t('nav.home'))}</a></div>`, b2 => {
+        <div class="end-actions"><button class="btn-o" id="twEndDl">${icon('download', 15)} ${esc(t('tw.notes'))}</button><button class="btn-ghost" data-close>${esc(t('tw.review'))}</button><a class="btn-primary" href="#/home">${esc(t('nav.home'))}</a></div>`, b2 => {
         b2.setAttribute('aria-labelledby', 'mTitle');
         b2.querySelector('[data-close]').onclick = closeModal;
         $('#twEndDl').onclick = () => exportLesson(L);
@@ -3002,13 +2540,13 @@ async function exportLesson(L) {
 }
 
 /* ---------- Flashcards (Gemini + localStorage) ---------- */
-const FC_STORE_KEY = 'solvely.flashcards.v1';
+const FC_STORE_KEY = 'minionsolve.flashcards.v1';
 const fcJobs = {};
 const FC = { chatAbort: null, chatBusy: false, flipped: false, filter: 'all', topicId: null, tab: 'study', guide: null, review: null };
 
 function fcLoadAll() {
   try {
-    const raw = localStorage.getItem(FC_STORE_KEY);
+    const raw = localStorage.getItem(FC_STORE_KEY) || localStorage.getItem('solvely.flashcards.v1');
     if (!raw) return { version: 1, sets: {} };
     const data = JSON.parse(raw);
     if (!data || typeof data !== 'object' || !data.sets || typeof data.sets !== 'object') return { version: 1, sets: {} };
@@ -3435,40 +2973,6 @@ function showFcDone(set, list) {
   set.studyIndex = 0; fcPut(set);
 }
 
-/* ---------- plan modal (design demonstration) ---------- */
-const PLANS = [
-  { id: 'week', name: 'Weekly', price: '$2.00', per: '/ wk', note: 'Sample price', badge: 'Popular' },
-  { id: 'month', name: 'Monthly', price: '$6.00', per: '/ mo', note: 'Sample price' },
-  { id: 'year', name: 'Yearly', price: '$4.00', per: '/ mo', note: 'Billed yearly · sample price' }
-];
-function openPlans(limitReached) {
-  let sel = 'week';
-  const ok = icon('check', 16, 2.6), no = '<span class="pm-dash">—</span>';
-  const rows = [['Whiteboard tutor lessons', '3 / day', 'Unlimited'], ['Flashcards & quizzes', 'Basic', ok], ['Exam predictor', no, ok], ['Upload PDFs & slides', no, ok], ['Download lesson notes', ok, ok]];
-  openModal(`<div class="pm-left">
-      <button class="pm-back" data-close aria-label="Close">${icon('back', 18)}</button>
-      <h3>Study smarter with <em>Plus</em></h3>
-      <svg class="pm-chart" viewBox="0 0 300 120" aria-hidden="true"><path d="M30 100H290M30 100V12" stroke="#d6dbe4"/><defs><linearGradient id="pmG" x1="0" x2="1"><stop offset="0" stop-color="#7aa7ff"/><stop offset="1" stop-color="#ff7a59"/></linearGradient></defs><path d="M40 92C90 90 120 84 160 70S240 36 272 20" fill="none" stroke="url(#pmG)" stroke-width="3" stroke-linecap="round"/><circle cx="80" cy="90" r="4.5" fill="#5b8bff"/><circle cx="160" cy="70" r="4.5" fill="#e06cd0"/><circle cx="272" cy="20" r="6" fill="#ff7a59"/><text x="272" y="11" text-anchor="middle" font-size="10" font-weight="700" fill="#ff5a3c">GOAL</text><text x="8" y="16" font-size="9" fill="#6b7280">Confidence</text><text x="250" y="114" font-size="9" fill="#6b7280">Practice</text></svg>
-      <table class="pm-table"><thead><tr><th>Features</th><th>Free</th><th>Plus</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td class="pm-free">${r[1]}</td><td class="pm-plus">${r[2]}</td></tr>`).join('')}</tbody></table>
-      <p class="pm-cap">Sample comparison for this design.</p>
-    </div>
-    <div class="pm-right">
-      <span class="pm-tag">Prototype · sample plans</span>
-      <h2 id="mTitle">${limitReached ? 'You’ve used this session’s free lessons' : 'Upgrade to Plus'}</h2>
-      <p class="pm-sub">${limitReached ? 'A usage limit is enabled in this prototype’s settings.' : 'Pick a plan to preview the checkout step.'} No payment is processed here.</p>
-      <div class="pm-plans" role="radiogroup" aria-label="Plans">${PLANS.map(p => `<label class="pm-plan${p.id === sel ? ' sel' : ''}"><input type="radio" name="pmPlan" value="${p.id}" ${p.id === sel ? 'checked' : ''}><span class="pm-pl"><span class="pm-name">${p.name}</span><span><b>${p.price}</b> <small>${p.per}</small></span><small class="pm-note">${p.note}</small></span>${p.badge ? `<span class="pm-badge">${p.badge}</span>` : ''}</label>`).join('')}</div>
-      <button class="pm-cta" id="pmCta">Continue with Weekly</button>
-      <ul class="pm-fine"><li>Plans and prices are sample data for this UI design.</li><li>Real pricing, renewal terms and payment would come from your billing provider.</li></ul>
-    </div>`, box => {
-    box.setAttribute('aria-labelledby', 'mTitle');
-    $$('[data-close]', box).forEach(b => b.onclick = closeModal);
-    $$('input[name=pmPlan]', box).forEach(r => r.onchange = () => {
-      sel = r.value; $$('.pm-plan', box).forEach(l => l.classList.toggle('sel', l.querySelector('input').checked));
-      $('#pmCta').textContent = `Continue with ${PLANS.find(p => p.id === sel).name}`;
-    });
-    $('#pmCta').onclick = () => toast('Checkout isn’t connected in this prototype — no payment was taken.');
-  }, 'plan-modal');
-}
 
 /* ---------------- Global keys ---------------- */
 document.addEventListener('click', e => {
