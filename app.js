@@ -149,9 +149,12 @@ const I18N = {
     'voice.use': 'Use this voice', 'voice.cancel': 'Cancel',
     'voice.gemini': 'Google Gemini', 'voice.geminiNote': 'Uses the Gemini voice already in the app. English is clear. Burmese is less steady.',
     'voice.eleven': 'ElevenLabs', 'voice.elevenNote': 'Best Burmese and English, with live word-by-word voice. Needs ElevenLabs credits.',
-    'voice.vox': 'VoxCPM2', 'voice.voxNote': 'One Hugging Face model for Burmese and English. Free to use. Needs an NVIDIA GPU with about 8 GB.',
     'voice.mms': 'Meta MMS', 'voice.mmsNote': 'mms-tts-mya for Myanmar and mms-tts-eng for English. Runs on CPU. Non-commercial license.',
     'voice.f5': 'F5 Myanmar + Kokoro', 'voice.f5Note': 'F5-Myanmar-TTS reads Burmese. Kokoro reads English on Python 3.12 or older. On Python 3.14, English uses the Meta English voice.',
+    'voice.sherpa': 'Sherpa MMS', 'voice.sherpaNote': 'The same Meta Burmese and English voices, run faster with sherpa-onnx. Non-commercial license. The first lesson downloads the model.',
+    'voice.aivoov': 'AiVOOV', 'voice.aivoovNote': 'Microsoft Nilar for Myanmar and Aria for English. Needs AIVOOV_API_KEY. The free allowance is small.',
+    'voice.freetts': 'FreeTTS', 'voice.freettsNote': 'Microsoft Nilar for Myanmar and Jenny for English. Needs FREETTS_API_KEY. Free plan is about 5,000 characters a month and is non-commercial.',
+    'voice.narakeet': 'Narakeet', 'voice.narakeetNote': 'Sanda reads Burmese and Linda reads English. Needs a paid NARAKEET_API_KEY.',
     'err.audio': 'The narration could not be created. Try again.', 'err.unsupported_voice': 'That voice is not available.',
     'tw.skip': 'Skip', 'tw.continue': 'Continue', 'tw.correct': 'Correct!', 'tw.wrong': 'Not quite.', 'tw.you': 'You', 'tw.tutor': 'Tutor',
     'tw.clearInk': 'Clear ink', 'tw.qcap': 'Quick check — pick an answer, or skip to keep going.', 'tw.qof': 'Question {n} of {total}',
@@ -243,9 +246,12 @@ const I18N = {
     'voice.use': 'ဒီအသံကို သုံးမယ်', 'voice.cancel': 'မလုပ်တော့ပါ',
     'voice.gemini': 'Google Gemini', 'voice.geminiNote': 'App ထဲက Gemini အသံ။ အင်္ဂလိပ် ရှင်းတယ်။ မြန်မာအသံက အနည်းငယ် မတည်ငြိမ်ဘူး။',
     'voice.eleven': 'ElevenLabs', 'voice.elevenNote': 'မြန်မာနဲ့ အင်္ဂလိပ် အကောင်းဆုံး။ စာလုံးလိုက် တိုက်ရိုက်အသံ။ ElevenLabs ခရက်ဒစ် လိုတယ်။',
-    'voice.vox': 'VoxCPM2', 'voice.voxNote': 'မြန်မာနဲ့ အင်္ဂလိပ် တစ်မော်ဒယ်တည်း။ အခမဲ့ သုံးလို့ရတယ်။ NVIDIA GPU 8 GB လောက် လိုတယ်။',
     'voice.mms': 'Meta MMS', 'voice.mmsNote': 'မြန်မာအတွက် mms-tts-mya၊ အင်္ဂလိပ်အတွက် mms-tts-eng။ CPU နဲ့ ရတယ်။ စီးပွားဖြစ် လိုင်စင် မဟုတ်။',
     'voice.f5': 'F5 Myanmar + Kokoro', 'voice.f5Note': 'မြန်မာကို F5-Myanmar-TTS။ Kokoro က Python 3.12 နဲ့အောက်မှာပဲ တင်လို့ရတယ်။ Python 3.14 မှာ အင်္ဂလိပ်ကို Meta အသံနဲ့ ဖတ်မယ်။',
+    'voice.sherpa': 'Sherpa MMS', 'voice.sherpaNote': 'Meta မြန်မာနဲ့ အင်္ဂလိပ်အသံကို sherpa-onnx နဲ့ ပိုမြန်အောင် ဖွင့်တယ်။ စီးပွားဖြစ် လိုင်စင် မဟုတ်။ ပထမဆုံးသင်ခန်းစာက မော်ဒယ်ကို ဒေါင်းလုဒ်လုပ်မယ်။',
+    'voice.aivoov': 'AiVOOV', 'voice.aivoovNote': 'မြန်မာကို Microsoft Nilar၊ အင်္ဂလိပ်ကို Aria။ AIVOOV_API_KEY လိုတယ်။ အခမဲ့ပမာဏ နည်းတယ်။',
+    'voice.freetts': 'FreeTTS', 'voice.freettsNote': 'မြန်မာကို Microsoft Nilar၊ အင်္ဂလိပ်ကို Jenny။ FREETTS_API_KEY လိုတယ်။ အခမဲ့က တစ်လ စာလုံး ၅၀၀၀ လောက်၊ စီးပွားဖြစ် မဟုတ်။',
+    'voice.narakeet': 'Narakeet', 'voice.narakeetNote': 'မြန်မာကို Sanda၊ အင်္ဂလိပ်ကို Linda။ ငွေပေးရတဲ့ NARAKEET_API_KEY လိုတယ်။',
     'err.audio': 'အသံဖန်တီးမရပါ။ ထပ်စမ်းပါ။', 'err.unsupported_voice': 'ဤအသံကို မရနိုင်ပါ။',
     'tw.skip': 'ကျော်ရန်', 'tw.continue': 'ဆက်ရန်', 'tw.correct': 'မှန်ပါသည်!', 'tw.wrong': 'မမှန်သေးပါ။', 'tw.you': 'သင်', 'tw.tutor': 'ဆရာ',
     'tw.clearInk': 'မင်ရေး ဖျက်ရန်', 'tw.qcap': 'အမြန်စစ်ဆေးချက် — အဖြေရွေးပါ သို့မဟုတ် ကျော်ပါ။', 'tw.qof': 'မေးခွန်း {n} / {total}',
@@ -484,9 +490,12 @@ function closeModal() { $('#modal').hidden = true; if (lastFocus) lastFocus.focu
 const VOICE_MODELS = [
   { id: 'gemini', title: 'voice.gemini', note: 'voice.geminiNote' },
   { id: 'elevenlabs', title: 'voice.eleven', note: 'voice.elevenNote' },
-  { id: 'voxcpm2', title: 'voice.vox', note: 'voice.voxNote' },
   { id: 'mms', title: 'voice.mms', note: 'voice.mmsNote' },
-  { id: 'f5kokoro', title: 'voice.f5', note: 'voice.f5Note' }
+  { id: 'f5kokoro', title: 'voice.f5', note: 'voice.f5Note' },
+  { id: 'sherpa', title: 'voice.sherpa', note: 'voice.sherpaNote' },
+  { id: 'aivoov', title: 'voice.aivoov', note: 'voice.aivoovNote' },
+  { id: 'freetts', title: 'voice.freetts', note: 'voice.freettsNote' },
+  { id: 'narakeet', title: 'voice.narakeet', note: 'voice.narakeetNote' }
 ];
 
 function savedVoiceProvider() {

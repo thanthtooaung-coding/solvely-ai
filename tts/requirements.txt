@@ -4,9 +4,9 @@
 #   pip install -r tts/requirements.txt
 #
 # Each voice group is imported only when that model is chosen.
-# VoxCPM2 is about 2B parameters and wants an NVIDIA GPU with ~8 GB VRAM.
 # Meta MMS runs on CPU. Its license is CC-BY-NC 4.0 (non-commercial).
-# F5-Myanmar-TTS is Burmese only. Kokoro speaks the English lessons.
+# Optional faster Meta MMS runtime. Install separately: pip install sherpa-onnx
+# The worker downloads model.onnx on first use.
 
 numpy>=1.26
 soundfile>=0.12
@@ -14,9 +14,6 @@ soundfile>=0.12
 # Meta MMS (facebook/mms-tts-mya and facebook/mms-tts-eng)
 torch>=2.2
 transformers>=4.44
-
-# VoxCPM2 (openbmb/VoxCPM2) — Burmese and English in one model
-voxcpm>=2.0
 
 # Burmese: freococo/F5-Myanmar-TTS. English: hexgrad/Kokoro.
 # Kokoro and its misaki dependency both require Python <3.13, so this line is skipped on 3.14.

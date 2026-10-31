@@ -92,20 +92,6 @@ def speak_mms(text, language):
     return wav_bytes(join_audio(chunks), model.config.sampling_rate)
 
 
-def speak_vox(text, _language):
-    import numpy as np
-    from voxcpm import VoxCPM
-
-    model = cached("voxcpm2", lambda: VoxCPM.from_pretrained("openbmb/VoxCPM2", load_denoiser=False))
-    rate = int(getattr(getattr(model, "tts_model", None), "sample_rate", 48000) or 48000)
-    chunks = []
-    for part in pieces(text, 500):
-        wav = model.generate(text=part, cfg_value=2.0, inference_timesteps=10)
-        chunks.append(np.asarray(wav, dtype=np.float32).reshape(-1))
-        chunks.append(np.zeros(int(rate * 0.12), dtype=np.float32))
-    return wav_bytes(join_audio(chunks), rate)
-
-
 def speak_f5(text):
     import soundfile as sf
     import tempfile
@@ -159,11 +145,88 @@ def speak_kokoro(text):
     return wav_bytes(join_audio(chunks), 24000)
 
 
+def speak_sherpa(text, language):
+    import numpy as np
+    import sherpa_onnx
+
+    model_path, tokens_path = sherpa_model(language)
+
+    def load():
+        config = sherpa_onnx.OfflineTtsConfig(
+            model=sherpa_onnx.OfflineTtsModelConfig(
+                vits=sherpa_onnx.OfflineTtsVitsModelConfig(
+                    model=model_path,
+                    tokens=tokens_path,
+                ),
+                provider="cpu",
+                num_threads=2,
+            ),
+            max_num_sentences=1,
+        )
+        if not config.validate():
+            raise RuntimeError("Sherpa could not read the MMS ONNX files in tts/models/sherpa.")
+        return sherpa_onnx.OfflineTts(config)
+
+    tts = cached("sherpa-" + language, load)
+    chunks = []
+    rate = 16000
+    for part in pieces(text, 300):
+        audio = tts.generate(part, sid=0, speed=1.0)
+        rate = int(audio.sample_rate or rate)
+        chunks.append(np.asarray(audio.samples, dtype=np.float32))
+        chunks.append(np.zeros(int(rate * 0.12), dtype=np.float32))
+    return wav_bytes(join_audio(chunks), rate)
+
+
+def sherpa_model(language):
+    code = "mya" if language == "my" else "eng"
+    root = os.path.join(os.path.dirname(__file__), "models", "sherpa", code)
+    os.makedirs(root, exist_ok=True)
+    direct_model = os.path.join(root, "model.onnx")
+    direct_tokens = os.path.join(root, "tokens.txt")
+    nested_model = os.path.join(root, code, "model.onnx")
+    nested_tokens = os.path.join(root, code, "tokens.txt")
+    if os.path.exists(direct_model) and os.path.exists(direct_tokens):
+        return direct_model, direct_tokens
+    if os.path.exists(nested_model) and os.path.exists(nested_tokens):
+        return nested_model, nested_tokens
+    if code == "eng":
+        extracted = extract_mms_eng(root)
+        if extracted:
+            return extracted
+    from huggingface_hub import hf_hub_download
+    hf_hub_download("Symmetris-labs/tts-mms", f"{code}/model.onnx", local_dir=root)
+    hf_hub_download("Symmetris-labs/tts-mms", f"{code}/tokens.txt", local_dir=root)
+    if os.path.exists(nested_model) and os.path.exists(nested_tokens):
+        return nested_model, nested_tokens
+    raise RuntimeError(
+        "Sherpa MMS files are missing. Install sherpa-onnx, then download the "
+        + code + " model.onnx and tokens.txt into tts/models/sherpa/" + code + "."
+    )
+
+
+def extract_mms_eng(root):
+    import tarfile
+    import urllib.request
+    archive = os.path.join(root, "vits-mms-eng.tar.bz2")
+    if not os.path.exists(archive):
+        urllib.request.urlretrieve(
+            "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-mms-eng.tar.bz2",
+            archive,
+        )
+    with tarfile.open(archive, "r:bz2") as tar:
+        tar.extractall(root, filter="data")
+    for dirpath, _dirs, files in os.walk(root):
+        if "model.onnx" in files and "tokens.txt" in files:
+            return os.path.join(dirpath, "model.onnx"), os.path.join(dirpath, "tokens.txt")
+    return None
+
+
 def speak(provider, language, text):
     if provider == "mms":
         return speak_mms(text, language)
-    if provider == "voxcpm2":
-        return speak_vox(text, language)
+    if provider == "sherpa":
+        return speak_sherpa(text, language)
     if provider == "f5kokoro":
         if language == "my":
             return speak_f5(text)

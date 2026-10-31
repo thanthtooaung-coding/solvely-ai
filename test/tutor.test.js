@@ -258,9 +258,12 @@ test('lesson and chat reject bad input without calling Gemini', async () => {
 test('voice model choice picks the narrator without changing the other engines', () => {
   assert.equal(narrationEngine('gemini', true), 'gemini-tts');
   assert.equal(narrationEngine('elevenlabs', false), 'elevenlabs');
-  assert.equal(narrationEngine('voxcpm2', true), 'voxcpm2');
   assert.equal(narrationEngine('mms', false), 'mms');
   assert.equal(narrationEngine('f5kokoro', true), 'f5kokoro');
+  assert.equal(narrationEngine('sherpa', true), 'sherpa');
+  assert.equal(narrationEngine('aivoov', true), 'aivoov');
+  assert.equal(narrationEngine('freetts', false), 'freetts');
+  assert.equal(narrationEngine('narakeet', true), 'narakeet');
   assert.equal(narrationEngine('', true), 'elevenlabs');
   assert.equal(narrationEngine('', false), 'gemini-tts');
 });
