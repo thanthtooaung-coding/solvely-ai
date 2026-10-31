@@ -441,6 +441,13 @@ html.dark .solve-btn:disabled { background: var(--chip); color: var(--muted-2); 
 .field span { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--text-2); }
 .field .select { width: 100%; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+.voice-modal { width: min(560px, 100%); max-height: min(86vh, 760px); overflow: auto; }
+.voice-list { display: flex; flex-direction: column; gap: 8px; }
+.voice-opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+.voice-opt:has(input:checked) { border-color: #1f4e9a; background: #f4f7fc; }
+.voice-opt input { margin-top: 3px; }
+.voice-opt b { display: block; font-size: 14px; font-weight: 600; }
+.voice-opt small { display: block; color: var(--muted); font-size: 12px; line-height: 1.4; margin-top: 2px; }
 
 .toast {
   position: fixed; left: 50%; bottom: 28px; z-index: 60;

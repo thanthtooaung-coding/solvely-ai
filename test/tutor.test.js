@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 import { createApp } from '../lib/app.js';
 import { extractPptx } from '../lib/files.js';
 import { lessonUsesBurmese, normalizeLesson, parseModelJson } from '../lib/lesson.js';
-import { alignWordTimings, charsToWords, prepareNarrationText, speakableMath } from '../lib/narration.js';
+import { alignWordTimings, charsToWords, narrationEngine, prepareNarrationText, speakableMath } from '../lib/narration.js';
 import { renderNotesHtml } from '../lib/notes.js';
 import { findBrowser } from '../lib/printpdf.js';
 
@@ -253,4 +253,14 @@ test('lesson and chat reject bad input without calling Gemini', async () => {
     else process.env.GEMINI_API_KEY = previous;
     server.close();
   }
+});
+
+test('voice model choice picks the narrator without changing the other engines', () => {
+  assert.equal(narrationEngine('gemini', true), 'gemini-tts');
+  assert.equal(narrationEngine('elevenlabs', false), 'elevenlabs');
+  assert.equal(narrationEngine('voxcpm2', true), 'voxcpm2');
+  assert.equal(narrationEngine('mms', false), 'mms');
+  assert.equal(narrationEngine('f5kokoro', true), 'f5kokoro');
+  assert.equal(narrationEngine('', true), 'elevenlabs');
+  assert.equal(narrationEngine('', false), 'gemini-tts');
 });

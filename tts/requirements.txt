@@ -1,0 +1,24 @@
+# Optional local voices for the whiteboard tutor.
+# Install into a Python 3.10+ environment, then set LOCAL_TTS_PYTHON if `python` is not that environment.
+#
+#   pip install -r tts/requirements.txt
+#
+# Each voice group is imported only when that model is chosen.
+# VoxCPM2 is about 2B parameters and wants an NVIDIA GPU with ~8 GB VRAM.
+# Meta MMS runs on CPU. Its license is CC-BY-NC 4.0 (non-commercial).
+# F5-Myanmar-TTS is Burmese only. Kokoro speaks the English lessons.
+
+numpy>=1.26
+soundfile>=0.12
+
+# Meta MMS (facebook/mms-tts-mya and facebook/mms-tts-eng)
+torch>=2.2
+transformers>=4.44
+
+# VoxCPM2 (openbmb/VoxCPM2) — Burmese and English in one model
+voxcpm>=2.0
+
+# Burmese: freococo/F5-Myanmar-TTS. English: hexgrad/Kokoro.
+# Kokoro and its misaki dependency both require Python <3.13, so this line is skipped on 3.14.
+f5-myanmar-tts>=0.1
+kokoro>=0.7.16; python_version < "3.13"

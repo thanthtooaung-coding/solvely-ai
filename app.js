@@ -145,6 +145,13 @@ const I18N = {
     'narr.section': 'Section {n} of {total}', 'narr.browser': 'Using browser speech for this section.', 'narr.off': 'Turn narration on with Play.',
     'narr.tap': 'Tap Play once to start the tutor voice (browser audio lock).',
     'narr.quota': 'ElevenLabs credits are used up, so the tutor is using the Gemini voice. Add ElevenLabs credits to get live voice back.',
+    'voice.title': 'Choose a voice', 'voice.sub': 'This voice reads the lesson. You can pick a different one the next time you create a lesson.',
+    'voice.use': 'Use this voice', 'voice.cancel': 'Cancel',
+    'voice.gemini': 'Google Gemini', 'voice.geminiNote': 'Uses the Gemini voice already in the app. English is clear. Burmese is less steady.',
+    'voice.eleven': 'ElevenLabs', 'voice.elevenNote': 'Best Burmese and English, with live word-by-word voice. Needs ElevenLabs credits.',
+    'voice.vox': 'VoxCPM2', 'voice.voxNote': 'One Hugging Face model for Burmese and English. Free to use. Needs an NVIDIA GPU with about 8 GB.',
+    'voice.mms': 'Meta MMS', 'voice.mmsNote': 'mms-tts-mya for Myanmar and mms-tts-eng for English. Runs on CPU. Non-commercial license.',
+    'voice.f5': 'F5 Myanmar + Kokoro', 'voice.f5Note': 'F5-Myanmar-TTS reads Burmese. Kokoro reads English on Python 3.12 or older. On Python 3.14, English uses the Meta English voice.',
     'err.audio': 'The narration could not be created. Try again.', 'err.unsupported_voice': 'That voice is not available.',
     'tw.skip': 'Skip', 'tw.continue': 'Continue', 'tw.correct': 'Correct!', 'tw.wrong': 'Not quite.', 'tw.you': 'You', 'tw.tutor': 'Tutor',
     'tw.clearInk': 'Clear ink', 'tw.qcap': 'Quick check — pick an answer, or skip to keep going.', 'tw.qof': 'Question {n} of {total}',
@@ -232,6 +239,13 @@ const I18N = {
     'narr.section': 'အပိုင်း {n} / {total}', 'narr.browser': 'ဤအပိုင်းအတွက် ဘရောက်ဇာ အသံကို သုံးနေသည်။', 'narr.off': 'Play နှိပ်ပြီး အသံဖွင့်ပါ။',
     'narr.tap': 'ဘရောက်ဇာ အသံပိတ်ထားသည်။ Play ကို တစ်ချက် နှိပ်ပါ။',
     'narr.quota': 'ElevenLabs ခရက်ဒစ် ကုန်သွားသဖြင့် Gemini အသံကို သုံးနေသည်။ တိုက်ရိုက်အသံ ပြန်ရရန် ElevenLabs ခရက်ဒစ် ထည့်ပါ။',
+    'voice.title': 'အသံ မော်ဒယ် ရွေးပါ', 'voice.sub': 'ဒီအသံက သင်ခန်းစာကို ဖတ်ပေးမယ်။ နောက်တစ်ခါ သင်ခန်းစာဖန်တီးတဲ့အခါ ပြောင်းလို့ရတယ်။',
+    'voice.use': 'ဒီအသံကို သုံးမယ်', 'voice.cancel': 'မလုပ်တော့ပါ',
+    'voice.gemini': 'Google Gemini', 'voice.geminiNote': 'App ထဲက Gemini အသံ။ အင်္ဂလိပ် ရှင်းတယ်။ မြန်မာအသံက အနည်းငယ် မတည်ငြိမ်ဘူး။',
+    'voice.eleven': 'ElevenLabs', 'voice.elevenNote': 'မြန်မာနဲ့ အင်္ဂလိပ် အကောင်းဆုံး။ စာလုံးလိုက် တိုက်ရိုက်အသံ။ ElevenLabs ခရက်ဒစ် လိုတယ်။',
+    'voice.vox': 'VoxCPM2', 'voice.voxNote': 'မြန်မာနဲ့ အင်္ဂလိပ် တစ်မော်ဒယ်တည်း။ အခမဲ့ သုံးလို့ရတယ်။ NVIDIA GPU 8 GB လောက် လိုတယ်။',
+    'voice.mms': 'Meta MMS', 'voice.mmsNote': 'မြန်မာအတွက် mms-tts-mya၊ အင်္ဂလိပ်အတွက် mms-tts-eng။ CPU နဲ့ ရတယ်။ စီးပွားဖြစ် လိုင်စင် မဟုတ်။',
+    'voice.f5': 'F5 Myanmar + Kokoro', 'voice.f5Note': 'မြန်မာကို F5-Myanmar-TTS။ Kokoro က Python 3.12 နဲ့အောက်မှာပဲ တင်လို့ရတယ်။ Python 3.14 မှာ အင်္ဂလိပ်ကို Meta အသံနဲ့ ဖတ်မယ်။',
     'err.audio': 'အသံဖန်တီးမရပါ။ ထပ်စမ်းပါ။', 'err.unsupported_voice': 'ဤအသံကို မရနိုင်ပါ။',
     'tw.skip': 'ကျော်ရန်', 'tw.continue': 'ဆက်ရန်', 'tw.correct': 'မှန်ပါသည်!', 'tw.wrong': 'မမှန်သေးပါ။', 'tw.you': 'သင်', 'tw.tutor': 'ဆရာ',
     'tw.clearInk': 'မင်ရေး ဖျက်ရန်', 'tw.qcap': 'အမြန်စစ်ဆေးချက် — အဖြေရွေးပါ သို့မဟုတ် ကျော်ပါ။', 'tw.qof': 'မေးခွန်း {n} / {total}',
@@ -370,15 +384,19 @@ const BURMESE = /[\u1000-\u109F]/;
 function doSolve() {
   const q = $('#question').value.trim();
   if (!q && !state.files.length) return;
-  if (state.tab === 'whiteboard') {                // Whiteboard Tutor → Gemini lesson
+  if (state.tab === 'whiteboard') {
     if (state.creatingLesson) return;
     state.creatingLesson = true;
-    try {
-      const lessonId = createLesson(q, state.files.map(f => f.file).filter(Boolean));
-      if (lessonId) { state.history.unshift({ q, tab: 'whiteboard', files: state.files.map(f => f.name), time: new Date(), lessonId }); renderHistory(); }
-    } finally {
-      setTimeout(() => { state.creatingLesson = false; }, 800);
-    }
+    void (async () => {
+      try {
+        const provider = await chooseVoiceModel();
+        if (!provider) return;
+        const lessonId = createLesson(q, state.files.map(f => f.file).filter(Boolean), provider);
+        if (lessonId) { state.history.unshift({ q, tab: 'whiteboard', files: state.files.map(f => f.name), time: new Date(), lessonId }); renderHistory(); }
+      } finally {
+        setTimeout(() => { state.creatingLesson = false; }, 800);
+      }
+    })();
     return;
   }
   if (state.tab === 'flashcards') {
@@ -462,6 +480,48 @@ function openModal(html, onMount, cls) {
   const f = box.querySelector('input, select, button'); if (f) f.focus();
 }
 function closeModal() { $('#modal').hidden = true; if (lastFocus) lastFocus.focus(); }
+
+const VOICE_MODELS = [
+  { id: 'gemini', title: 'voice.gemini', note: 'voice.geminiNote' },
+  { id: 'elevenlabs', title: 'voice.eleven', note: 'voice.elevenNote' },
+  { id: 'voxcpm2', title: 'voice.vox', note: 'voice.voxNote' },
+  { id: 'mms', title: 'voice.mms', note: 'voice.mmsNote' },
+  { id: 'f5kokoro', title: 'voice.f5', note: 'voice.f5Note' }
+];
+
+function savedVoiceProvider() {
+  try {
+    const id = localStorage.getItem('solvely.voiceProvider');
+    if (VOICE_MODELS.some(m => m.id === id)) return id;
+  } catch { /* private mode */ }
+  return 'gemini';
+}
+
+function chooseVoiceModel() {
+  const picked = savedVoiceProvider();
+  return new Promise(resolve => {
+    let settled = false;
+    const finish = value => {
+      if (settled) return;
+      settled = true;
+      document.removeEventListener('keydown', onKey);
+      closeModal();
+      resolve(value);
+    };
+    const onKey = e => { if (e.key === 'Escape') finish(null); };
+    document.addEventListener('keydown', onKey);
+    const options = VOICE_MODELS.map(m => `<label class="voice-opt"><input type="radio" name="voiceModel" value="${m.id}"${m.id === picked ? ' checked' : ''}><span><b>${esc(t(m.title))}</b><small>${esc(t(m.note))}</small></span></label>`).join('');
+    openModal(`<h2 id="mTitle">${esc(t('voice.title'))}</h2><p class="sub">${esc(t('voice.sub'))}</p><div class="voice-list" role="radiogroup" aria-labelledby="mTitle">${options}</div><div class="modal-actions"><button class="btn-o" id="voiceCancel" type="button">${esc(t('voice.cancel'))}</button><button class="btn-primary" id="voiceOk" type="button">${esc(t('voice.use'))}</button></div>`, box => {
+      box.querySelector('#voiceCancel').onclick = () => finish(null);
+      box.querySelector('#voiceOk').onclick = () => {
+        const input = box.querySelector('input[name=voiceModel]:checked');
+        const id = input ? input.value : 'gemini';
+        try { localStorage.setItem('solvely.voiceProvider', id); } catch { /* ignore */ }
+        finish(id);
+      };
+    }, 'voice-modal');
+  });
+}
 
 
 /* ================================================================
@@ -550,10 +610,11 @@ function lessonLang(L) {
   if (L && (L.language === 'my' || (L.apiLesson && L.apiLesson.language === 'my'))) return 'my';
   return state.lang === 'my' ? 'my' : 'en';
 }
-function createLesson(topic, files) {
+function createLesson(topic, files, voiceProvider) {
   const id = 'l' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
   const text = (topic || '').trim();
-  lessons[id] = { id, topic: text, language: wantsBurmese(text) ? 'my' : 'en', sources: files.map(makeSource), status: 'preparing', step: 0,
+  const provider = VOICE_MODELS.some(m => m.id === voiceProvider) ? voiceProvider : savedVoiceProvider();
+  lessons[id] = { id, topic: text, language: wantsBurmese(text) ? 'my' : 'en', voiceProvider: provider, sources: files.map(makeSource), status: 'preparing', step: 0,
     blocks: [], idx: 0, answers: {}, qa: [], strokes: [], created: Date.now() };
   location.hash = `#/tutor/${id}/prep`;
   return id;
@@ -575,6 +636,7 @@ function apiErr(res, data) {
 }
 function friendlyError(err) {
   if (err && err.local) return err.message;
+  if (err && err.code === 'local_tts' && err.message) return err.message;
   if (err && err.name === 'AbortError') return t('err.timeout');
   if (err && err.code && I18N.en['err.' + err.code]) return t('err.' + err.code);
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return t('err.network');
@@ -847,6 +909,7 @@ async function prepLoadNarrationPack(L, signal) {
         text: sections[i].text,
         language: lessonLang(L),
         voice,
+        provider: L.voiceProvider || '',
         sectionId: String(i),
         lessonId: L.id || ''
       }, signal);
@@ -855,7 +918,7 @@ async function prepLoadNarrationPack(L, signal) {
       const entry = {
         preloaded: true,
         voice,
-        provider: data.provider || '',
+        provider: data.provider || L.voiceProvider || '',
         mimeType: data.mimeType || 'audio/wav',
         url,
         words: Array.isArray(data.words) ? data.words : [],
@@ -863,7 +926,7 @@ async function prepLoadNarrationPack(L, signal) {
         duration: data.duration || 0
       };
       L.narrPack[i] = entry;
-      const key = narrCacheKey(sections[i].text, lessonLang(L), voice);
+      const key = narrCacheKey(sections[i].text, lessonLang(L), voice, L.voiceProvider || '');
       Narr.cache.set(key, entry);
     } catch (err) {
       if (err.name === 'AbortError') throw err;
@@ -1412,8 +1475,13 @@ class NarrStream {
     }
   }
 }
+function voiceProviderOf(L) {
+  return (L && L.voiceProvider) || '';
+}
 function narrStreamSpeed() { return Math.min(1.2, Math.max(0.7, T.speed || 1)); }
 function narrCanStream(L) {
+  const provider = voiceProviderOf(L);
+  if (provider && provider !== 'elevenlabs') return false;
   const m = Narr.meta && Narr.meta.stream;
   return !!(L && m && m.enabled && (m.languages || []).includes(lessonLang(L)) && (window.AudioContext || window.webkitAudioContext));
 }
@@ -1424,7 +1492,7 @@ function narrGetStream(L, index) {
   const key = [lessonLang(L), Narr.voice, narrStreamSpeed(), section.text].join('\n');
   const have = Narr.streams.get(key);
   if (have && !have.error) return have;
-  const s = new NarrStream(key, { text: section.text, language: lessonLang(L), voice: Narr.voice, speed: narrStreamSpeed() });
+  const s = new NarrStream(key, { text: section.text, language: lessonLang(L), voice: Narr.voice, speed: narrStreamSpeed(), provider: voiceProviderOf(L) });
   Narr.streams.set(key, s);
   while (Narr.streams.size > 10) {
     const [k, old] = Narr.streams.entries().next().value;
@@ -1796,27 +1864,29 @@ function b64ToBlob(b64, mime) {
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   return new Blob([bytes], { type: mime || 'audio/wav' });
 }
-function narrCacheKey(text, lang, voice) {
-  return [lang, voice, text].join('\n');
+function narrCacheKey(text, lang, voice, provider) {
+  return [provider || '', lang, voice, text].join('\n');
 }
 async function narrFetchAudio(section) {
   const L = T.L;
   const lang = lessonLang(L);
+  const provider = voiceProviderOf(L);
   const pack = L.narrPack && L.narrPack[Narr.index];
-  if (pack && (pack.url || pack.audioBase64) && (!pack.voice || pack.voice === Narr.voice)) return pack;
-  const key = narrCacheKey(section.text, lang, Narr.voice);
+  if (pack && (pack.url || pack.audioBase64) && (!pack.voice || pack.voice === Narr.voice) && (!provider || pack.provider === provider)) return pack;
+  const key = narrCacheKey(section.text, lang, Narr.voice, provider);
   if (Narr.cache.has(key)) return Narr.cache.get(key);
   const data = await postJson('/api/whiteboard/narration', {
     text: section.text,
     language: lang,
     voice: Narr.voice,
+    provider,
     sectionId: String(Narr.index),
     lessonId: L.id || ''
   }, Narr.abort && Narr.abort.signal);
   const entry = {
     mimeType: data.mimeType || 'audio/wav',
     audioBase64: data.audioBase64,
-    provider: data.provider || 'gemini-tts',
+    provider: data.provider || provider || 'gemini-tts',
     text: data.text || section.text,
     duration: data.duration || 0,
     words: Array.isArray(data.words) ? data.words : []
